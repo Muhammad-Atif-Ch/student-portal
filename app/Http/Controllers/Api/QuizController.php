@@ -48,6 +48,7 @@ class QuizController extends Controller
         } else {
             return response()->json(['error' => 'Invalid request'], 400);
         }
+        
 
     }
 }

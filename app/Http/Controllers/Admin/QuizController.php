@@ -2,31 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Test;
-use App\Models\Category;
-use Illuminate\Http\Request;
-use App\Services\Test\TestService;
+use App\Models\Quiz;
+use App\Services\Quiz\QuizService;
 use App\Http\Controllers\Controller;
-use App\Repositories\CategoryRepository;
 use Illuminate\Support\Facades\Response;
-use App\Services\Category\CategoryService;
 use App\Http\Requests\Test\CreateTestRequest;
-use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Test\UpdateTestRequest;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class TestController extends Controller
+class QuizController extends Controller
 {
-    public function __construct(private TestService $service)
+    public function __construct(private QuizService $service)
     {
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $tests = $this->service->listTest();
-        return view('backend.test.index', compact('tests'));
+        return view('backend.quiz.index', compact('tests'));
     }
 
     /**
@@ -35,7 +30,7 @@ class TestController extends Controller
     public function create()
     {
         $tests = $this->service->listTest();
-        return view('backend.test.create', compact('tests'));
+        return view('backend.quiz.create', compact('tests'));
     }
 
     /**
@@ -44,7 +39,7 @@ class TestController extends Controller
     public function store(CreateTestRequest $request)
     {
         $response = $this->service->createTest($request);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.test.index');
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
     }
 
     /**
@@ -61,7 +56,7 @@ class TestController extends Controller
     public function edit(string $id)
     {
         $test = $this->service->showTest($id);
-        return view('backend.test.edit', compact('test'));
+        return view('backend.quiz.edit', compact('test'));
     }
 
     /**
@@ -70,15 +65,15 @@ class TestController extends Controller
     public function update(UpdateTestRequest $request, string $id)
     {
         $response = $this->service->updateTest($request, $id);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.test.index');
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Test $test)
+    public function destroy(Quiz $test)
     {
         $response = $this->service->destroy($test);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.test.index');
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
     }
 }

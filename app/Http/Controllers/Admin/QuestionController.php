@@ -21,27 +21,27 @@ class QuestionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($test_id)
+    public function index($quiz_id)
     {
-        $questions = $this->service->listQuestion($test_id);
-        return view('backend.question.index', compact('test_id','questions'));
+        $questions = $this->service->listQuestion($quiz_id);
+        return view('backend.question.index', compact('quiz_id','questions'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create($test_id)
+    public function create($quiz_id)
     {
-        return view('backend.question.create', compact('test_id'));
+        return view('backend.question.create', compact('quiz_id'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateQuestionRequest $request, $test_id)
+    public function store(CreateQuestionRequest $request, $quiz_id)
     {
         $response = $this->service->createQuestion($request);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: "admin.test.question.index", route_params: ['test' => $test_id]);
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: "admin.quiz.question.index", route_params: ['quiz' => $quiz_id]);
     }
 
     /**
@@ -55,27 +55,27 @@ class QuestionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $test_id, string $id)
+    public function edit(string $quiz_id, string $id)
     {
-        $question = $this->service->showQuestion($test_id, $id);
-        return view('backend.question.edit', compact('test_id', 'question'));
+        $question = $this->service->showQuestion($quiz_id, $id);
+        return view('backend.question.edit', compact('quiz_id', 'question'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateQuestionRequest $request, string $test_id, string $id)
+    public function update(UpdateQuestionRequest $request, string $quiz_id, string $id)
     {
         $response = $this->service->updateQuestion($request, $id);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.test.question.index', route_params: ['test' => $test_id]);
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($test_id, Question $question)
+    public function destroy($quiz_id, Question $question)
     {
         $response = $this->service->destroy($question);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.test.question.index', route_params: ['test' => $test_id]);
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 }

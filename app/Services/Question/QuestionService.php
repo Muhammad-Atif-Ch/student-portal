@@ -30,15 +30,15 @@ class QuestionService extends AbstractService
         return $this->response;
     }
 
-    public function listQuestion($test_id): Collection
+    public function listQuestion($quiz_id): Collection
     {
-        $questions = $this->repository->getListWithoutPagination(conditions: ['test_id' => $test_id]);
+        $questions = $this->repository->getListWithoutPagination(conditions: ['quiz_id' => $quiz_id]);
         return $questions;
     }
 
-    public function showQuestion($test_id, $id): Model
+    public function showQuestion($quiz_id, $id): Model
     {
-        return $this->getWhere(['test_id' => $test_id, 'id' => $id]);
+        return $this->getWhere(['quiz_id' => $quiz_id, 'id' => $id]);
     }
 
     public function updateQuestion(UpdateQuestionRequest $request, $id): AbstractResponseInterface

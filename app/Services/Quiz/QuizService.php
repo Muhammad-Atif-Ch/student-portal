@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Services\Test;
+namespace App\Services\Quiz;
 
 use Illuminate\Http\Request;
 use App\Helpers\ResponseCode;
 use App\Responses\TestResponse;
 use Illuminate\Support\Collection;
-use App\Repositories\TestRepository;
+use App\Repositories\QuizRepository;
 use App\Core\Services\AbstractService;
+use Illuminate\Database\Eloquent\Model;
 use App\Http\Requests\Test\CreateTestRequest;
 use App\Http\Requests\Test\UpdateTestRequest;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
-use Illuminate\Database\Eloquent\Model;
 
-class TestService extends AbstractService
+class QuizService extends AbstractService
 {
-
-    public function __construct(TestRepository $repository, TestResponse $response, Request $request)
+    public function __construct(QuizRepository $repository, TestResponse $response, Request $request)
     {
         $this->repository = $repository;
         $this->response = $response;
@@ -41,8 +40,6 @@ class TestService extends AbstractService
         return $this->getById($id);
     }
 
-/*************  ✨ Codeium Command ⭐  *************/
-/******  71fa46c5-05d6-4155-bb37-6274d6b64da1  *******/
     public function updateTest(UpdateTestRequest $request, $id): AbstractResponseInterface
     {
         $this->update($request->validated(), $id);

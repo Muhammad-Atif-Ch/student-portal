@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.test.question.update', ['test' => $test_id, 'question' => $question->id]) }}" method="POST">
+                            <form action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
@@ -59,13 +59,13 @@
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>D - Option <small style="color: red">*</small></label>
-                                                <input type="text" name="d" class="form-control" required value="{{ $question->d }}">
+                                                <input type="text" name="d" class="form-control" value="{{ $question->d }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>E - Option</label>
-                                                <input type="text" name="e" class="form-control" required value="{{ $question->e }}">
+                                                <input type="text" name="e" class="form-control" value="{{ $question->e }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">

@@ -30,5 +30,13 @@ class PermissionSeeder extends Seeder
             'password' => Hash::make('123456'),
         ]);
         $user3->assignRole($role3);
+
+        $user4 = \App\Models\User::create([
+            'device_id' => 'test123',
+        ]);
+
+        $user4 = \App\Models\User::create([
+            'device_id' => 'demo123',
+        ]);
     }
 }

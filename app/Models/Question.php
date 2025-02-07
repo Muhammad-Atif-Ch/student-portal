@@ -10,7 +10,7 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
-        'test_id',
+        'quiz_id',
         'question',
         'correct_answer',
         'a',
@@ -27,10 +27,5 @@ class Question extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function answers()
-    {
-        return $this->hasMany(Answer::class);
     }
 }

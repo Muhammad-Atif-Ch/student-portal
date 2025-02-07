@@ -22,7 +22,7 @@ class CreateQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'test_id' => 'required|exists:tests,id|sometimes',
+            'quiz_id' => 'required|exists:quizzes,id|sometimes',
             'question' => 'required',
             'correct_answer' => 'required',
             'a' => 'required',
@@ -39,7 +39,7 @@ class CreateQuestionRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'test_id' => $this->route('test'),
+            'quiz_id' => $this->route('quiz'),
         ]);
     }
 }

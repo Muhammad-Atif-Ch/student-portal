@@ -11,7 +11,7 @@ class StudentReport extends Model
 
     protected $fillable = [
         'student_id',
-        'test_id',
+        'quiz_id',
         'total_marks',
         'obtained_marks',
         'result',

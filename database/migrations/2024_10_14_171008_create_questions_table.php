@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('test_id');
+            $table->unsignedBigInteger('quiz_id');
             $table->string('question');
             $table->enum('correct_answer', ['a', 'b', 'c', 'd', 'e', 'f']);
             $table->string('a');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key
-            $table->foreign('test_id')->references('id')->on('tests')->onDelete('cascade');
+            $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');
         });
     }
 

@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.test.question.store', $test_id) }}" method="POST">
+                            <form action="{{ route('admin.quiz.question.store', $quiz_id) }}" method="POST">
                                 @csrf
                                 <div class="card-header">
                                     <h4>Create Question</h4>
@@ -64,13 +64,13 @@
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>E - Option</label>
-                                                <input type="text" name="e" class="form-control" required>
+                                                <input type="text" name="e" class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>F - Option</label>
-                                                <input type="text" name="f" class="form-control" required>
+                                                <input type="text" name="f" class="form-control">
                                             </div>
                                         </div>
                                     </div>

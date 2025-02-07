@@ -11,7 +11,7 @@
                 <a href="{{ route('admin.dashboard') }}" class="nav-link"><i data-feather="monitor"></i><span>Dashboard</span></a>
             </li>
             <li class="dropdown {{ Request::is('test*') ? 'active' : '' }}">
-                <a href="{{ route('admin.test.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>Test</span></a>
+                <a href="{{ route('admin.quiz.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>Test</span></a>
             </li>
             <li class="dropdown {{ Request::is('users*') ? 'active' : '' }}">
                 <a href="{{ route('admin.users.index') }}" class="nav-link"><i data-feather="user"></i><span>Users</span></a>

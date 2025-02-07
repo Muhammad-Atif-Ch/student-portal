@@ -10,7 +10,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Tests List</h4>
-                                <a href="{{ route('admin.test.create') }}" class="btn btn-primary">Add Test</a>
+                                <a href="{{ route('admin.quiz.create') }}" class="btn btn-primary">Add Test</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -36,9 +36,9 @@
                                                     <td>{{ $test->test_time }}</td>
                                                     <td>{{ $test->description }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.test.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                                                        <a href="{{ route('admin.test.question.index', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                                        <form action="{{ route('admin.test.destroy', $test->id) }}" method="POST" class="d-inline">
+                                                        <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                                        <a href="{{ route('admin.quiz.question.index', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                                        <form action="{{ route('admin.quiz.destroy', $test->id) }}" method="POST" class="d-inline">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

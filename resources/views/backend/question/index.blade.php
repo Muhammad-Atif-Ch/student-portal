@@ -10,7 +10,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Questions List</h4>
-                                <a href="{{ route('admin.test.question.create', $test_id) }}" class="btn btn-primary">Add Question</a>
+                                <a href="{{ route('admin.quiz.question.create', $quiz_id) }}" class="btn btn-primary">Add Question</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -42,8 +42,8 @@
                                                     <td>{{ $question->f }}</td>
                                                     <td>{{ $question->correct_answer }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.test.question.edit', ['test' => $test_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                                                        <form action="{{ route('admin.test.question.destroy', ['test' => $test_id, 'question' => $question->id]) }}" method="POST" class="d-inline">
+                                                        <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                                        <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" class="d-inline">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

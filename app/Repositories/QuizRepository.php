@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Test;
 use Illuminate\Database\QueryException;
 use App\Core\Repositories\AbstractRepository;
+use App\Models\Quiz;
 
-class TestRepository extends AbstractRepository
+class QuizRepository extends AbstractRepository
 {
-    public function __construct(Test $model)
+    public function __construct(Quiz $model)
     {
         $this->model = $model;
     }

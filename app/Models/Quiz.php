@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Test extends Model
+class Quiz extends Model
 {
     use HasFactory;
 
@@ -15,4 +15,9 @@ class Test extends Model
         'test_time',
         'description',
     ];
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }

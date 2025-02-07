@@ -8,30 +8,29 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.test.update', $test->id) }}" method="POST">
+                            <form action="{{ route('admin.quiz.store') }}" method="POST">
                                 @csrf
-                                @method('PUT')
                                 <div class="card-header">
-                                    <h4>Edit Test</h4>
+                                    <h4>Create Test</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Title <small style="color: red">*</small></label>
-                                                <input type="text" name="title" class="form-control" required value="{{ $test->title}}">
+                                                <input type="text" name="title" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Per Question Mark <small style="color: red">*</small></label>
-                                                <input type="number" name="per_question_mark" class="form-control" required value="{{ $test->per_question_mark}}">
+                                                <input type="number" name="per_question_mark" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Test Time (per minutes) <small style="color: red">*</small></label>
-                                                <input type="number" name="test_time" class="form-control" required value="{{ $test->test_time }}">
+                                                <input type="number" name="test_time" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>
@@ -39,7 +38,7 @@
                                         <div class="col-12 col-md-12 col-lg-12">
                                             <div class="form-group">
                                                 <label>Description</label>
-                                                <textarea name="description" class="form-control">{{ $test->description }}</textarea>
+                                                <textarea name="description" class="form-control"></textarea>
                                             </div>
                                         </div>
                                     </div>

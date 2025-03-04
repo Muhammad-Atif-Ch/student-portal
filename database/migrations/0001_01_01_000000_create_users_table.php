@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->text('image')->nullable()->comment('profile image');
+            $table->enum('app_type', ['car', 'bike', 'both'])->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

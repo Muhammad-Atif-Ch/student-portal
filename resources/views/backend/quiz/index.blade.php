@@ -9,8 +9,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Tests List</h4>
-                                <a href="{{ route('admin.quiz.create') }}" class="btn btn-primary">Add Test</a>
+                                <h4>Quiz List</h4>
+                                {{-- <a href="{{ route('admin.quiz.create') }}" class="btn btn-primary">Add Test</a> --}}
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -21,9 +21,7 @@
                                                     #
                                                 </th>
                                                 <th>Title</th>
-                                                <th>Per Question Marks</th>
-                                                <th>Test Time</th>
-                                                <th>Description</th>
+                                                <th>Official Test Question</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -32,16 +30,14 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $test->title }}</td>
-                                                    <td>{{ $test->per_question_mark }}</td>
-                                                    <td>{{ $test->test_time }}</td>
-                                                    <td>{{ $test->description }}</td>
+                                                    <td>{{ $test->official_test_question }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                                        {{-- <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
                                                         <a href="{{ route('admin.quiz.question.index', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
-                                                        <form action="{{ route('admin.quiz.destroy', $test->id) }}" method="POST" class="d-inline">
+                                                        {{-- <form action="{{ route('admin.quiz.destroy', $test->id) }}" method="POST" class="d-inline">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                                        </form>
+                                                        </form> --}}
                                                     </td>
                                                 </tr>
                                             @empty

@@ -16,27 +16,13 @@ class StudentQuizHistorySeeder extends Seeder
      */
     public function run(): void
     {
-        //StudentQuizHistory::factory()->count(5000)->create();
-
-        // Quiz::factory(10)
-        // ->has(Question::factory(5000), 'questions') // Each quiz has 10 questions
-        // ->create()
-        // ->each(function ($quiz) {
-        //     // For each question in the quiz, create StudentQuizHistory
-        //     $quiz->questions->each(function ($question) use ($quiz) {
-        //         StudentQuizHistory::factory()
-        //             ->withQuizAndQuestions($quiz, $question) // Link quiz & question
-        //             ->create();
-        //     });
-        // });
-
         $quizzes = Quiz::with('questions')->get();
         $historyRecords = [];
 
         foreach ($quizzes as $quiz) {
             foreach ($quiz->questions as $question) {
                 $historyRecords[] = [
-                    'student_id' => 3, // Random student ID
+                    'user_id' => 3, // Random student ID
                     'quiz_id' => $quiz->id, // Current quiz ID
                     'question_id' => $question->id, // Current question ID
                     'answer' => fake()->randomElement(['a', 'b', 'c', 'd']), // Random answer

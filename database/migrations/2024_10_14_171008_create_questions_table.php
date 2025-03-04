@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,6 +21,7 @@ return new class extends Migration
             $table->string('d');
             $table->string('e')->nullable();
             $table->string('f')->nullable();
+            $table->enum('type', ['car', 'bike', 'both'])->nullable();
             $table->text('answer_explanation')->nullable();
             $table->text('audio_file')->nullable();
             $table->timestamps();

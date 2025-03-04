@@ -18,7 +18,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('quiz', QuizController::class);
+    Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy', 'edit', 'update');
     Route::resource('quiz.question', QuestionController::class);
     Route::resource('users', UserController::class);
 });

@@ -13,6 +13,27 @@ class QuizSeeder extends Seeder
      */
     public function run(): void
     {
-        Quiz::factory()->count(10)->create();
+        Quiz::insert([
+            [
+                'title' => 'Legal Matters/Rules of the Road',
+                'official_test_question' => 7,
+            ],
+            [
+                'title' => 'Managing Risk',
+                'official_test_question' => 7,
+            ],
+            [
+                'title' => 'Safe and Socially Responsible Driving',
+                'official_test_question' => 23,
+            ],
+            [
+                'title' => 'Control of Vehicle',
+                'official_test_question' => 2,
+            ],
+            [
+                'title' => 'Technical Matters',
+                'official_test_question' => 1,
+            ],
+        ]);
     }
 }

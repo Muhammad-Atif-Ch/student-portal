@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('student_quiz_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('quiz_id');
             $table->unsignedBigInteger('question_id');
             $table->string('answer');
@@ -20,13 +20,13 @@ return new class extends Migration {
             $table->enum('type', ['official', 'practice']);
             $table->timestamps();
 
-            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
 
             $table->index('quiz_id');
             $table->index('question_id');
-            $table->index('student_id');
+            $table->index('user_id');
         });
     }
 

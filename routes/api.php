@@ -11,7 +11,11 @@ use App\Http\Controllers\Api\UserController;
 Route::get('user/device-register', [UserController::class, 'index'])->withoutMiddleware('device.check');
 
 Route::group(['prefix' => 'quiz'], function () {
-    Route::get('/', [QuizController::class, 'index'])->name('quiz.index');
-    Route::get('get-question', [QuizController::class, 'getQuestion'])->name('quiz.question');
+    Route::get('/', [QuizController::class, 'index']);
+    Route::get('search-question', [QuizController::class, 'searchQuestion']);
+    Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
+    Route::get('get-practice-question', [QuizController::class, 'getPracticeQuestion']);
+    Route::get('get-official-question', [QuizController::class, 'getOfficialQuestion']);
+    Route::post('store', [QuizController::class, 'store']);
 });
 

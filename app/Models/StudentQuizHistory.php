@@ -10,7 +10,7 @@ class StudentQuizHistory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id',
+        'user_id',
         'quiz_id',
         'question_id',
         'answer',
@@ -18,7 +18,7 @@ class StudentQuizHistory extends Model
         'type',
     ];
 
-    public function student()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

@@ -18,9 +18,7 @@ class QuizFactory extends Factory
     {
         return [
             'title' => fake()->sentence(),
-            'per_question_mark' => random_int(1, 10),
-            'test_time' => random_int(1, 10),
-            'description' => fake()->sentence(),
+            'official_test_question' => random_int(1, 10),
         ];
     }
 }

@@ -13,19 +13,6 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
-        //Question::factory()->count(5000)->create();
-
-        $question = [
-            'quiz_id' => random_int(1, 10),
-            'question' => fake()->sentence(),
-            'a' => fake()->sentence(),
-            'b' => fake()->sentence(),
-            'c' => fake()->sentence(),
-            'd' => fake()->sentence(),
-            'answer_explanation' => fake()->sentence(),
-            'correct_answer' => fake()->randomElement(['a', 'b', 'c', 'd']),
-        ];
-
-        Question::insert($question);
+        Question::factory()->count(30)->create();
     }
 }

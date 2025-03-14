@@ -19,7 +19,9 @@ class Question extends Model
         'd',
         'e',
         'f',
+        'image',
         'answer_explanation',
+        'extra_explanation',
         'audio_file',
     ];
 
@@ -27,5 +29,10 @@ class Question extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function studentQuizHistory()
+    {
+        return $this->hasMany(StudentQuizHistory::class, 'question_id');
     }
 }

@@ -13,6 +13,7 @@ use App\Models\Question;
 use App\Models\QuestionHistory;
 use App\Models\StudentQuizHistory;
 use App\Models\User;
+use Illuminate\Support\Facades\Response;
 
 class QuizController extends Controller
 {
@@ -139,6 +140,24 @@ class QuizController extends Controller
                 $quizId = $quiz->id;
                 $quizLimit = $quiz->official_test_question;
 
+                // Get previously wrong attempted questions first
+                $wrongAttemptedQuestionIds = StudentQuizHistory::where([
+                    'user_id' => $userId,
+                    'quiz_id' => $quizId,
+                    'type' => 'official',
+                    'correct' => 0
+                ])->pluck('question_id');
+
+                // Fetch the wrong questions first (limit to quizLimit)
+                $wrongQuestions = Question::whereIn('id', $wrongAttemptedQuestionIds)
+                    ->where('quiz_id', $quizId)
+                    ->inRandomOrder()
+                    ->limit($quizLimit)
+                    ->get();
+
+                $wrongCount = $wrongQuestions->count();
+                $remainingLimit = $quizLimit - $wrongCount;
+
                 $questionIds = QuestionHistory::where(['user_id' => $userId, 'quiz_id' => $quizId, 'type' => 'official'])->pluck('question_id');
 
                 $remainingQuestions = Question::whereNotIn('id', $questionIds)
@@ -185,15 +204,8 @@ class QuizController extends Controller
                     'questions' => $remainingQuestions
                 ];
             });
-        //dd($quizzes);
-        // $quiz = Quiz::with([
-        //     'questions' => function ($query) use ($remainingQuestions) {
-        //         $query->whereIn('id', $remainingQuestions->pluck('id')->toArray());
-        //     }
-        // ])->find($quizId);
 
         return new QuestionResource($quizzes);
-
     }
 
     public function store(CreateQuestionRequest $request)
@@ -216,5 +228,14 @@ class QuizController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
+    }
+
+    public function previousIncorrect()
+    {
+        $studentQuizHistory = StudentQuizHistory::where('correct', 0)->pluck('question_id')->toArray();
+
+        $question = Question::whereIn('id', $studentQuizHistory)->get();
+
+        return QuestionResource::collection($question);
     }
 }

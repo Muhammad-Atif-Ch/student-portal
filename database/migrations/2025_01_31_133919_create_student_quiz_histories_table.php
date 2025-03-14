@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('question_id');
             $table->string('answer');
             $table->boolean('correct')->default(false);
+            $table->boolean('flag')->default(false);
             $table->enum('type', ['official', 'practice']);
             $table->timestamps();
 

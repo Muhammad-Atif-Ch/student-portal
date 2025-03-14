@@ -21,8 +21,10 @@ return new class extends Migration {
             $table->string('d');
             $table->string('e')->nullable();
             $table->string('f')->nullable();
+            $table->text('image')->nullable();
             $table->enum('type', ['car', 'bike', 'both'])->nullable();
             $table->text('answer_explanation')->nullable();
+            $table->text('extra_explanation')->nullable();
             $table->text('audio_file')->nullable();
             $table->timestamps();
 

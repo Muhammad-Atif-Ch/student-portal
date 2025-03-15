@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
@@ -25,6 +26,9 @@ class UserController extends Controller
         $user = User::create([
             'device_id' => $deviceId // Dummy password for device-only users
         ]);
+
+        $role = Role::where(['name' => 'student'])->first();
+        $user->assignRole($role);
 
         return response()->json([
             'success' => 'Device registered successfully',

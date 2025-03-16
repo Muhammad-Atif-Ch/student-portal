@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Question;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateQuestionRequest extends FormRequest
 {
@@ -28,11 +30,11 @@ class UpdateQuestionRequest extends FormRequest
             'a' => 'required|sometimes',
             'b' => 'required|sometimes',
             'c' => 'required|sometimes',
-            'd' => 'required|sometimes',
-            'e' => 'nullable|sometimes',
-            'f' => 'nullable|sometimes',
+            'type' => 'required|sometimes|in:car,bike,both',
             'answer_explanation' => 'nullable|sometimes',
-            'audio_file' => 'nullable|file|sometimes',
+            'extra_explanation' => 'nullable|sometimes',
+            'audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:10240|sometimes',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
         ];
     }
 

@@ -28,11 +28,11 @@ class CreateQuestionRequest extends FormRequest
             'a' => 'required',
             'b' => 'required',
             'c' => 'required',
-            'd' => 'required',
-            'e' => 'nullable',
-            'f' => 'nullable',
+            'type' => 'required|required|in:car,bike,both',
+            'audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
             'answer_explanation' => 'nullable',
-            'audio_file' => 'nullable|file',
+            'extra_explanation' => 'nullable',
         ];
     }
 

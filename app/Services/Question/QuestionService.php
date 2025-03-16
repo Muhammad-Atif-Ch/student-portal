@@ -32,7 +32,7 @@ class QuestionService extends AbstractService
 
     public function listQuestion($quiz_id): Collection
     {
-        $questions = $this->repository->getListWithoutPagination(conditions: ['quiz_id' => $quiz_id]);
+        $questions = $this->repository->getListWithoutPagination(conditions: ['quiz_id' => $quiz_id], orderBy: 'DESC');
         return $questions;
     }
 
@@ -43,7 +43,18 @@ class QuestionService extends AbstractService
 
     public function updateQuestion(UpdateQuestionRequest $request, $id): AbstractResponseInterface
     {
-        $this->update($request->validated(), $id);
+        $data = $request->validated();
+        if ($request->hasFile('audio_file')) {
+            $path = $this->request->file('audio_file')->store('audios', 'public');
+            $data['audio_file'] = $path;
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $this->request->file('image')->store('images', 'public');
+            $data['image'] = $path;
+        }
+
+        $this->update($data, $id);
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
         return $this->response;
     }

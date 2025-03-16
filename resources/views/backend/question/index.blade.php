@@ -22,9 +22,6 @@
                                                 <th>A - Option</th>
                                                 <th>B - Option</th>
                                                 <th>C - Option</th>
-                                                <th>D - Option</th>
-                                                <th>E - Option</th>
-                                                <th>F - Option</th>
                                                 <th>Correct Answer</th>
                                                 <th>Action</th>
                                             </tr>
@@ -37,9 +34,6 @@
                                                     <td>{{ $question->a }}</td>
                                                     <td>{{ $question->b }}</td>
                                                     <td>{{ $question->c }}</td>
-                                                    <td>{{ $question->d }}</td>
-                                                    <td>{{ $question->e }}</td>
-                                                    <td>{{ $question->f }}</td>
                                                     <td>{{ $question->correct_answer }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>

@@ -16,13 +16,14 @@ class Question extends Model
         'a',
         'b',
         'c',
-        'd',
-        'e',
-        'f',
+        // 'd',
+        // 'e',
+        // 'f',
         'image',
         'answer_explanation',
         'extra_explanation',
         'audio_file',
+        'type',
     ];
 
 

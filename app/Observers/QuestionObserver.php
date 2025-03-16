@@ -13,9 +13,7 @@ class QuestionObserver
      */
     public function created(Question $question): void
     {
-        if (isset($this->request->attachments)) {
-            $this->attachments($question);
-        }
+        //
     }
 
     /**
@@ -53,7 +51,7 @@ class QuestionObserver
     public function attachments($data)
     {
         $fileUploader = app(FileUpload::class);
-        $req['attachments']  = $fileUploader->uploadMany(env("ATTACHMENT_IMAGES_PATH"), $this->request->attachments);
+        $req['audio_file'] = $fileUploader->uploadMany(env("ATTACHMENT_IMAGES_PATH"), $this->request->attachments);
         $data->attachments()->createMany($req['attachments']);
     }
 }

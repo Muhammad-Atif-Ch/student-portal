@@ -23,7 +23,6 @@ class QuestionFactory extends Factory
             'a' => fake()->sentence(),
             'b' => fake()->sentence(),
             'c' => fake()->sentence(),
-            'd' => fake()->sentence(),
             'image' => "demo.jpg",
             'answer_explanation' => fake()->sentence(),
             'extra_explanation' => fake()->sentence(),

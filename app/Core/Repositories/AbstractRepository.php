@@ -103,10 +103,10 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         return $data;
     }
 
-    public function getListWithoutPagination(array $conditions = [], array $with = [])
+    public function getListWithoutPagination(array $conditions = [], array $with = [], $orderBy = 'asc')
     {
         try {
-            $query = $this->model->with($with)->where($conditions)->orderBy('id', 'asc');
+            $query = $this->model->with($with)->where($conditions)->orderBy('id', $orderBy);
             $data = $query->get();
         } catch (RelationNotFoundException $e) {
             throw new RelationNotFoundException($e->getMessage());

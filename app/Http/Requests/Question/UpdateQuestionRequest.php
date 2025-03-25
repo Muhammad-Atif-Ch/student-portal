@@ -29,11 +29,12 @@ class UpdateQuestionRequest extends FormRequest
             'correct_answer' => 'required|sometimes',
             'a' => 'required|sometimes',
             'b' => 'required|sometimes',
-            'c' => 'required|sometimes',
+            'c' => 'nullable|sometimes',
+            'd' => 'nullable|sometimes',
             'type' => 'required|sometimes|in:car,bike,both',
             'answer_explanation' => 'nullable|sometimes',
-            'extra_explanation' => 'nullable|sometimes',
-            'audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:10240|sometimes',
+            'visual_explanation' => 'nullable|sometimes',
+            // 'audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:10240|sometimes',
             'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
         ];
     }

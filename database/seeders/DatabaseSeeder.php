@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             QuizSeeder::class,
+            LanguageSeeder::class,
             // QuestionSeeder::class,
             // StudentQuizHistorySeeder::class,
         ]);

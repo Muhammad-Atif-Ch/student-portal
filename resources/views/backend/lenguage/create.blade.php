@@ -60,8 +60,8 @@
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
-                                                <label>C - Option</label>
-                                                <input type="text" name="c" class="form-control" value="{{ old('c') }}">
+                                                <label>C - Option <small style="color: red">*</small></label>
+                                                <input type="text" name="c" class="form-control" required value="{{ old('c') }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
@@ -92,12 +92,12 @@
                                                 <input type="file" name="image" class="form-control" accept="image/*">
                                             </div>
                                         </div>
-                                        {{-- <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Choose Audio File</label>
                                                 <input type="file" name="audio_file" class="form-control">
                                             </div>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

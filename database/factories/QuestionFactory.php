@@ -25,7 +25,7 @@ class QuestionFactory extends Factory
             'c' => fake()->sentence(),
             'image' => "demo.jpg",
             'answer_explanation' => fake()->sentence(),
-            'extra_explanation' => fake()->sentence(),
+            'visual_explanation' => fake()->sentence(),
             'type' => fake()->randomElement(['car', 'bike', 'both']),
             'correct_answer' => fake()->randomElement(['a', 'b', 'c', 'd']),
         ];

@@ -27,12 +27,13 @@ class CreateQuestionRequest extends FormRequest
             'correct_answer' => 'required',
             'a' => 'required',
             'b' => 'required',
-            'c' => 'required',
+            'c' => 'nullable',
+            'd' => 'nullable',
             'type' => 'required|required|in:car,bike,both',
-            'audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
+            // 'audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
             'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
             'answer_explanation' => 'nullable',
-            'extra_explanation' => 'nullable',
+            'visual_explanation' => 'nullable',
         ];
     }
 

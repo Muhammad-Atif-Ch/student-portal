@@ -14,13 +14,14 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('quiz_id');
             $table->string('question');
-            $table->enum('correct_answer', ['a', 'b', 'c', 'd', 'e', 'f']);
+            $table->enum('correct_answer', ['a', 'b', 'c', 'd']);
             $table->string('a');
             $table->string('b');
-            $table->string('c');
+            $table->string('c')->nullable();
+            $table->string('d')->nullable();
             $table->enum('type', ['car', 'bike', 'both'])->nullable();
             $table->text('answer_explanation')->nullable();
-            $table->text('extra_explanation')->nullable();
+            $table->text('visual_explanation')->nullable();
             $table->text('audio_file')->nullable();
             $table->text('image')->nullable();
             $table->timestamps();

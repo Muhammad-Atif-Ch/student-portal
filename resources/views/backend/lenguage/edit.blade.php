@@ -63,8 +63,8 @@
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
-                                                <label>C - Option</label>
-                                                <input type="text" name="c" class="form-control" value="{{ $question->c }}">
+                                                <label>C - Option <small style="color: red">*</small></label>
+                                                <input type="text" name="c" class="form-control" required value="{{ $question->c }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
@@ -95,21 +95,21 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="col-12 col-md-12 col-lg-12">
                                             <div class="form-group">
-                                                <label>Visual Explanation</label>
-                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*">
-                                                <img src="{{ asset("storage/{$question->visual_explanation}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
+                                                <label>Extra Explanation</label>
+                                                <textarea name="extra_explanation" class="form-control">{{ $question->extra_explanation }}</textarea>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Choose Image</label>
                                                 <input type="file" name="image" class="form-control" accept="image/*">
-                                                <img src="{{ asset("storage/{$question->image}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
                                             </div>
                                         </div>
-                                        {{-- <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Choose Audio File</label>
                                                 <input type="file" name="audio_file" class="form-control" accept="audio/*">
@@ -126,7 +126,17 @@
 
                                                 </div>
                                             </div>
-                                        @endif --}}
+                                        @endif
+                                    </div>
+                                    <div class="row">
+                                        @if ($question->image)
+                                            <div class="col-12 col-md-4 col-lg-4">
+                                                <div class="form-group">
+                                                    <label>Uploaded image</label>
+                                                    <img src="{{ asset("storage/{$question->image}") }}" class="img-fluid form-control" style="max-width: 300px;height: 300px;">
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

@@ -43,7 +43,7 @@ class QuestionService extends AbstractService
 
     public function listQuestion($quiz_id): Collection
     {
-        $questions = $this->repository->getListWithoutPagination(conditions: ['quiz_id' => $quiz_id], orderBy: 'DESC');
+        $questions = $this->repository->getListWithoutPagination(conditions: ['quiz_id' => $quiz_id]);
         return $questions;
     }
 

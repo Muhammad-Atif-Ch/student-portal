@@ -5,16 +5,20 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Storage;
 
-class UploadFile{
+class UploadFile
+{
 
 
-    public function upload($path, $image){
-
+    public function upload($path, $image)
+    {
         $filNameWithExtension = $image->getClientOriginalName();
         $fileName = pathinfo($filNameWithExtension, PATHINFO_FILENAME);
         $extension = $image->getClientOriginalExtension();
         $imageName = trim(str_replace(' ', '', $fileName . '_' . time() . '.' . $extension));
         str_replace(' ', '', $imageName);
+        if (!$image->isValid()) {
+            return back()->with('error', 'Uploaded file is not valid.');
+        }
 
         //For Local Project
         $image->move($path, $imageName);

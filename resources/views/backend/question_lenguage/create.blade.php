@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.quiz.question.lenguage.store', ['quiz' => $quiz_id, 'question' => $question_id]) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.quiz.question.language.store', ['quiz' => $quiz_id, 'question' => $question_id]) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-header">
                                     <h4>Add Question Translation</h4>

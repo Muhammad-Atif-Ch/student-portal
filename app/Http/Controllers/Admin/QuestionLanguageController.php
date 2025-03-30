@@ -40,8 +40,12 @@ class QuestionLanguageController extends Controller
      */
     public function store(CreateLenguageRequest $request, $quiz_id, $question_id)
     {
-        $response = $this->service->createQuestion($request, $quiz_id, $question_id);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: "admin.quiz.question.lenguage.index", route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        try {
+            $response = $this->service->createQuestion($request, $quiz_id, $question_id);
+            return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: "admin.quiz.question.language.index", route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -67,8 +71,12 @@ class QuestionLanguageController extends Controller
      */
     public function update(UpdateLenguageRequest $request, $quiz_id, $question_id, string $id)
     {
-        $response = $this->service->updateQuestion($request, $id);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.language.index', route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        try {
+            $response = $this->service->updateQuestion($request, $id);
+            return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.language.index', route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -76,7 +84,11 @@ class QuestionLanguageController extends Controller
      */
     public function destroy($quiz_id, $question_id, QuestionTranslation $language)
     {
-        $response = $this->service->destroy($language);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.language.index', route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        try {
+            $response = $this->service->destroy($language);
+            return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.language.index', route_params: ['quiz' => $quiz_id, 'question' => $question_id]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

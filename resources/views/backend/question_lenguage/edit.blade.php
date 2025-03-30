@@ -32,9 +32,9 @@
                                             <div class="form-group">
                                                 <label>Title Audio File</label>
                                                 <input type="file" name="title_audio_file" class="form-control" accept="audio/*">
-                                                @if ($question_language->title_audio_file && Storage::disk('public')->exists($question_language->title_audio_file))
+                                                @if ($question_language->title_audio_file && file_exists(public_path("audios/{$question_language->title_audio_file}")))
                                                     <audio controls class="mt-2">
-                                                        <source src="{{ asset("storage/{$question_language->title_audio_file}") }}" type="audio/mpeg">
+                                                        <source src="{{ asset("audios/{$question_language->title_audio_file}") }}" type="audio/mpeg">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 @endif
@@ -44,9 +44,9 @@
                                             <div class="form-group">
                                                 <label>A Audio File </label>
                                                 <input type="file" name="a_audio_file" class="form-control" accept="audio/*">
-                                                @if ($question_language->a_audio_file && Storage::disk('public')->exists($question_language->a_audio_file))
+                                                @if ($question_language->a_audio_file && file_exists(public_path("audios/{$question_language->a_audio_file}")))
                                                     <audio controls class="mt-2">
-                                                        <source src="{{ asset("storage/{$question_language->a_audio_file}") }}" type="audio/mpeg">
+                                                        <source src="{{ asset("audios/{$question_language->a_audio_file}") }}" type="audio/mpeg">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 @endif
@@ -58,9 +58,9 @@
                                             <div class="form-group">
                                                 <label>B Audio File</label>
                                                 <input type="file" name="b_audio_file" class="form-control" accept="audio/*">
-                                                @if ($question_language->b_audio_file && Storage::disk('public')->exists($question_language->b_audio_file))
+                                                @if ($question_language->b_audio_file && file_exists(public_path("audios/{$question_language->b_audio_file}")))
                                                     <audio controls class="mt-2">
-                                                        <source src="{{ asset("storage/{$question_language->b_audio_file}") }}" type="audio/mpeg">
+                                                        <source src="{{ asset("audios/{$question_language->b_audio_file}") }}" type="audio/mpeg">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 @endif
@@ -70,9 +70,9 @@
                                             <div class="form-group">
                                                 <label>C Audio File</label>
                                                 <input type="file" name="c_audio_file" class="form-control" accept="audio/*">
-                                                @if ($question_language->c_audio_file && Storage::disk('public')->exists($question_language->c_audio_file))
+                                                @if ($question_language->c_audio_file && file_exists(public_path("audios/{$question_language->c_audio_file}")))
                                                     <audio controls class="mt-2">
-                                                        <source src="{{ asset("storage/{$question_language->c_audio_file}") }}" type="audio/mpeg">
+                                                        <source src="{{ asset("audios/{$question_language->c_audio_file}") }}" type="audio/mpeg">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 @endif
@@ -82,9 +82,9 @@
                                             <div class="form-group">
                                                 <label>D Audio File</label>
                                                 <input type="file" name="d_audio_file" class="form-control" accept="audio/*">
-                                                @if ($question_language->d_audio_file && Storage::disk('public')->exists($question_language->d_audio_file))
+                                                @if ($question_language->d_audio_file && file_exists(public_path("audios/{$question_language->d_audio_file}")))
                                                     <audio controls class="mt-2">
-                                                        <source src="{{ asset("storage/{$question_language->d_audio_file}") }}" type="audio/mpeg">
+                                                        <source src="{{ asset("audios/{$question_language->d_audio_file}") }}" type="audio/mpeg">
                                                         Your browser does not support the audio element.
                                                     </audio>
                                                 @endif

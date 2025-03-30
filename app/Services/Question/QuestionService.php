@@ -3,6 +3,7 @@
 namespace App\Services\Question;
 
 use App\Models\Question;
+use App\Helpers\UploadFile;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseCode;
 use Illuminate\Support\Collection;
@@ -28,13 +29,15 @@ class QuestionService extends AbstractService
     {
         $data = $request->validated();
         if ($request->hasFile('visual_explanation')) {
-            $path = $this->request->file('visual_explanation')->store('images', 'public');
-            $data['visual_explanation'] = $path;
+            $uploadFile = new UploadFile();
+            $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
+            $data['visual_explanation'] = $imageName;
         }
 
         if ($request->hasFile('image')) {
-            $path = $this->request->file('image')->store('images', 'public');
-            $data['image'] = $path;
+            $uploadFile = new UploadFile();
+            $imageName = $uploadFile->upload('images', $request->file('image'));
+            $data['image'] = $imageName;
         }
         $this->create($data);
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
@@ -59,20 +62,28 @@ class QuestionService extends AbstractService
 
         if ($request->hasFile('visual_explanation')) {
             if ($question->visual_explanation) {
-                Storage::disk('public')->delete($question->visual_explanation);
+                $filePath = public_path("images/$question->visual_explanation");
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
             }
 
-            $path = $this->request->file('visual_explanation')->store('images', 'public');
-            $data['visual_explanation'] = $path;
+            $uploadFile = new UploadFile();
+            $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
+            $data['visual_explanation'] = $imageName;
         }
 
         if ($request->hasFile('image')) {
             if ($question->image) {
-                Storage::disk('public')->delete($question->image);
+                $filePath = public_path("images/$question->image");
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
             }
 
-            $path = $this->request->file('image')->store('images', 'public');
-            $data['image'] = $path;
+            $uploadFile = new UploadFile();
+            $imageName = $uploadFile->upload('images', $request->file('image'));
+            $data['image'] = $imageName;
         }
 
         $this->update($data, $id);

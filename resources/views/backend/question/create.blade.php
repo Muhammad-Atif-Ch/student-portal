@@ -83,7 +83,7 @@
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Visual Explanation</label>
-                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*">
+                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*,video/*">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">

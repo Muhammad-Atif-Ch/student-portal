@@ -1,5 +1,13 @@
 @extends('backend.layouts.app')
 @section('title', __('Questions List'))
+@section('style')
+    <style>
+        div.dataTables_wrapper div.dataTables_length select {
+            width: 80px;
+            display: inline-block;
+        }
+    </style>
+@endsection
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -9,7 +17,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>{{ $quiz->title }}</h4>
+                                <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
                                 <div>
                                     <a href="#" class="btn btn-primary me-2" type="button" data-toggle="modal" data-target="#importFile">Import Excel</a>
                                     <a href="{{ route('admin.quiz.question.destroy.all', $quiz_id) }}" class="btn btn-danger text-white">Delete All</a>
@@ -102,4 +110,16 @@
     </div>
 @endsection
 @section('scripts')
+    <script>
+        $(document).ready(function() {
+            if ($.fn.DataTable.isDataTable('#table-1')) {
+                $('#table-1').DataTable().destroy(); // Destroy existing instance
+            }
+
+            $('#table-1').DataTable({
+                "pageLength": 100, // Show 100 rows by default
+                "lengthMenu": [10, 25, 50, 100, 200] // Allow users to change row count
+            });
+        });
+    </script>
 @endsection

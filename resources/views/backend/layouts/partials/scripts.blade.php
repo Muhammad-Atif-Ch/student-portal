@@ -8,6 +8,15 @@
 <!-- Page Specific JS File -->
 <script src="{{ asset('assets/js/page/index.js') }}"></script>
 <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
+<script>
+    window.routes = {
+        setting: {
+            index: "{{ route('admin.setting.index') }}",
+            update: "{{ route('admin.setting.update') }}",
+            // other routes...
+        }
+    };
+</script>
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 <!-- Custom JS File -->
@@ -19,7 +28,14 @@
 
 <!-- In the head section -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@yield('scripts')
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $(document).ready(function() {
         const Toast = Swal.mixin({
             toast: true,

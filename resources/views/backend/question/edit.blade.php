@@ -12,7 +12,7 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
-                                    <h4>{{ $quiz->title }} - Question No - {{ $question->id }}</h4>
+                                    <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -98,8 +98,31 @@
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Visual Explanation</label>
-                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*">
-                                                <img src="{{ asset("images/{$question->visual_explanation}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
+                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*,video/*">
+                                                {{-- <img src="{{ asset("images/{$question->visual_explanation}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;"> --}}
+                                                @if ($question->visual_explanation)
+                                                    @php
+                                                        // Get file extension
+                                                        $extension = pathinfo($question->visual_explanation, PATHINFO_EXTENSION);
+                                                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                                                        $videoExtensions = ['mp4', 'mov', 'avi', 'mkv'];
+                                                    @endphp
+
+                                                    <div class="mt-3">
+                                                        @if (in_array($extension, $imageExtensions))
+                                                            {{-- Show image --}}
+                                                            <img src="{{ asset("images/{$question->visual_explanation}") }}" class="img-fluid form-control" style="max-width: 300px; height: 300px;">
+                                                        @elseif (in_array($extension, $videoExtensions))
+                                                            {{-- Show video --}}
+                                                            <video controls class="img-fluid form-control" style="max-width: 300px; height: 300px;">
+                                                                <source src="{{ asset("images/{$question->visual_explanation}") }}" type="video/{{ $extension }}">
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        @else
+                                                            <p>File format not supported.</p>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">

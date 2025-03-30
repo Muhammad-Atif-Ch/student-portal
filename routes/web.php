@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\QuestionLanguageController;
@@ -21,6 +22,13 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::post('import-question/{quiz}', [QuestionController::class, 'importQuestion'])->name('question.import.file');
     Route::get('destroy-question/{quiz}', [QuestionController::class, 'destroyAll'])->name('quiz.question.destroy.all');
     Route::resource('users', UserController::class);
+
+    // Settings
+    Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
+        Route::get('index', [SettingController::class, 'index'])->name('index');
+        Route::post('update', [SettingController::class, 'update'])->name('update');
+        Route::post('reset-default', [SettingController::class, 'resetDefault'])->name('resetDefault');
+    });
 });
 
 require __DIR__ . '/auth.php';

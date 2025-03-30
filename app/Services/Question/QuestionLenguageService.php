@@ -58,7 +58,6 @@ class QuestionLenguageService extends AbstractService
             $this->response->setResponse(ResponseCode::ERROR, ResponseCode::REGULAR, $e->getMessage());
             return $this->response;
         }
-
     }
 
     public function listQuestion($quiz_id, $question_id): Collection

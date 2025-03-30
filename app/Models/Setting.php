@@ -12,6 +12,11 @@ class Setting extends Model
     protected $fillable = [
         'project_name',
         'logo',
-        'favicon'
+        'favicon',
+        'theme_layout',
+        'sidebar_color',
+        'color_theme',
+        'mini_sidebar',
+        'stiky_header',
     ];
 }

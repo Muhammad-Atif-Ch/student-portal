@@ -31,9 +31,9 @@ class CreateQuestionRequest extends FormRequest
             'd' => 'nullable',
             'type' => 'required|required|in:car,bike,both',
             // 'audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
             'answer_explanation' => 'nullable',
-            'visual_explanation' => 'nullable',
+            'visual_explanation' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
         ];
     }
 

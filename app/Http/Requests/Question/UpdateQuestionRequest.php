@@ -33,9 +33,9 @@ class UpdateQuestionRequest extends FormRequest
             'd' => 'nullable|sometimes',
             'type' => 'required|sometimes|in:car,bike,both',
             'answer_explanation' => 'nullable|sometimes',
-            'visual_explanation' => 'nullable|sometimes',
+            'visual_explanation' => 'nullable|sometimes|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240',
             // 'audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:10240|sometimes',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240|sometimes',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
         ];
     }
 

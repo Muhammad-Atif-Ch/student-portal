@@ -12,7 +12,7 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
-                                    <h4>Edit Question</h4>
+                                    <h4>{{ $quiz->title }} - Question No - {{ $question->id }}</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -99,14 +99,14 @@
                                             <div class="form-group">
                                                 <label>Visual Explanation</label>
                                                 <input type="file" name="visual_explanation" class="form-control" accept="image/*">
-                                                <img src="{{ asset("storage/{$question->visual_explanation}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
+                                                <img src="{{ asset(Storage::url($question->visual_explanation)) }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Choose Image</label>
                                                 <input type="file" name="image" class="form-control" accept="image/*">
-                                                <img src="{{ asset("storage/{$question->image}") }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
+                                                <img src="{{ asset(Storage::url($question->image)) }}" class="img-fluid form-control mt-3" style="max-width: 300px;height: 300px;">
                                             </div>
                                         </div>
                                         {{-- <div class="col-12 col-md-4 col-lg-4">

@@ -11,6 +11,7 @@ use App\Services\Question\QuestionService;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
 use App\Imports\QuestionImport;
+use App\Models\Quiz;
 
 class QuestionController extends Controller
 {
@@ -25,8 +26,9 @@ class QuestionController extends Controller
      */
     public function index($quiz_id)
     {
+        $quiz = Quiz::find($quiz_id);
         $questions = $this->service->listQuestion($quiz_id);
-        return view('backend.question.index', compact('quiz_id', 'questions'));
+        return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));
     }
 
     /**
@@ -59,8 +61,9 @@ class QuestionController extends Controller
      */
     public function edit(string $quiz_id, string $id)
     {
+        $quiz = Quiz::find($quiz_id);
         $question = $this->service->showQuestion($quiz_id, $id);
-        return view('backend.question.edit', compact('quiz_id', 'question'));
+        return view('backend.question.edit', compact('quiz_id', 'question', 'quiz'));
     }
 
     /**

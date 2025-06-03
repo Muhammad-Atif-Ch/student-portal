@@ -24,6 +24,9 @@ class Question extends Model
         'type',
     ];
 
+    protected $appends = ['image_url', 'visual_explanation_url'];
+
+
 
     public function user()
     {
@@ -33,5 +36,23 @@ class Question extends Model
     public function studentQuizHistory()
     {
         return $this->hasMany(StudentQuizHistory::class, 'question_id');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            return asset('images/' . $this->image); // or use Storage::url($this->image)
+        }
+
+        return null;
+    }
+
+    public function getVisualExplanationUrlAttribute()
+    {
+        if ($this->visual_explanation) {
+            return asset('images/' . $this->visual_explanation); // or use Storage::url($this->image)
+        }
+
+        return null;
     }
 }

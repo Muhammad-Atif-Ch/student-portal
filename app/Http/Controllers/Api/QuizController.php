@@ -158,35 +158,51 @@ class QuizController extends Controller
                 $wrongCount = $wrongQuestions->count();
                 $remainingLimit = $quizLimit - $wrongCount;
 
-                $questionIds = QuestionHistory::where(['user_id' => $userId, 'quiz_id' => $quizId, 'type' => 'official'])->pluck('question_id');
+                // STEP 3: Get previously attempted question IDs to avoid
+                $alreadyAttemptedIds = QuestionHistory::where([
+                    'user_id' => $userId,
+                    'quiz_id' => $quizId,
+                    'type' => 'official'
+                ])
+                    ->pluck('question_id');
 
-                $remainingQuestions = Question::whereNotIn('id', $questionIds)
-                    ->where('quiz_id', $quizId)
-                    ->inRandomOrder()
-                    ->limit($quizLimit)
-                    ->get();
-
-                // If there are remaining questions, add them to the result
-                $remainingCount = $remainingQuestions->count();
-
-                // If the number of remaining questions is less than the limit, fetch additional questions
-                if ($remainingCount < $quizLimit) {
-                    // Reset history since all questions are used
-                    QuestionHistory::where(['user_id' => $userId, 'quiz_id' => $quizId, 'type' => 'official'])->delete();
-
-                    // Fetch additional questions to make up for the limit
-                    $additionalQuestions = Question::whereNotIn('id', $remainingQuestions->pluck('id')) // Avoid duplicates
+                // STEP 4: Fetch remaining random new questions (excluding previously used and wrong ones)
+                $remainingQuestions = collect();
+                if ($remainingLimit > 0) {
+                    $remainingQuestions = Question::whereNotIn('id', $alreadyAttemptedIds)
+                        ->whereNotIn('id', $wrongQuestions->pluck('id'))
                         ->where('quiz_id', $quizId)
                         ->inRandomOrder()
-                        ->limit($quizLimit - $remainingCount)
+                        ->limit($remainingLimit)
                         ->get();
 
-                    // Merge both sets of questions
-                    $remainingQuestions = $remainingQuestions->merge($additionalQuestions);
+                    $actualRemainingCount = $remainingQuestions->count();
+
+                    // STEP 5: If still not enough, reset history and fetch again
+                    if ($actualRemainingCount < $remainingLimit) {
+                        QuestionHistory::where([
+                            'user_id' => $userId,
+                            'quiz_id' => $quizId,
+                            'type' => 'official'
+                        ])->delete();
+
+                        $needed = $remainingLimit - $actualRemainingCount;
+
+                        $extraQuestions = Question::whereNotIn('id', $wrongQuestions->pluck('id'))
+                            ->where('quiz_id', $quizId)
+                            ->inRandomOrder()
+                            ->limit($needed)
+                            ->get();
+
+                        $remainingQuestions = $remainingQuestions->merge($extraQuestions);
+                    }
                 }
 
-                // Bulk insert question history instead of looping
-                $historyData = $remainingQuestions->map(function ($question) use ($userId, $quizId) {
+                // STEP 6: Combine wrong + new questions
+                $finalQuestions = $wrongQuestions->merge($remainingQuestions)->take($quizLimit);
+
+                // STEP 7: Insert into question history
+                $historyData = $finalQuestions->map(function ($question) use ($userId, $quizId) {
                     return [
                         'user_id' => $userId,
                         'quiz_id' => $quizId,
@@ -199,10 +215,9 @@ class QuizController extends Controller
 
                 QuestionHistory::insert($historyData);
 
-                return [
-                    'quiz' => $quiz,
-                    'questions' => $remainingQuestions
-                ];
+                $quiz->setRelation('questions', $finalQuestions);
+
+                return $quiz;
             });
 
         return new QuestionResource($quizzes);

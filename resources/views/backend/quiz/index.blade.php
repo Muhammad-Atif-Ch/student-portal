@@ -32,7 +32,7 @@
                                                     <td>{{ $test->title }}</td>
                                                     <td>{{ $test->official_test_question }}</td>
                                                     <td>
-                                                        {{-- <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
+                                                        <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
                                                         <a href="{{ route('admin.quiz.question.index', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
                                                         {{-- <form action="{{ route('admin.quiz.destroy', $test->id) }}" method="POST" class="d-inline">
                                                             @csrf @method('DELETE')

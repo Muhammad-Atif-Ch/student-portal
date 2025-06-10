@@ -8,26 +8,26 @@ class TestResponse extends AbstractResponse
 {
     public function getCreateResponseMessage() : String
     {
-        return "Test created successfully";
+        return "Quiz created successfully";
     }
 
     public function getListResponseMessage() : String
     {
-        return "List of tests get successfully";
+        return "List of Quizs get successfully";
     }
 
     public function getUpdateResponseMessage() : String
     {
-        return "Test updated successfully";
+        return "Quiz updated successfully";
     }
 
     public function getDeleteResponseMessage(): String
     {
-        return "Test deleted successfully";
+        return "Quiz deleted successfully";
     }
     public function getRecordResponseMessage(): String
     {
-        return "Test get successfully";
+        return "Quiz get successfully";
     }
 
 }

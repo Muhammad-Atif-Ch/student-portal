@@ -22,10 +22,7 @@ class UpdateTestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|sometimes',
-            'per_question_mark' => 'required|sometimes',
-            'test_time' => 'required|sometimes',
-            'description' => 'nullable|sometimes',
+            'official_test_question' => 'required|sometimes',
         ];
     }
 }

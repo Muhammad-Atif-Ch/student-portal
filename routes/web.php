@@ -16,7 +16,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy', 'edit', 'update');
+    Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy');
     Route::resource('quiz.question', QuestionController::class);
     Route::resource('quiz.question.language', QuestionLanguageController::class);
     Route::post('import-question/{quiz}', [QuestionController::class, 'importQuestion'])->name('question.import.file');

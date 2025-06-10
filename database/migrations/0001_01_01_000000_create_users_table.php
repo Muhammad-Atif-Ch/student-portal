@@ -13,7 +13,6 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('device_id')->unique()->nullable();
-
             $table->string('name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('mobile')->unique()->nullable();
@@ -22,7 +21,7 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->text('image')->nullable()->comment('profile image');
-            $table->enum('app_type', ['car', 'bike', 'both'])->nullable();
+            $table->enum('app_type', ['car', 'bike', 'both'])->default('both');
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

@@ -22,7 +22,7 @@ class UpdateSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "app_type" => ["required", "string", "in:car,bike"],
+            "app_type" => ["required", "string", "in:car,bike,both"],
         ];
     }
 }

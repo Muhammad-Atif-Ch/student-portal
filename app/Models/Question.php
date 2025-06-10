@@ -26,7 +26,10 @@ class Question extends Model
 
     protected $appends = ['image_url', 'visual_explanation_url'];
 
-
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class);
+    }
 
     public function user()
     {

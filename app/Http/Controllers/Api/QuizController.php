@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use App\Models\Quiz;
 use App\Models\User;
+use App\Models\Setting;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use App\Models\QuestionHistory;
@@ -49,14 +50,32 @@ class QuizController extends Controller
     public function getReadQuestion(Request $request)
     {
         $quiz = $request->quiz;
+        $deviceId = $request->header('Device-Id');
+        $user = User::where('device_id', $deviceId)->first();
+        $userId = $user->id;
+        // Step 2: Determine allowed question types
+        $allowedTypes = match ($user->app_type) {
+            'car' => ['car', 'both'],
+            'bike' => ['bike', 'both'],
+            'both' => ['car', 'bike', 'both'],
+            default => ['both'], // fallback if app_type is missing
+        };
 
         if ($quiz == 'all') {
-            $quiz = Quiz::with('questions')->paginate(40);
+            $quiz = Quiz::with([
+                'questions' => function ($query) use ($allowedTypes) {
+                    $query->whereIn('type', $allowedTypes);
+                }
+            ])->get();
 
             return QuestionResource::collection($quiz);
         } elseif ($quiz !== null) {
             // Fetch the IDs of questions the student has already taken
-            $quiz = Quiz::with('questions')->where('id', $quiz)->first();
+            $quiz = Quiz::with([
+                'questions' => function ($query) use ($allowedTypes) {
+                    $query->whereIn('type', $allowedTypes);
+                }
+            ])->where('id', $quiz)->first();
 
             return new QuestionResource($quiz);
         } else {
@@ -68,47 +87,68 @@ class QuizController extends Controller
     {
         $deviceId = $request->header('Device-Id');
         $quiz = $request->quiz;
-        $limit = $request->limit ?? 20;
+        $limit = 40;
 
-        $userId = User::where('device_id', $deviceId)->first()->id;
-        if ($quiz == 'all') {
-            $quiz = Quiz::with('questions')->paginate(40);
+        $user = User::where('device_id', $deviceId)->first();
+        $userId = $user->id;
+        // Step 2: Determine allowed question types
+        $allowedTypes = match ($user->app_type) {
+            'car' => ['car', 'both'],
+            'bike' => ['bike', 'both'],
+            'both' => ['car', 'bike', 'both'],
+            default => ['both'], // fallback if app_type is missing
+        };
 
-            return QuestionResource::collection($quiz);
+        // Determine quiz IDs
+        if ($quiz === 'all') {
+            $quizIds = Quiz::pluck('id')->toArray();
         } elseif ($quiz !== null) {
-            // Fetch the IDs of questions the student has already taken
-            $questionIds = QuestionHistory::where(['user_id' => $userId, 'quiz_id' => $quiz, 'type' => 'practice'])->pluck('question_id');
+            $quizIds = is_array($quiz) ? $quiz : explode(',', $quiz);
+        } else {
+            return response()->json(['error' => 'Invalid request'], 400);
+        }
 
-            $remainingQuestions = Question::whereNotIn('id', $questionIds)
-                ->where('quiz_id', $quiz)
+        $allQuestions = collect();
+
+        foreach ($quizIds as $quizId) {
+            // Get previously attempted questions
+            $usedQuestionIds = QuestionHistory::where([
+                'user_id' => $userId,
+                'quiz_id' => $quizId,
+                'type' => 'practice',
+            ])->pluck('question_id');
+
+            // Get new questions
+            $newQuestions = Question::where('quiz_id', $quizId)
+                ->whereIn('type', $allowedTypes)
+                ->whereNotIn('id', $usedQuestionIds)
                 ->inRandomOrder()
                 ->limit($limit)
                 ->get();
 
-            // If there are remaining questions, add them to the result
-            $remainingCount = $remainingQuestions->count();
+            if ($newQuestions->count() < $limit) {
+                // Reset history if needed
+                QuestionHistory::where([
+                    'user_id' => $userId,
+                    'quiz_id' => $quizId,
+                    'type' => 'practice',
+                ])->delete();
 
-            // If the number of remaining questions is less than the limit, fetch additional questions
-            if ($remainingCount < $limit) {
-                // Reset history since all questions are used
-                QuestionHistory::where(['user_id' => $userId, 'quiz_id' => $quiz, 'type' => 'practice'])->delete();
-
-                // Fetch additional questions to make up for the limit
-                $additionalQuestions = Question::whereNotIn('id', $remainingQuestions->pluck('id')) // Avoid duplicates
-                    ->where('quiz_id', $quiz)
+                $additionalQuestions = Question::where('quiz_id', $quizId)
+                    ->whereIn('type', $allowedTypes)
+                    ->whereNotIn('id', $newQuestions->pluck('id'))
                     ->inRandomOrder()
-                    ->limit($limit - $remainingCount)
+                    ->limit($limit - $newQuestions->count())
                     ->get();
 
-                // Merge both sets of questions
-                $remainingQuestions = $remainingQuestions->merge($additionalQuestions);
+                $newQuestions = $newQuestions->merge($additionalQuestions);
             }
 
-            // Bulk insert question history instead of looping
-            $historyData = $remainingQuestions->map(function ($question) use ($userId, $quiz) {
+            // Save history
+            $historyData = $newQuestions->map(function ($question) use ($userId, $quizId) {
                 return [
                     'user_id' => $userId,
-                    'quiz_id' => $quiz,
+                    'quiz_id' => $quizId,
                     'question_id' => $question->id,
                     'type' => 'practice',
                     'created_at' => now(),
@@ -118,27 +158,29 @@ class QuizController extends Controller
 
             QuestionHistory::insert($historyData);
 
-            $quiz = Quiz::with([
-                'questions' => function ($query) use ($remainingQuestions) {
-                    $query->whereIn('id', $remainingQuestions->pluck('id')->toArray());
-                }
-            ])->find($quiz);
-
-            return new QuestionResource($quiz);
-        } else {
-            return response()->json(['error' => 'Invalid request'], 400);
+            $allQuestions = $allQuestions->merge($newQuestions);
         }
+
+        return QuestionResource::collection($allQuestions);
     }
 
     public function getOfficialQuestion(Request $request)
     {
         $deviceId = $request->header('Device-Id');
 
-        $userId = User::where('device_id', $deviceId)->first()->id;
+        $user = User::where('device_id', $deviceId)->first();
+        $userId = $user->id;
+        // Step 2: Determine allowed question types
+        $allowedTypes = match ($user->app_type) {
+            'car' => ['car', 'both'],
+            'bike' => ['bike', 'both'],
+            'both' => ['car', 'bike', 'both'],
+            default => ['both'], // fallback if app_type is missing
+        };
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
             ->get()
-            ->map(function ($quiz) use ($userId) {
+            ->map(function ($quiz) use ($userId, $allowedTypes) {
                 $quizId = $quiz->id;
                 $quizLimit = $quiz->official_test_question;
 
@@ -153,6 +195,7 @@ class QuizController extends Controller
                 // Fetch the wrong questions first (limit to quizLimit)
                 $wrongQuestions = Question::whereIn('id', $wrongAttemptedQuestionIds)
                     ->where('quiz_id', $quizId)
+                    ->whereIn('type', $allowedTypes)
                     ->inRandomOrder()
                     ->limit($quizLimit)
                     ->get();
@@ -174,6 +217,7 @@ class QuizController extends Controller
                     $remainingQuestions = Question::whereNotIn('id', $alreadyAttemptedIds)
                         ->whereNotIn('id', $wrongQuestions->pluck('id'))
                         ->where('quiz_id', $quizId)
+                        ->whereIn('type', $allowedTypes)
                         ->inRandomOrder()
                         ->limit($remainingLimit)
                         ->get();
@@ -192,6 +236,7 @@ class QuizController extends Controller
 
                         $extraQuestions = Question::whereNotIn('id', $wrongQuestions->pluck('id'))
                             ->where('quiz_id', $quizId)
+                            ->whereIn('type', $allowedTypes)
                             ->inRandomOrder()
                             ->limit($needed)
                             ->get();
@@ -270,7 +315,7 @@ class QuizController extends Controller
     {
         $studentQuizHistory = StudentQuizHistory::where('correct', 0)->pluck('question_id')->toArray();
 
-        $question = Question::whereIn('id', $studentQuizHistory)->get();
+        $question = Question::with('quiz')->whereIn('id', $studentQuizHistory)->get();
 
         return QuestionResource::collection($question);
     }

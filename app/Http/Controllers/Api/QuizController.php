@@ -109,59 +109,154 @@ class QuizController extends Controller
         }
 
         $allQuestions = collect();
+        $remainingLimit = $limit;
 
-        foreach ($quizIds as $quizId) {
-            // Get previously attempted questions
-            $usedQuestionIds = QuestionHistory::where([
-                'user_id' => $userId,
-                'quiz_id' => $quizId,
-                'type' => 'practice',
-            ])->pluck('question_id');
+        // foreach ($quizIds as $quizId) {
+        //     if ($remainingLimit <= 0)
+        //         break;
 
-            // Get new questions
-            $newQuestions = Question::where('quiz_id', $quizId)
-                ->whereIn('type', $allowedTypes)
-                ->whereNotIn('id', $usedQuestionIds)
-                ->inRandomOrder()
-                ->limit($limit)
-                ->get();
+        //     // Get previously attempted questions
+        //     $usedQuestionIds = QuestionHistory::where([
+        //         'user_id' => $userId,
+        //         'quiz_id' => $quizId,
+        //         'type' => 'practice',
+        //     ])->pluck('question_id');
 
-            if ($newQuestions->count() < $limit) {
-                // Reset history if needed
-                QuestionHistory::where([
+        //     // Get new questions
+        //     $newQuestions = Question::where('quiz_id', $quizId)
+        //         ->whereIn('type', $allowedTypes)
+        //         ->whereNotIn('id', $usedQuestionIds)
+        //         ->inRandomOrder()
+        //         ->limit($remainingLimit)
+        //         ->get();
+
+        //     if ($newQuestions->count() < $remainingLimit) {
+        //         // Reset history if needed
+        //         QuestionHistory::where([
+        //             'user_id' => $userId,
+        //             'quiz_id' => $quizId,
+        //             'type' => 'practice',
+        //         ])->delete();
+
+        //         $additionalQuestions = Question::where('quiz_id', $quizId)
+        //             ->whereIn('type', $allowedTypes)
+        //             ->whereNotIn('id', $newQuestions->pluck('id'))
+        //             ->inRandomOrder()
+        //             ->limit($remainingLimit - $newQuestions->count())
+        //             ->get();
+
+        //         $newQuestions = $newQuestions->merge($additionalQuestions);
+        //     }
+
+        //     // Save history
+        //     $historyData = $newQuestions->map(function ($question) use ($userId, $quizId) {
+        //         return [
+        //             'user_id' => $userId,
+        //             'quiz_id' => $quizId,
+        //             'question_id' => $question->id,
+        //             'type' => 'practice',
+        //             'created_at' => now(),
+        //             'updated_at' => now(),
+        //         ];
+        //     })->toArray();
+
+        //     QuestionHistory::insert($historyData);
+
+        //     $allQuestions = $allQuestions->merge($newQuestions);
+        //     $remainingLimit -= $newQuestions->count();
+        // }
+
+        // return QuestionResource::collection($allQuestions);
+        $quizzes = Quiz::select('id', 'title', 'official_test_question')
+            ->get()
+            ->map(function ($quiz) use ($userId, $allowedTypes) {
+                $quizId = $quiz->id;
+                $quizLimit = $quiz->official_test_question;
+
+                // Get previously wrong attempted questions first
+                $wrongAttemptedQuestionIds = StudentQuizHistory::where([
                     'user_id' => $userId,
                     'quiz_id' => $quizId,
                     'type' => 'practice',
-                ])->delete();
+                    'correct' => 0
+                ])->pluck('question_id');
 
-                $additionalQuestions = Question::where('quiz_id', $quizId)
+                // Fetch the wrong questions first (limit to quizLimit)
+                $wrongQuestions = Question::whereIn('id', $wrongAttemptedQuestionIds)
+                    ->where('quiz_id', $quizId)
                     ->whereIn('type', $allowedTypes)
-                    ->whereNotIn('id', $newQuestions->pluck('id'))
                     ->inRandomOrder()
-                    ->limit($limit - $newQuestions->count())
+                    ->limit($quizLimit)
                     ->get();
 
-                $newQuestions = $newQuestions->merge($additionalQuestions);
-            }
+                $wrongCount = $wrongQuestions->count();
+                $remainingLimit = $quizLimit - $wrongCount;
 
-            // Save history
-            $historyData = $newQuestions->map(function ($question) use ($userId, $quizId) {
-                return [
+                // STEP 3: Get previously attempted question IDs to avoid
+                $alreadyAttemptedIds = QuestionHistory::where([
                     'user_id' => $userId,
                     'quiz_id' => $quizId,
-                    'question_id' => $question->id,
-                    'type' => 'practice',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            })->toArray();
+                    'type' => 'practice'
+                ])
+                    ->pluck('question_id');
 
-            QuestionHistory::insert($historyData);
+                // STEP 4: Fetch remaining random new questions (excluding previously used and wrong ones)
+                $remainingQuestions = collect();
+                if ($remainingLimit > 0) {
+                    $remainingQuestions = Question::whereNotIn('id', $alreadyAttemptedIds)
+                        ->whereNotIn('id', $wrongQuestions->pluck('id'))
+                        ->where('quiz_id', $quizId)
+                        ->whereIn('type', $allowedTypes)
+                        ->inRandomOrder()
+                        ->limit($remainingLimit)
+                        ->get();
 
-            $allQuestions = $allQuestions->merge($newQuestions);
-        }
+                    $actualRemainingCount = $remainingQuestions->count();
 
-        return QuestionResource::collection($allQuestions);
+                    // STEP 5: If still not enough, reset history and fetch again
+                    if ($actualRemainingCount < $remainingLimit) {
+                        QuestionHistory::where([
+                            'user_id' => $userId,
+                            'quiz_id' => $quizId,
+                            'type' => 'practice'
+                        ])->delete();
+
+                        $needed = $remainingLimit - $actualRemainingCount;
+
+                        $extraQuestions = Question::whereNotIn('id', $wrongQuestions->pluck('id'))
+                            ->where('quiz_id', $quizId)
+                            ->whereIn('type', $allowedTypes)
+                            ->inRandomOrder()
+                            ->limit($needed)
+                            ->get();
+
+                        $remainingQuestions = $remainingQuestions->merge($extraQuestions);
+                    }
+                }
+
+                // STEP 6: Combine wrong + new questions
+                $finalQuestions = $wrongQuestions->merge($remainingQuestions)->take($quizLimit);
+
+                // STEP 7: Insert into question history
+                $historyData = $finalQuestions->map(function ($question) use ($userId, $quizId) {
+                    return [
+                        'user_id' => $userId,
+                        'quiz_id' => $quizId,
+                        'question_id' => $question->id,
+                        'type' => 'practice',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->toArray();
+
+                QuestionHistory::insert($historyData);
+
+                $quiz->setRelation('questions', $finalQuestions);
+
+                return $quiz;
+            });
+
+        return new QuestionResource($quizzes);
     }
 
     public function getOfficialQuestion(Request $request)

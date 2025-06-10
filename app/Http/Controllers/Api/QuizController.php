@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\QuizResource;
-use Illuminate\Support\Facades\Response;
 use App\Http\Resources\Api\QuestionResource;
 use App\Http\Requests\Api\CreateQuestionRequest;
 
@@ -52,7 +51,7 @@ class QuizController extends Controller
         $quiz = $request->quiz;
 
         if ($quiz == 'all') {
-            $quiz = Quiz::with('questions')->get();
+            $quiz = Quiz::with('questions')->paginate(40);
 
             return QuestionResource::collection($quiz);
         } elseif ($quiz !== null) {
@@ -73,7 +72,7 @@ class QuizController extends Controller
 
         $userId = User::where('device_id', $deviceId)->first()->id;
         if ($quiz == 'all') {
-            $quiz = Quiz::with('questions')->get();
+            $quiz = Quiz::with('questions')->paginate(40);
 
             return QuestionResource::collection($quiz);
         } elseif ($quiz !== null) {
@@ -233,15 +232,6 @@ class QuizController extends Controller
             $userId = User::where('device_id', $deviceId)->first()->id;
             $validatedData = $request->validated();
 
-            // $studentQuizHistory = StudentQuizHistory::create([
-            //     'user_id' => $userId,
-            //     'quiz_id' => $data['quiz_id'],
-            //     'question_id' => $data['question_id'],
-            //     'answer' => $data['answer'],
-            //     'correct' => $data['correct'],
-            //     'type' => $data['type'],
-            // ]);
-
             // Use database transaction for data integrity
             $result = DB::transaction(function () use ($validatedData, $userId) {
                 $bulkData = [];
@@ -269,11 +259,6 @@ class QuizController extends Controller
                 ];
             });
 
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Quiz history saved successfully',
-            //     'data' => $result
-            // ]);
             return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {
             Log::error('Insert failed: ' . $e->getMessage());

@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Quiz;
 use Exception;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\CreateQuestionRequest;
-use App\Http\Resources\Api\QuestionResource;
-use App\Http\Resources\Api\QuizResource;
+use Carbon\Carbon;
+use App\Models\Quiz;
+use App\Models\User;
 use App\Models\Question;
+use Illuminate\Http\Request;
 use App\Models\QuestionHistory;
 use App\Models\StudentQuizHistory;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\QuizResource;
 use Illuminate\Support\Facades\Response;
+use App\Http\Resources\Api\QuestionResource;
+use App\Http\Requests\Api\CreateQuestionRequest;
 
 class QuizController extends Controller
 {
@@ -226,21 +229,54 @@ class QuizController extends Controller
     public function store(CreateQuestionRequest $request)
     {
         try {
-            $data = $request->validated();
             $deviceId = $request->header('Device-Id');
-
             $userId = User::where('device_id', $deviceId)->first()->id;
+            $validatedData = $request->validated();
 
-            $studentQuizHistory = StudentQuizHistory::create([
-                'user_id' => $userId,
-                'quiz_id' => $data['quiz_id'],
-                'question_id' => $data['question_id'],
-                'answer' => $data['answer'],
-                'correct' => $data['correct'],
-                'type' => $data['type'],
-            ]);
-            return (new QuestionResource($studentQuizHistory))->additional(['success' => 'Question add successfully']);
+            // $studentQuizHistory = StudentQuizHistory::create([
+            //     'user_id' => $userId,
+            //     'quiz_id' => $data['quiz_id'],
+            //     'question_id' => $data['question_id'],
+            //     'answer' => $data['answer'],
+            //     'correct' => $data['correct'],
+            //     'type' => $data['type'],
+            // ]);
+
+            // Use database transaction for data integrity
+            $result = DB::transaction(function () use ($validatedData, $userId) {
+                $bulkData = [];
+                $now = Carbon::now();
+
+                foreach ($validatedData['data'] as $item) {
+                    $bulkData[] = [
+                        'user_id' => $userId,
+                        'quiz_id' => $item['quiz_id'],
+                        'question_id' => $item['question_id'],
+                        'answer' => $item['answer'],
+                        'correct' => $item['correct'],
+                        'type' => $item['type'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+
+                // Bulk insert
+                StudentQuizHistory::insert($bulkData);
+
+                return [
+                    'inserted_count' => count($bulkData),
+                    'user_id' => $userId
+                ];
+            });
+
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Quiz history saved successfully',
+            //     'data' => $result
+            // ]);
+            return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {
+            Log::error('Insert failed: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
     }

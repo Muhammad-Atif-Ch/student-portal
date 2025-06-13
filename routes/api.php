@@ -22,6 +22,7 @@ Route::group(['prefix' => 'quiz'], function () {
     Route::get('get-official-question', [QuizController::class, 'getOfficialQuestion']);
     Route::post('store', [QuizController::class, 'store']);
     Route::get('previous-incorrect', [QuizController::class, 'previousIncorrect']);
+    Route::get('least-seen', [QuizController::class, 'leastSeen']);
 
     // Question related routes
     Route::get('get-flag', [QuestionController::class, 'getFlag']);

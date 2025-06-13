@@ -102,8 +102,10 @@ class QuizController extends Controller
         // Determine quiz IDs
         if ($quiz === 'all') {
             $quizIds = Quiz::pluck('id')->toArray();
+            $useOfficialLimit = true;
         } elseif ($quiz !== null) {
             $quizIds = is_array($quiz) ? $quiz : explode(',', $quiz);
+            $useOfficialLimit = false;
         } else {
             return response()->json(['error' => 'Invalid request'], 400);
         }
@@ -168,10 +170,12 @@ class QuizController extends Controller
 
         // return QuestionResource::collection($allQuestions);
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
+            ->where('id', $quizIds)
             ->get()
-            ->map(function ($quiz) use ($userId, $allowedTypes) {
+            ->map(function ($quiz) use ($userId, $allowedTypes, $useOfficialLimit) {
                 $quizId = $quiz->id;
-                $quizLimit = $quiz->official_test_question;
+                // $quizLimit = $quiz->official_test_question;
+                $quizLimit = $useOfficialLimit ? $quiz->official_test_question : 40;
 
                 // Get previously wrong attempted questions first
                 $wrongAttemptedQuestionIds = StudentQuizHistory::where([
@@ -413,5 +417,36 @@ class QuizController extends Controller
         $question = Question::with('quiz')->whereIn('id', $studentQuizHistory)->get();
 
         return QuestionResource::collection($question);
+    }
+
+    public function leastSeen()
+    {
+        $deviceId = request()->header('Device-Id');
+        $user = User::where('device_id', $deviceId)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $userId = $user->id;
+
+        $quizzes  = Quiz::with('questions')->get();
+
+        $filteredQuizzes = $quizzes->map(function ($quiz) use ($userId) {
+            // Get IDs of questions already seen by the user for this quiz
+            $seenQuestionIds = QuestionHistory::where('user_id', $userId)
+                ->where('quiz_id', $quiz->id)
+                ->pluck('question_id');
+
+            // Filter out already seen questions
+            $unseenQuestions = $quiz->questions->whereNotIn('id', $seenQuestionIds);
+
+            // Attach filtered questions back to the quiz
+            $quiz->setRelation('questions', $unseenQuestions);
+
+            return $quiz;
+        });
+
+        return QuestionResource::collection($filteredQuizzes);
     }
 }

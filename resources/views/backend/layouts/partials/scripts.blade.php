@@ -22,8 +22,6 @@
 <!-- Custom JS File -->
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 
-<!-- Voice JS File -->
-<script src="{{ asset('https://code.responsivevoice.org/responsivevoice.js?key=14tp8PdO') }}"></script>
 <script src="{{ asset('assets/js/pages/dashboard/index.js') }}"></script>
 
 <!-- In the head section -->

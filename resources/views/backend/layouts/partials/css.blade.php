@@ -8,5 +8,6 @@
 <!-- Custom style CSS -->
 <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 <link rel='shortcut icon' type='image/x-icon' href="{{ asset('assets/img/favicon.ico') }}" />
+<link rel="stylesheet" href="assets/bundles/pretty-checkbox/pretty-checkbox.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @yield('style')

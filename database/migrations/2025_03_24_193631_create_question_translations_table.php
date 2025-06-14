@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('quiz_id')->constrained("quizzes")->onDelete('cascade');
             $table->foreignId('question_id')->constrained("questions")->onDelete('cascade');
-            $table->foreignId('language_id')->constrained("languages")->onDelete('cascade');
+            $table->foreignId('lenguage_id')->constrained("lenguages")->onDelete('cascade');
             $table->text('title_audio_file')->nullable();
             $table->text('a_audio_file')->nullable();
             $table->text('b_audio_file')->nullable();

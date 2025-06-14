@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-@section('title', __('Add Question'))
+@section('title', __('Create User'))
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -8,96 +8,71 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.quiz.question.store', $quiz_id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.users.store') }}" method="POST">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Create Question</h4>
+                                    <h4>Create User</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Question <small style="color: red">*</small></label>
-                                                <input type="text" name="question" class="form-control" required value="{{ old('question') }}">
+                                                <label>Name <small style="color: red">*</small></label>
+                                                <input type="text" name="name" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Correct Answer <small style="color: red">*</small></label>
-                                                <select class="form-control" name="correct_answer" value="{{ old('correct_answer') }}" required>
-                                                    <option value="" selected>Select Option</option>
-                                                    <option value="a" {{ old('correct_answer') == 'a' ? 'selected' : '' }}>A - Option</option>
-                                                    <option value="b" {{ old('correct_answer') == 'b' ? 'selected' : '' }}>B - Option</option>
-                                                    <option value="c" {{ old('correct_answer') == 'c' ? 'selected' : '' }}>C - Option</option>
-                                                    <option value="d" {{ old('correct_answer') == 'd' ? 'selected' : '' }}>D - Option</option>
+                                                <label>Email <small style="color: red">*</small></label>
+                                                <input type="email" name="email" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Mobile</label>
+                                                <input type="number" name="mobile" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Address</label>
+                                                <input type="text" name="address" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>City</label>
+                                                <input type="text" name="city" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Role</label>
+                                                <select name="role_id" class="form-control" required>
+                                                    <option value="">Select Role</option>
+                                                    @foreach ($data['roles'] as $role)
+                                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-4 col-lg-4">
-                                            <div class="form-group">
-                                                <label>Type <small style="color: red">*</small></label>
-                                                <select class="form-control" name="type" required>
-                                                    <option value="" selected>Select Option</option>
-                                                    <option value="car" {{ old('type') == 'car' ? 'selected' : '' }}>Car</option>
-                                                    <option value="bike" {{ old('type') == 'bike' ? 'selected' : '' }}>Bike</option>
-                                                    <option value="both" {{ old('type') == 'both' ? 'selected' : '' }}>Both</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12 col-md-3 col-lg-3">
-                                            <div class="form-group">
-                                                <label>A - Option <small style="color: red">*</small></label>
-                                                <input type="text" name="a" class="form-control" required value="{{ old('a') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3 col-lg-3">
-                                            <div class="form-group">
-                                                <label>B - Option <small style="color: red">*</small></label>
-                                                <input type="text" name="b" class="form-control" required value="{{ old('b') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3 col-lg-3">
-                                            <div class="form-group">
-                                                <label>C - Option <small style="color: red">*</small></label>
-                                                <input type="text" name="c" class="form-control" required value="{{ old('c') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3 col-lg-3">
-                                            <div class="form-group">
-                                                <label>D - Option</label>
-                                                <input type="text" name="d" class="form-control" value="{{ old('d') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12 col-md-12 col-lg-12">
-                                            <div class="form-group">
-                                                <label>Answer Explanation</label>
-                                                <textarea name="answer_explanation" class="form-control">{{ old('answer_explanation') }}</textarea>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Visual Explanation</label>
-                                                <input type="file" name="visual_explanation" class="form-control" accept="image/*">
+                                                <label>Password <small style="color: red">*</small></label>
+                                                <input type="text" name="password" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Choose Image</label>
-                                                <input type="file" name="image" class="form-control" accept="image/*">
+                                                <label>Confirm Password <small style="color: red">*</small></label>
+                                                <input type="text" name="password_confirmation" class="form-control" required>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-4 col-lg-4">
-                                            <div class="form-group">
-                                                <label>Choose Audio File</label>
-                                                <input type="file" name="audio_file" class="form-control">
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

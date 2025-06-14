@@ -49,6 +49,14 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Question Translation </label>
+                                                <input type="text" name="question_translation" class="form-control" value="{{ $question->question_translation }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>A - Option <small style="color: red">*</small></label>
@@ -73,24 +81,46 @@
                                                 <input type="text" name="d" class="form-control" value="{{ $question->d }}">
                                             </div>
                                         </div>
-                                        {{-- <div class="col-12 col-md-3 col-lg-3">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
-                                                <label>E - Option</label>
-                                                <input type="text" name="e" class="form-control" value="{{ $question->e }}">
+                                                <label>A - Option Translation </label>
+                                                <input type="text" name="a_translation" class="form-control" value="{{ $question->a_translation }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
-                                                <label>F - Option</label>
-                                                <input type="text" name="f" class="form-control" required value="{{ $question->f }}">
+                                                <label>B - Option Translation </label>
+                                                <input type="text" name="b_translation" class="form-control" value="{{ $question->b_translation }}">
                                             </div>
-                                        </div> --}}
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>C - Option Translation </label>
+                                                <input type="text" name="c_translation" class="form-control" value="{{ $question->c_translation }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>D - Option Translation </label>
+                                                <input type="text" name="d_translation" class="form-control" value="{{ $question->d_translation }}">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 col-md-12 col-lg-12">
                                             <div class="form-group">
                                                 <label>Answer Explanation</label>
                                                 <textarea name="answer_explanation" class="form-control">{{ $question->answer_explanation }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12">
+                                            <div class="form-group">
+                                                <label>Answer Explanation Translation</label>
+                                                <textarea name="answer_explanation_translation" class="form-control">{{ $question->answer_explanation_translation }}</textarea>
                                             </div>
                                         </div>
                                     </div>

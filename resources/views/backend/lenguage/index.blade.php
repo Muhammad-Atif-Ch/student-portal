@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-@section('title', __('Questions List'))
+@section('title', __('Lenguage List'))
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -9,51 +9,57 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Questions List</h4>
-                                <div>
-                                    <a href="{{ route('admin.question.import.file', $quiz_id) }}" class="btn btn-primary me-2">Import Excel</a>
-                                    <a href="{{ route('admin.quiz.question.create', $quiz_id) }}" class="btn btn-primary">Add Question</a>
-                                </div>
+                                <h4>Lenguage List</h4>
+                                {{-- <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add User</a> --}}
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-1">
                                         <thead>
                                             <tr>
-                                                <th class="text-center col-1">#</th>
-                                                <th class="col-2">Question</th>
-                                                <th class="col-2">A - Option</th>
-                                                <th class="col-2">B - Option</th>
-                                                <th class="col-2">C - Option</th>
-                                                <th class="col-1">Correct Answer</th>
-                                                <th class="col-2">Action</th>
+                                                <th class="text-center">#</th>
+                                                <th>Name</th>
+                                                <th>Code</th>
+                                                <th>Code 2</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($questions as $question)
+                                            @forelse ($lenguages as $lenguage)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $question->question }}</td>
-                                                    <td>{{ $question->a }}</td>
-                                                    <td>{{ $question->b }}</td>
-                                                    <td>{{ $question->c }}</td>
-                                                    <td>{{ $question->correct_answer }}</td>
+                                                    <td>{{ $lenguage->name }}</td>
+                                                    <td>{{ $lenguage->code ?? 'N/A' }}</td>
+                                                    <td>{{ $lenguage->code_2 ?? 'N/A' }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.quiz.question.lenguage.index', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
-                                                            <i class="fa fa-language"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" class="d-inline">
-                                                            @csrf @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                                        </form>
+                                                        {{-- @if ($lenguage->status)
+                                                            <span class="badge badge-primary">Active</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Deactive</span>
+                                                        @endif --}}
+                                                        <div class="pretty p-switch pr-2">
+                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $lenguage->id }}"
+                                                                {{ $lenguage->status ? 'checked' : '' }}>
+                                                            <div class="state p-primary">
+                                                                <label></label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {{-- <div class="pretty p-switch pr-2">
+                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $lenguage->id }}"
+                                                                {{ $lenguage->status ? 'checked' : '' }}>
+                                                            <div class="state p-primary">
+                                                                <label></label>
+                                                            </div>
+                                                        </div> --}}
+                                                        <a href="{{ route('admin.lenguage.update', $lenguage->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td class="text-center" colspan="10"> No data found</td>
+                                                    <td class="text-center" colspan="4"> No data found</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -69,4 +75,28 @@
     </div>
 @endsection
 @section('scripts')
+    <script>
+        document.querySelectorAll('.language-status-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const lenguageId = this.getAttribute('data-language-id');
+                const status = this.checked ? 1 : 0;
+
+                fetch(`/lenguage/update/${lenguageId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            status: status
+                        })
+                    }).then(res => {
+                        console.log(data.message);
+                    })
+                    .then(data => {
+                        console.log(data.message);
+                    });
+            });
+        });
+    </script>
 @endsection

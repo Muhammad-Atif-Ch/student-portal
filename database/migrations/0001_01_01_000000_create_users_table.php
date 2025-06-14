@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->string('password')->nullable();
             $table->text('image')->nullable()->comment('profile image');
             $table->enum('app_type', ['car', 'bike', 'both'])->default('both');
+            $table->string('lenguage')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

@@ -34,6 +34,12 @@ class CreateQuestionRequest extends FormRequest
             'image' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
             'answer_explanation' => 'nullable',
             'visual_explanation' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
+            'question_translation' => 'nullable',
+            'a_translation' => 'nullable',
+            'b_translation' => 'nullable',
+            'c_translation' => 'nullable',
+            'd_translation' => 'nullable',
+            'answer_explanation_translation' => 'nullable',
         ];
     }
 

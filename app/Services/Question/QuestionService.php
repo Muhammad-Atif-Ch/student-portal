@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use App\Responses\QuestionResponse;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use App\Repositories\QuestionRepository;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;

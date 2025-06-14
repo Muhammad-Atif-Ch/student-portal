@@ -36,6 +36,12 @@ class UpdateQuestionRequest extends FormRequest
             'visual_explanation' => 'nullable|sometimes|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240',
             // 'audio_file' => 'nullable|file|mimes:mp3,wav,ogg,m4a,aac|max:10240|sometimes',
             'image' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
+            'question_translation' => 'nullable',
+            'a_translation' => 'nullable',
+            'b_translation' => 'nullable',
+            'c_translation' => 'nullable',
+            'd_translation' => 'nullable',
+            'answer_explanation_translation' => 'nullable',
         ];
     }
 

@@ -46,6 +46,14 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Question Translation </label>
+                                                <input type="text" name="question_translation" class="form-control" value="{{ old('question_translation') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 col-md-3 col-lg-3">
                                             <div class="form-group">
                                                 <label>A - Option <small style="color: red">*</small></label>
@@ -72,10 +80,44 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>A - Option </label>
+                                                <input type="text" name="a_translation" class="form-control" value="{{ old('a_translation') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>B - Option </label>
+                                                <input type="text" name="b_translation" class="form-control" value="{{ old('b_translation') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>C - Option</label>
+                                                <input type="text" name="c_translation" class="form-control" value="{{ old('c_translation') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-3">
+                                            <div class="form-group">
+                                                <label>D - Option</label>
+                                                <input type="text" name="d_translation" class="form-control" value="{{ old('d_translation') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 col-md-12 col-lg-12">
                                             <div class="form-group">
                                                 <label>Answer Explanation</label>
                                                 <textarea name="answer_explanation" class="form-control">{{ old('answer_explanation') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12">
+                                            <div class="form-group">
+                                                <label>Answer Explanation _translation</label>
+                                                <textarea name="answer_explanation_translation" class="form-control">{{ old('answer_explanation_translation') }}</textarea>
                                             </div>
                                         </div>
                                     </div>

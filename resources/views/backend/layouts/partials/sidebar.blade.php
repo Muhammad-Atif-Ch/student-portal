@@ -9,6 +9,9 @@
             <li class="dropdown {{ Request::is('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard') }}" class="nav-link"><i data-feather="monitor"></i><span>Dashboard</span></a>
             </li>
+            <li class="dropdown {{ Request::is('lenguage*') ? 'active' : '' }}">
+                <a href="{{ route('admin.lenguage.index') }}" class="nav-link"><i data-feather="globe"></i><span>Lenguage</span></a>
+            </li>
             <li class="dropdown {{ Request::is('quiz*') ? 'active' : '' }}">
                 <a href="{{ route('admin.quiz.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>Quiz</span></a>
             </li>

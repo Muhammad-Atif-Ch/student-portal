@@ -80,8 +80,9 @@
             toggle.addEventListener('change', function() {
                 const lenguageId = this.getAttribute('data-language-id');
                 const status = this.checked ? 1 : 0;
+                let url = "{{ route('admin.lenguage.update', ':id') }}".replace(':id', lenguageId);
 
-                fetch(`/lenguage/update/${lenguageId}`, {
+                fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

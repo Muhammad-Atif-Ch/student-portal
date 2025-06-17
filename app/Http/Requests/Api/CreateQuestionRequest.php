@@ -37,7 +37,7 @@ class CreateQuestionRequest extends FormRequest
             'data' => 'required|array|min:1',
             'data.*.quiz_id' => 'required|integer|min:1|exists:quizzes,id',
             'data.*.question_id' => 'required|integer|min:1',
-            'data.*.answer' => 'required|string|max:10',
+            'data.*.answer' => 'nullable|string|max:10',
             'data.*.type' => 'required|string|in:practice,official,exam,test',
             'data.*.correct' => 'required|integer|in:0,1',
         ];

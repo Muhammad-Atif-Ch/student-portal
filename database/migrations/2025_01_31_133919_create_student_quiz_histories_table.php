@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('quiz_id');
             $table->unsignedBigInteger('question_id');
-            $table->string('answer');
+            $table->string('answer')->nullable();
             $table->boolean('correct')->default(false);
             $table->boolean('flag')->default(false);
             $table->enum('type', ['official', 'practice']);

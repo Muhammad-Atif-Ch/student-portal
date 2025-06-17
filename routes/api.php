@@ -42,5 +42,5 @@ Route::group(['prefix' => 'setting'], function () {
     Route::post('update', [SettingController::class, 'update']);
 });
 
-Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
+Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy')->withoutMiddleware('device.check');
 

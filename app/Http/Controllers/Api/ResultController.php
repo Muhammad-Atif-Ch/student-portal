@@ -19,13 +19,13 @@ class ResultController extends Controller
 
         $userId = User::where('device_id', $deviceId)->first()->id;
 
-        $result = StudentQuizHistory::selectRaw('DATE(created_at) as test_date, 
+        $result = StudentQuizHistory::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as test_datetime, 
         type,
         SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers, 
-        COUNT(*) as total_attempts')
+        COUNT(*) as total_attempts")
             ->where('user_id', $userId)
-            ->groupBy('test_date', 'type')
-            ->orderBy('test_date', 'DESC')
+            ->groupBy('test_datetime', 'type')
+            ->orderBy('test_datetime', 'DESC')
             ->get();
         return ResultResource::collection($result);
     }
@@ -38,7 +38,9 @@ class ResultController extends Controller
 
         $resultIds = StudentQuizHistory::with('question')->where('user_id', $userId)
             ->where('type', $request->type)
-            ->whereDate('created_at', $request->created_at)
+            ->whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') = ?", [
+                date('Y-m-d H:i', strtotime($request->created_at))
+            ])
             ->orderBy('created_at', 'DESC')
             ->get();
 

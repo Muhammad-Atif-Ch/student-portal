@@ -4,9 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\PrivacyPolicyController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -40,4 +41,6 @@ Route::group(['prefix' => 'setting'], function () {
     Route::get('/', [SettingController::class, 'index']);
     Route::post('update', [SettingController::class, 'update']);
 });
+
+Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
 

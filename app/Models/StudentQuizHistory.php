@@ -20,16 +20,16 @@ class StudentQuizHistory extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function quiz()
     {
-        return $this->belongsTo(Quiz::class);
+        return $this->belongsTo(Quiz::class, 'quiz_id');
     }
 
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class, 'question_id');
     }
 }

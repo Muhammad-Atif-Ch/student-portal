@@ -21,13 +21,57 @@ class ResultController extends Controller
 
         $result = StudentQuizHistory::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as test_datetime, 
         type,
-        SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers, 
+        SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers,
+        SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers,
         COUNT(*) as total_attempts")
             ->where('user_id', $userId)
             ->groupBy('test_datetime', 'type')
             ->orderBy('test_datetime', 'DESC')
             ->get();
         return ResultResource::collection($result);
+    }
+
+    public function previousTestResultReport(Request $request)
+    {
+        $deviceId = $request->header('Device-Id');
+        $userId = User::where('device_id', $deviceId)->first()->id;
+        // Fetching the test results grouped by date and type   
+        $quizzes = Quiz::
+            with([
+                'questions.studentQuizHistories' => function ($query) use ($userId, $request) {
+                    $query->where('user_id', $userId);
+                    $query->where('type', $request->type);
+                    $query->whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') = ?", [
+                        date('Y-m-d H:i', strtotime($request->date))
+                    ]);
+                }
+            ])
+            ->get()
+            ->map(function ($quiz) {
+                $attempted = 0;
+                $correct = 0;
+                $incorrect = 0;
+
+                foreach ($quiz->questions as $question) {
+                    foreach ($question->studentQuizHistories as $history) {
+                        $attempted++;
+                        if ($history->correct) {
+                            $correct++;
+                        } else {
+                            $incorrect++;
+                        }
+                    }
+                }
+
+                return [
+                    'quiz_id' => $quiz->id,
+                    'quiz_title' => $quiz->title,
+                    'attempted_questions' => $attempted,
+                    'correct_answers' => $correct,
+                    'incorrect_answers' => $incorrect,
+                ];
+            });
+        return ResultResource::collection($quizzes);
     }
 
     public function previousTestResultDetails(Request $request)
@@ -79,18 +123,41 @@ class ResultController extends Controller
     public function resultCategory(Request $request)
     {
         $deviceId = $request->header('Device-Id');
-
         $userId = User::where('device_id', $deviceId)->first()->id;
 
-        $results = Quiz::withCount([
-            'questions as total_questions',
-            'quizHistotry as attempted_questions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId)->where('student_quiz_histories.type', 'official');
-            }
-        ])
-            ->orderBy('id', 'DESC')
-            ->get();
+        $quizzes = Quiz::withCount('questions')
+            ->with([
+                'questions.studentQuizHistories' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ])
+            ->get()
+            ->map(function ($quiz) {
+                $attempted = 0;
+                $correct = 0;
+                $incorrect = 0;
 
-        return ResultResource::collection($results);
+                foreach ($quiz->questions as $question) {
+                    foreach ($question->studentQuizHistories as $history) {
+                        $attempted++;
+                        if ($history->correct) {
+                            $correct++;
+                        } else {
+                            $incorrect++;
+                        }
+                    }
+                }
+
+                return [
+                    'quiz_id' => $quiz->id,
+                    'quiz_title' => $quiz->title,
+                    'total_questions' => $quiz->questions_count,
+                    'attempted_questions' => $attempted,
+                    'correct_answers' => $correct,
+                    'incorrect_answers' => $incorrect,
+                ];
+            });
+
+        return ResultResource::collection($quizzes);
     }
 }

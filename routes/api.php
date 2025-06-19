@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ContactUsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\QuizController;
@@ -8,12 +9,16 @@ use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
+use App\Models\ContactUs;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
-Route::get('user/device-register', [UserController::class, 'index'])->withoutMiddleware('device.check');
-
+Route::withoutMiddleware(['device.check'])->group(function () {
+    Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
+    Route::get('user/device-register', [UserController::class, 'index']);
+    Route::post('contact-us', [ContactUsController::class, 'index']);
+});
 
 Route::group(['prefix' => 'quiz'], function () {
     Route::get('/', [QuizController::class, 'index']);
@@ -31,9 +36,13 @@ Route::group(['prefix' => 'quiz'], function () {
 
     // Result related routes
     Route::get('previous-test-result', [ResultController::class, 'previousTestResult']);
+    Route::get('previous-test-result-report', [ResultController::class, 'previousTestResultReport']);
     Route::get('previous-test-result-details', [ResultController::class, 'previousTestResultDetails']);
     Route::get('result-summary', [ResultController::class, 'resultSummary']);
     Route::get('result-category', [ResultController::class, 'resultCategory']);
+
+    // Contact Us related route
+    // Route::get('contact-us', [ContactUsController::class, 'index']);
 });
 
 Route::group(['prefix' => 'setting'], function () {
@@ -41,6 +50,4 @@ Route::group(['prefix' => 'setting'], function () {
     Route::get('/', [SettingController::class, 'index']);
     Route::post('update', [SettingController::class, 'update']);
 });
-
-Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy')->withoutMiddleware('device.check');
 

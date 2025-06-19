@@ -42,7 +42,7 @@ class Question extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function studentQuizHistory()
+    public function studentQuizHistories()
     {
         return $this->hasMany(StudentQuizHistory::class, 'question_id');
     }

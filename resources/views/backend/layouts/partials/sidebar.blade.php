@@ -12,6 +12,9 @@
             <li class="dropdown {{ Request::is('lenguage*') ? 'active' : '' }}">
                 <a href="{{ route('admin.lenguage.index') }}" class="nav-link"><i data-feather="globe"></i><span>Lenguage</span></a>
             </li>
+            <li class="dropdown {{ Request::is('contact-us*') ? 'active' : '' }}">
+                <a href="{{ route('admin.contact-us.index') }}" class="nav-link"><i data-feather="phone-incoming"></i><span>Contact Us</span></a>
+            </li>
             <li class="dropdown {{ Request::is('quiz*') ? 'active' : '' }}">
                 <a href="{{ route('admin.quiz.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>Quiz</span></a>
             </li>

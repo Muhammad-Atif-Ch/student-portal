@@ -344,6 +344,20 @@ class QuizController extends Controller
                 ];
             });
 
+            $now = Carbon::now();
+            $result = StudentQuizHistory::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as test_datetime, 
+                    type,
+                    SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers,
+                    SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers,
+                    COUNT(*) as total_attempts")
+                ->where('user_id', $userId)
+                ->whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') = ?", [
+                    date('Y-m-d H:i', strtotime($now->format('Y-m-d H:i')))
+                ])
+                ->groupBy('test_datetime', 'type')
+                ->orderBy('test_datetime', 'DESC')
+                ->get();
+
             return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {
             Log::error('Insert failed: ' . $e->getMessage());
@@ -371,7 +385,7 @@ class QuizController extends Controller
 
         $userId = $user->id;
 
-        $quizzes  = Quiz::with('questions')->get();
+        $quizzes = Quiz::with('questions')->get();
 
         $filteredQuizzes = $quizzes->map(function ($quiz) use ($userId) {
             // Get IDs of questions already seen by the user for this quiz

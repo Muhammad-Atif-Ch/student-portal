@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UploadFile
 {
-
-
     public function upload($path, $image)
     {
         $filNameWithExtension = $image->getClientOriginalName();

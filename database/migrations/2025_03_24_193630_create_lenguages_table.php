@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('lenguages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code');
-            $table->string('code_2');
-            $table->string('status');
+            $table->string('code', 5)->nullable();
+            $table->string('code_2', 10)->nullable();
+            $table->string('name', 100)->nullable();
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

@@ -18,6 +18,24 @@
             <li class="dropdown {{ Request::is('quiz*') ? 'active' : '' }}">
                 <a href="{{ route('admin.quiz.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>Quiz</span></a>
             </li>
+            {{-- <li class="{{ Request::is('admin/translation*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.translation.index') }}">
+                    <i data-feather="type"></i>
+                    <span>{{ __('Translation') }}</span>
+                </a>
+            </li> --}}
+            {{-- <li class="{{ Request::is('admin/text-to-speech*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.tts.index') }}">
+                    <i data-feather="volume-2"></i>
+                    <span>{{ __('Text to Speech') }}</span>
+                </a>
+            </li> --}}
+            <li class="{{ Request::is('admin/translations*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.translations.index') }}">
+                    <i data-feather="list"></i>
+                    <span>{{ __('Translations') }}</span>
+                </a>
+            </li>
             <li class="dropdown {{ Request::is('users*') ? 'active' : '' }}">
                 <a href="{{ route('admin.users.index') }}" class="nav-link"><i data-feather="user"></i><span>Users</span></a>
             </li>

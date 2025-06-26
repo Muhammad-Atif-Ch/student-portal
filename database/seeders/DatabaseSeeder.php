@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             QuizSeeder::class,
             SettingSeeder::class,
+            LanguageSeeder::class,
             QuestionSeeder::class,
             // StudentQuizHistorySeeder::class,
         ]);

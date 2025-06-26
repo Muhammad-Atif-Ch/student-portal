@@ -10,10 +10,19 @@
 <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
 <script>
     window.routes = {
+        translation: {
+            progress: "{{ route('admin.translations.progress') }}",
+            start: "{{ route('admin.translations.start') }}",
+            stop: "{{ route('admin.translations.stop') }}"
+        },
         setting: {
             index: "{{ route('admin.setting.index') }}",
-            update: "{{ route('admin.setting.update') }}",
-            // other routes...
+            update: "{{ route('admin.setting.update') }}"
+        },
+        tts: {
+            start: "{{ route('admin.translations.tts.start') }}",
+            progress: "{{ route('admin.translations.tts.progress') }}",
+            stop: "{{ route('admin.translations.tts.stop') }}"
         }
     };
 </script>
@@ -26,7 +35,7 @@
 
 <!-- In the head section -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@yield('scripts')
+@stack('scripts')
 <script>
     $.ajaxSetup({
         headers: {

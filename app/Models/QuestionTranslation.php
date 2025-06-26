@@ -12,26 +12,33 @@ class QuestionTranslation extends Model
     protected $fillable = [
         'quiz_id',
         'question_id',
-        'language_id',
-        'title_audio_file',
-        'a_audio_file',
-        'b_audio_file',
-        'c_audio_file',
-        'd_audio_file',
+        'lenguage_id',
+        'question_translation',
+        'a_translation',
+        'b_translation',
+        'c_translation',
+        'd_translation',
+        'answer_explanation_translation',
+        'question_audio',
+        'a_audio',
+        'b_audio',
+        'c_audio',
+        'd_audio',
+        'answer_explanation_translation_audio'
     ];
-
-    public function quiz()
-    {
-        return $this->belongsTo(Quiz::class);
-    }
 
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
-    public function Language()
+    public function quiz()
     {
-        return $this->belongsTo(Language::class);
+        return $this->belongsTo(Quiz::class, 'quiz_id');
+    }
+
+    public function lenguage()
+    {
+        return $this->belongsTo(Lenguage::class, 'lenguage_id');
     }
 }

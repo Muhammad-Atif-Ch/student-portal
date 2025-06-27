@@ -25,22 +25,8 @@ class AzureTTSService
       // Get voice for language
       $voice = $this->getVoiceForLanguage($language);
 
-      // Debug log the configuration
-      // Log::debug('Azure TTS Configuration', [
-      //   'endpoint' => $this->endpoint,
-      //   'region' => $this->region,
-      //   'language' => $language,
-      //   'voice' => $voice,
-      //   'has_key' => !empty($this->apiKey)
-      // ]);
-
       // Prepare SSML
       $ssml = $this->generateSSML($text, $voice);
-
-      // // Debug log the SSML
-      // Log::debug('Azure TTS SSML Request', [
-      //   'ssml' => $ssml
-      // ]);
 
       $headers = [
         'Ocp-Apim-Subscription-Key' => $this->apiKey,
@@ -48,12 +34,6 @@ class AzureTTSService
         'X-Microsoft-OutputFormat' => 'audio-16khz-128kbitrate-mono-mp3',
         'User-Agent' => 'QuestionTTS'
       ];
-
-      // // Debug log headers (excluding the key)
-      // Log::debug('Azure TTS Headers', array_merge(
-      //   $headers,
-      //   ['Ocp-Apim-Subscription-Key' => '[REDACTED]']
-      // ));
 
       // Make API request
       $response = Http::withHeaders($headers)

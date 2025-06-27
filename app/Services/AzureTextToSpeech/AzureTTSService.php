@@ -87,12 +87,31 @@ class AzureTTSService
     // This is a simplified version. You might want to create a more comprehensive mapping
     // or fetch this dynamically from Azure's voice list API
     $voices = [
-      'en' => ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'],
-      'es' => ['locale' => 'es-ES', 'gender' => 'Female', 'name' => 'es-ES-ElviraNeural'],
-      'fr' => ['locale' => 'fr-FR', 'gender' => 'Female', 'name' => 'fr-FR-DeniseNeural'],
+      'en' => [
+        'female' => ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'],
+        'male' => ['locale' => 'en-US', 'gender' => 'Male', 'name' => 'en-US-GuyNeural']
+      ],
+      'es' => [
+        'female' => ['locale' => 'es-ES', 'gender' => 'Female', 'name' => 'es-ES-ElviraNeural'],
+        'male' => ['locale' => 'es-ES', 'gender' => 'Male', 'name' => 'es-ES-AlvaroNeural']
+      ],
+      'fr' => [
+        'female' => ['locale' => 'fr-FR', 'gender' => 'Female', 'name' => 'fr-FR-DeniseNeural'],
+        'male' => ['locale' => 'fr-FR', 'gender' => 'Male', 'name' => 'fr-FR-HenriNeural']
+      ],
       // Add more language mappings as needed
     ];
 
-    return $voices[$language] ?? $voices['en']; // Default to English if language not found
+    // Default to female voice if language not found
+    $defaultVoice = ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'];
+
+    // Check if language exists in voices array
+    if (!isset($voices[$language])) {
+      return $defaultVoice;
+    }
+
+    // Get voice preference from settings or default to female
+    $preferredGender = config('tts.preferred_gender', 'female');
+    return $voices[$language][$preferredGender] ?? $voices[$language]['female'] ?? $defaultVoice;
   }
 }

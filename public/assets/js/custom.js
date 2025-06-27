@@ -631,6 +631,83 @@ function initTranslationProgress() {
             startBtn.innerHTML =
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Starting...';
 
+            // Show initial progress alert immediately
+            const initialProgressHtml = `
+                <div class="progress mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                         role="progressbar" 
+                         style="width: 0%"></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted">0 / 0</small>
+                    <small class="text-primary font-weight-bold">0%</small>
+                </div>
+                <div class="text-muted" style="font-size: 13px;">Initializing translation process...</div>
+            `;
+
+            progressAlert = Swal.fire({
+                title: '<small class="text-primary">Translation Progress</small>',
+                html: initialProgressHtml,
+                position: "bottom-end",
+                showConfirmButton: false,
+                showCloseButton: true,
+                backdrop: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: "280px",
+                padding: "0.75rem",
+                customClass: {
+                    popup: "translation-progress-popup shadow-sm",
+                    title: "translation-progress-title",
+                    closeButton: "translation-progress-close",
+                    container: "translation-progress-container",
+                },
+                didOpen: (toast) => {
+                    const popup = Swal.getPopup();
+                    popup.style.position = "fixed";
+                    popup.style.bottom = "20px";
+                    popup.style.right = "20px";
+                    popup.style.margin = "0";
+                    popup.style.border = "none";
+                    popup.style.borderRadius = "8px";
+                    popup.style.background = "#fff";
+                    popup.style.boxShadow = "0 0 15px rgba(0,0,0,0.1)";
+
+                    // Style the title
+                    const title = popup.querySelector(".swal2-title");
+                    if (title) {
+                        title.style.fontSize = "14px";
+                        title.style.padding = "0";
+                        title.style.marginBottom = "10px";
+                    }
+
+                    // Style the close button
+                    const closeButton = popup.querySelector(".swal2-close");
+                    if (closeButton) {
+                        closeButton.style.fontSize = "20px";
+                        closeButton.style.padding = "0";
+                        closeButton.style.marginRight = "5px";
+                        closeButton.style.marginTop = "2px";
+                    }
+
+                    // Add custom styles to container
+                    const container =
+                        document.querySelector(".swal2-container");
+                    if (container) {
+                        container.style.position = "fixed";
+                        container.style.padding = "0";
+                        container.style.background = "none";
+                    }
+                },
+                willClose: () => {
+                    // Only allow closing if translation is not active
+                    if (isTranslationActive) {
+                        return false;
+                    }
+                    progressAlert = null;
+                },
+            });
+
             try {
                 const response = await fetch(routes.translation.start, {
                     method: "POST",
@@ -656,10 +733,18 @@ function initTranslationProgress() {
                         "error"
                     );
                     resetButtonStates();
+                    if (progressAlert) {
+                        progressAlert.close();
+                        progressAlert = null;
+                    }
                 }
             } catch (error) {
                 addLog("Network error occurred", "error");
                 resetButtonStates();
+                if (progressAlert) {
+                    progressAlert.close();
+                    progressAlert = null;
+                }
             } finally {
                 isSubmitting = false;
                 startBtn.innerHTML = "Start Translation";

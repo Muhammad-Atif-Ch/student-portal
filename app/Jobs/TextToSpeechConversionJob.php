@@ -98,7 +98,7 @@ class TextToSpeechConversionJob implements ShouldQueue
                     $translation->update([$audioField => $fileName]);
 
                     $progress['completed']++;
-                    $progress['message'] = "Converting {$field} for question {$translation->question_id}";
+                    $progress['message'] = "Converting {$field} for question {$translation->question_id} - {$translation->id} - {$translation->lenguage->name} ";
                     $this->updateProgress($progress);
 
                     // Prevent rate limiting

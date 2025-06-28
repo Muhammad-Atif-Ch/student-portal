@@ -91,6 +91,8 @@ class QuizController extends Controller
 
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
+        $languageId = $user->lenguage_id ?? 39;
+
         // Step 2: Determine allowed question types
         $allowedTypes = match ($user->app_type) {
             'car' => ['car', 'both'],
@@ -111,6 +113,15 @@ class QuizController extends Controller
         }
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
+            ->with([
+                'questions' => function ($query) use ($languageId) {
+                    $query->with([
+                        'translations' => function ($q) use ($languageId) {
+                            $q->where('lenguage_id', $languageId);
+                        }
+                    ]);
+                }
+            ])
             ->where('id', $quizIds)
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes, $useOfficialLimit) {
@@ -218,7 +229,18 @@ class QuizController extends Controller
             default => ['both'], // fallback if app_type is missing
         };
 
+        $languageId = $user->lenguage_id ?? 39;
+
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
+            ->with([
+                'questions' => function ($query) use ($languageId) {
+                    $query->with([
+                        'translations' => function ($q) use ($languageId) {
+                            $q->where('lenguage_id', $languageId);
+                        }
+                    ]);
+                }
+            ])
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes) {
                 $quizId = $quiz->id;
@@ -302,7 +324,7 @@ class QuizController extends Controller
 
                 QuestionHistory::insert($historyData);
 
-                $quiz->setRelation('questions', $finalQuestions);
+                $quiz->setRelation('questions.translations', $finalQuestions);
 
                 return $quiz;
             });

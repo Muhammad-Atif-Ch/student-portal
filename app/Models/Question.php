@@ -42,6 +42,10 @@ class Question extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function translations()
+    {
+        return $this->hasMany(QuestionTranslation::class, 'question_id');
+    }
     public function studentQuizHistories()
     {
         return $this->hasMany(StudentQuizHistory::class, 'question_id');

@@ -22,7 +22,8 @@ class UpdateSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "app_type" => ["required", "string", "in:car,bike,both"],
+            "app_type" => ["nullable", "string", "in:car,bike,both"],
+            "lenguage_id" => ["nullable", "exists:lenguages,id"],
         ];
     }
 }

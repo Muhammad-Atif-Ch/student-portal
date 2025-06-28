@@ -23,6 +23,7 @@ class SettingController extends Controller
         $deviceId = $request->header('Device-Id');
         $setting = User::where('device_id', $deviceId)->first();
         $setting->app_type = $request->app_type;
+        $setting->lenguage_id = $request->lenguage_id;
         $setting->save();
 
         return (new SettingResource($setting))->additional([

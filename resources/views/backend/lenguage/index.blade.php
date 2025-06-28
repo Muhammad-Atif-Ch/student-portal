@@ -40,7 +40,7 @@
                                                         @endif --}}
                                                         <div class="pretty p-switch pr-2">
                                                             <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $lenguage->id }}"
-                                                                {{ $lenguage->status ? 'checked' : '' }}>
+                                                                {{ $lenguage->status == 'active' ? 'checked' : '' }}>
                                                             <div class="state p-primary">
                                                                 <label></label>
                                                             </div>

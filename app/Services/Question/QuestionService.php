@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Helpers\ResponseCode;
 use Illuminate\Support\Collection;
 use App\Responses\QuestionResponse;
+use Illuminate\Support\Facades\Cache;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
 use App\Repositories\QuestionRepository;
@@ -91,6 +92,11 @@ class QuestionService extends AbstractService
 
         $this->update($data, $id);
 
+        Cache::forget('translation_stop_flag');
+        Cache::forget('translation_force_stop');
+        Cache::forget('translation_stopped_at');
+        Cache::forget('translation_immediate_stop');
+        Cache::forget('translation_progress');
         // After updating the question, dispatch the background job
         $question->refresh(); // Refresh the model to get updated data
         dispatch(new SingleQuestionTranslationJob($question));

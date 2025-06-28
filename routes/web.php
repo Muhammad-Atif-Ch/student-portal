@@ -62,6 +62,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::get('create-translation', [TranslationController::class, 'createTranslation'])->name('createTranslation');
         Route::post('translation/start', [TranslationController::class, 'translateAll'])->name('start');
         Route::get('translation/progress', [TranslationController::class, 'getProgress'])->name('progress');
+        Route::get('translation/progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
         Route::post('translation/stop', [TranslationController::class, 'stopTranslation'])->name('stop');
 
         // Text to Speech routes

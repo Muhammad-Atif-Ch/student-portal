@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->string('b_audio')->nullable();
             $table->string('c_audio')->nullable();
             $table->string('d_audio')->nullable();
-            $table->string('answer_explanation_translation_audio')->nullable();
+            $table->string('answer_explanation_audio')->nullable();
             $table->timestamps();
 
             // Add unique constraint to prevent duplicate translations

@@ -67,6 +67,7 @@
                                                 <th>{{ __('B Audio') }}</th>
                                                 <th>{{ __('C Audio') }}</th>
                                                 <th>{{ __('D Audio') }}</th>
+                                                <th>{{ __('Answer Explanation Audio') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -81,7 +82,7 @@
                                                     <td>{{ $data->b_translation }}</td>
                                                     <td>{{ $data->c_translation }}</td>
                                                     <td>{{ $data->d_translation }}</td>
-                                                    <td>{{ $data->answer_explanation_translation }}</td>
+                                                    <td>{{ Str::limit($data->answer_explanation_translation, 150) }}</td>
                                                     <td>
                                                         @if ($data->question_audio && file_exists(public_path("audios/{$data->question_audio}")))
                                                             <audio controls class="mt-2">
@@ -126,6 +127,16 @@
                                                         @if ($data->d_audio && file_exists(public_path("audios/{$data->d_audio}")))
                                                             <audio controls class="mt-2">
                                                                 <source src="{{ asset("audios/{$data->d_audio}") }}" type="audio/mpeg">
+                                                                Your browser does not support the audio element.
+                                                            </audio>
+                                                        @else
+                                                            <span class="text-danger">Null</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($data->answer_explanation_audio && file_exists(public_path("audios/{$data->answer_explanation_audio}")))
+                                                            <audio controls class="mt-2">
+                                                                <source src="{{ asset("audios/{$data->answer_explanation_audio}") }}" type="audio/mpeg">
                                                                 Your browser does not support the audio element.
                                                             </audio>
                                                         @else

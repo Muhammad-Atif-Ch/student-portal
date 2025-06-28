@@ -6,6 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title')</title>
         @include('backend.layouts.partials.css')
     </head>
@@ -31,6 +32,13 @@
         <script src="{{ asset('assets/js/custom.js') }}"></script>
         <!-- Make Laravel routes available to JavaScript -->
         <script>
+            // Set up CSRF token for all AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             var routes = {
                 translation: {
                     progress: "{{ route('admin.translations.progress') }}",
@@ -49,6 +57,7 @@
                 }
             };
         </script>
+        @yield('scripts')
     </body>
 
     <!-- index.html  21 Nov 2019 03:47:04 GMT -->

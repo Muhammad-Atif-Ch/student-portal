@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\QuestionLenguage\UpdateLenguageRequest;
+use App\Models\Language;
+use App\Models\Lenguage;
+use App\Models\QuestionTranslation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use App\Services\Question\QuestionLenguageService;
 use App\Http\Requests\QuestionLenguage\CreateLenguageRequest;
-use App\Models\Language;
-use App\Models\QuestionTranslation;
+use App\Http\Requests\QuestionLenguage\UpdateLenguageRequest;
 
 class QuestionLanguageController extends Controller
 {
@@ -31,7 +32,7 @@ class QuestionLanguageController extends Controller
      */
     public function create($quiz_id, $question_id)
     {
-        $languages = Language::get();
+        $languages = Lenguage::get();
         return view('backend.question_lenguage.create', compact('quiz_id', 'question_id', 'languages'));
     }
 
@@ -61,7 +62,7 @@ class QuestionLanguageController extends Controller
      */
     public function edit($quiz_id, $question_id, string $id)
     {
-        $languages = Language::get();
+        $languages = Lenguage::get();
         $question_language = $this->service->showQuestion($quiz_id, $question_id, $id);
         return view('backend.question_lenguage.edit', compact('quiz_id', 'question_id', 'question_language', 'languages'));
     }

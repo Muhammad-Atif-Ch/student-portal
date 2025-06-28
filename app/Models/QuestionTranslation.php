@@ -24,7 +24,7 @@ class QuestionTranslation extends Model
         'b_audio',
         'c_audio',
         'd_audio',
-        'answer_explanation_translation_audio'
+        'answer_explanation_audio'
     ];
 
     public function question()

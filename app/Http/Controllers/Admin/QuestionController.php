@@ -69,10 +69,22 @@ class QuestionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateQuestionRequest $request, string $quiz_id, string $id)
+    public function update(UpdateQuestionRequest $request, $quiz_id, $id)
     {
         $response = $this->service->updateQuestion($request, $id);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => $response->message(),
+                'data' => $response->getData(),
+                'code' => $response->code(),
+                'type' => $response->getResponeType()
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.quiz.question.index', ['quiz' => $quiz_id])
+            ->with($response->getResponeType(), $response->message());
     }
 
     /**

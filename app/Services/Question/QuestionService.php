@@ -11,14 +11,18 @@ use App\Responses\QuestionResponse;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
 use App\Repositories\QuestionRepository;
+use App\Jobs\SingleQuestionTranslationJob;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
 
 class QuestionService extends AbstractService
 {
-    public function __construct(QuestionRepository $repository, QuestionResponse $response, Request $request)
-    {
+    public function __construct(
+        QuestionRepository $repository,
+        QuestionResponse $response,
+        Request $request
+    ) {
         $this->repository = $repository;
         $this->response = $response;
         $this->request = $request;
@@ -86,7 +90,13 @@ class QuestionService extends AbstractService
         }
 
         $this->update($data, $id);
+
+        // After updating the question, dispatch the background job
+        $question->refresh(); // Refresh the model to get updated data
+        dispatch(new SingleQuestionTranslationJob($question));
+
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
+        $this->response->setData(['question_id' => $question->id]); // Add question ID to response
         return $this->response;
     }
 
@@ -100,5 +110,4 @@ class QuestionService extends AbstractService
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getDeleteResponseMessage());
         return $this->response;
     }
-
 }

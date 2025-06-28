@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" enctype="multipart/form-data">
+                            <form id="questionForm" action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-header">
@@ -193,4 +193,258 @@
         </section>
         @include('backend.layouts.partials.setting_sidebar')
     </div>
+@endsection
+
+@section('scripts')
+    <style>
+        .swal2-popup {
+            background: rgba(245, 245, 245, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-radius: 15px !important;
+            padding: 2em !important;
+        }
+
+        .swal2-title {
+            color: #2c3e50 !important;
+            font-size: 1.5em !important;
+            font-weight: 500 !important;
+        }
+
+        .swal2-html-container {
+            color: #2c3e50 !important;
+        }
+
+        .progress-wrapper {
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            color: #34495e;
+            font-size: 14px;
+        }
+
+        .progress-percentage {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(189, 195, 199, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #3498db;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        let progressAlert = null;
+        let isTranslationActive = false;
+
+        function checkQuestionProgress(questionId) {
+            if (!isTranslationActive) return;
+
+            $.ajax({
+                url: "{{ route('admin.translations.question.progress', ['question_id' => ':id']) }}".replace(':id', questionId),
+                method: 'GET',
+                success: function(response) {
+                    updateProgressUI(response, questionId);
+                },
+                error: function(xhr) {
+                    console.error('Error checking progress:', xhr);
+                }
+            });
+        }
+
+        function updateProgressUI(data, questionId) {
+            const {
+                progress,
+                percentage
+            } = data;
+            const {
+                status,
+                message
+            } = progress;
+
+            // Create progress HTML with improved styling
+            const progressHtml = `
+                <div class="progress-wrapper">
+                    <div class="progress-info">
+                        <div class="progress-label">
+                            <span>Translation Progress</span>
+                        </div>
+                        <div class="progress-percentage">
+                            <span>${percentage}%</span>
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                            aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100" 
+                            style="width: ${percentage}%;">
+                        </div>
+                    </div>
+                    <div class="progress-message">
+                        ${message || 'Processing...'}
+                    </div>
+                </div>
+            `;
+
+            // Show or update progress alert with improved styling
+            if (!progressAlert) {
+                progressAlert = Swal.fire({
+                    title: 'Translating Question',
+                    html: progressHtml,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    showCloseButton: false,
+                    position: 'center',
+                    width: '32rem',
+                    backdrop: `rgba(44, 62, 80, 0.3)`,
+                    customClass: {
+                        popup: 'swal2-show'
+                    }
+                });
+            } else {
+                Swal.update({
+                    html: progressHtml
+                });
+            }
+
+            // Handle completion states with improved styling
+            if (["completed", "stopped", "error"].includes(status)) {
+                isTranslationActive = false;
+                setTimeout(() => {
+                    if (progressAlert) {
+                        progressAlert.close();
+                        progressAlert = null;
+                    }
+
+                    // Show completion message with improved styling
+                    let title = "Translation Complete";
+                    let icon = "success";
+                    let confirmButtonColor = '#2ecc71';
+
+                    if (status === "error") {
+                        title = "Translation Failed";
+                        icon = "error";
+                        confirmButtonColor = '#e74c3c';
+                    } else if (status === "stopped") {
+                        title = "Translation Stopped";
+                        icon = "warning";
+                        confirmButtonColor = '#f1c40f';
+                    }
+
+                    Swal.fire({
+                        title: title,
+                        text: message || 'Process completed',
+                        icon: icon,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: confirmButtonColor,
+                        backdrop: `rgba(245, 245, 245, 0.95)`,
+                        customClass: {
+                            popup: 'swal2-show'
+                        }
+                    }).then(() => {
+                        window.location.href = "{{ route('admin.quiz.question.index', ['quiz' => $quiz_id]) }}";
+                    });
+                }, 1000);
+            } else {
+                // Continue checking progress
+                setTimeout(() => checkQuestionProgress(questionId), 1000);
+            }
+        }
+
+        // Handle form submission
+        $(document).ready(function() {
+            $('#questionForm').on('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const form = $(this);
+                const formData = new FormData(this);
+                const submitButton = form.find('button[type="submit"]');
+
+                // Disable submit button
+                submitButton.prop('disabled', true);
+
+                // Show loading state
+                Swal.fire({
+                    title: 'Updating Question',
+                    text: 'Please wait...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Perform AJAX request
+                $.ajax({
+                    url: form.attr('action'),
+                    method: 'POST', // Force POST method
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        console.log('Response:', response);
+                        Swal.close();
+
+                        if (response.data && response.data.question_id) {
+                            isTranslationActive = true;
+                            checkQuestionProgress(response.data.question_id);
+                        } else {
+                            Swal.fire({
+                                title: 'Success',
+                                text: response.message || 'Question updated successfully',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location.href = "{{ route('admin.quiz.question.index', ['quiz' => $quiz_id]) }}";
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        submitButton.prop('disabled', false);
+                        Swal.close();
+
+                        Swal.fire({
+                            title: 'Error',
+                            text: xhr.responseJSON?.message || 'An error occurred while updating the question.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
 @endsection

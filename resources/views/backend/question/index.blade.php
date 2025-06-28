@@ -41,7 +41,7 @@
                                         <tbody>
                                             @forelse ($questions as $question)
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $question->id }}</td>
                                                     <td>{{ $question->question }}</td>
                                                     <td>{{ $question->a }}</td>
                                                     <td>{{ $question->b }}</td>

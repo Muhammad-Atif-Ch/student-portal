@@ -90,11 +90,27 @@ class TranslationController extends Controller
       'percentage' => max(0, min(100, $percentage))
     ];
 
-    if ($progress['status'] === 'error' && isset($progress['error'])) {
-      $response['error'] = $progress['error'];
-    }
-
     return response()->json($response);
+  }
+
+  public function getQuestionProgress($question_id)
+  {
+    $progress = Cache::get("translation_progress_question_{$question_id}", [
+      'total' => 0,
+      'completed' => 0,
+      'status' => 'idle',
+      'message' => '',
+      'question_id' => $question_id
+    ]);
+
+    $percentage = $progress['total'] > 0
+      ? round(($progress['completed'] / $progress['total']) * 100, 2)
+      : 0;
+
+    return response()->json([
+      'progress' => $progress,
+      'percentage' => max(0, min(100, $percentage))
+    ]);
   }
 
   public function stopTranslation()

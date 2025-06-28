@@ -79,7 +79,7 @@
         document.querySelectorAll('.language-status-toggle').forEach(toggle => {
             toggle.addEventListener('change', function() {
                 const lenguageId = this.getAttribute('data-language-id');
-                const status = this.checked ? 1 : 0;
+                const status = this.checked ? 'active' : 'un-active';
                 let url = "{{ route('admin.lenguage.update', ':id') }}".replace(':id', lenguageId);
 
                 fetch(url, {

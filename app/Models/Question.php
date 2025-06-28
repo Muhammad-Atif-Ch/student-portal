@@ -44,7 +44,7 @@ class Question extends Model
 
     public function translations()
     {
-        return $this->hasMany(QuestionTranslation::class, 'question_id');
+        return $this->hasMany(QuestionTranslation::class, 'question_id')->forLanguage();
     }
     public function studentQuizHistories()
     {

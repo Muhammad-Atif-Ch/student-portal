@@ -32,7 +32,7 @@ class QuizController extends Controller
 
         // Fetch the IDs of questions the student has already taken
         $query = Question::query();
-
+        $query->with('translations');
         $query->where('question', 'like', "%{$request->question}%");
 
         if ($includeAnswer) {
@@ -66,7 +66,7 @@ class QuizController extends Controller
                 'questions' => function ($query) use ($allowedTypes) {
                     $query->whereIn('type', $allowedTypes);
                 }
-            ])->get();
+            ], 'questions.translations')->get();
 
             return QuestionResource::collection($quiz);
         } elseif ($quiz !== null) {
@@ -75,7 +75,7 @@ class QuizController extends Controller
                 'questions' => function ($query) use ($allowedTypes) {
                     $query->whereIn('type', $allowedTypes);
                 }
-            ])->where('id', $quiz)->first();
+            ], 'questions.translations')->where('id', $quiz)->first();
 
             return new QuestionResource($quiz);
         } else {
@@ -91,7 +91,6 @@ class QuizController extends Controller
 
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
-        $languageId = $user->lenguage_id ?? 39;
 
         // Step 2: Determine allowed question types
         $allowedTypes = match ($user->app_type) {
@@ -113,15 +112,7 @@ class QuizController extends Controller
         }
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
-            ->with([
-                'questions' => function ($query) use ($languageId) {
-                    $query->with([
-                        'translations' => function ($q) use ($languageId) {
-                            $q->where('lenguage_id', $languageId);
-                        }
-                    ]);
-                }
-            ])
+        ->with('questions.translations')
             ->where('id', $quizIds)
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes, $useOfficialLimit) {
@@ -229,18 +220,8 @@ class QuizController extends Controller
             default => ['both'], // fallback if app_type is missing
         };
 
-        $languageId = $user->lenguage_id ?? 39;
-
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
-            ->with([
-                'questions' => function ($query) use ($languageId) {
-                    $query->with([
-                        'translations' => function ($q) use ($languageId) {
-                            $q->where('lenguage_id', $languageId);
-                        }
-                    ]);
-                }
-            ])
+            ->with('questions.translations')
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes) {
                 $quizId = $quiz->id;
@@ -391,7 +372,7 @@ class QuizController extends Controller
     {
         $studentQuizHistory = StudentQuizHistory::where('correct', 0)->pluck('question_id')->toArray();
 
-        $question = Question::with('quiz')->whereIn('id', $studentQuizHistory)->get();
+        $question = Question::with('quiz', 'translations')->whereIn('id', $studentQuizHistory)->get();
 
         return QuestionResource::collection($question);
     }
@@ -407,7 +388,7 @@ class QuizController extends Controller
 
         $userId = $user->id;
 
-        $quizzes = Quiz::with('questions')->get();
+        $quizzes = Quiz::with('questions.translations')->get();
 
         $filteredQuizzes = $quizzes->map(function ($quiz) use ($userId) {
             // Get IDs of questions already seen by the user for this quiz

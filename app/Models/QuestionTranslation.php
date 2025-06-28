@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuestionTranslation extends Model
 {
@@ -49,6 +51,17 @@ class QuestionTranslation extends Model
     public function lenguage()
     {
         return $this->belongsTo(Lenguage::class, 'lenguage_id');
+    }
+
+    /**
+     * Scope a query to only include translations for a specific language.
+     */
+    public function scopeForLanguage(Builder $query)
+    {
+        $deviceId = request()->header('Device-Id');
+        $user = User::where('device_id', $deviceId)->first();
+        $languageId = $user->lenguage_id ?? 39;
+        return $query->where('lenguage_id', $languageId);
     }
 
     /**

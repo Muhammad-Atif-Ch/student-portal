@@ -32,15 +32,23 @@ class QuizController extends Controller
 
         // Fetch the IDs of questions the student has already taken
         $query = Question::query();
-        $query->with('translations');
-        $query->where('question', 'like', "%{$request->question}%");
 
-        if ($includeAnswer) {
-            $query->orwhere('a', 'like', "%{$request->question}%")
-                ->orWhere('b', 'like', "%{$request->question}%")
-                ->orWhere('c', 'like', "%{$request->question}%")
-                ->orWhere('d', 'like', "%{$request->question}%");
-        }
+        // Get the translations subquery
+        $query->whereHas('translations', function ($q) use ($request, $includeAnswer) {
+            $q->where('question_translation', 'like', "%{$request->question}%");
+
+            if ($includeAnswer) {
+                $q->orWhere(function ($subQ) use ($request) {
+                    $subQ->where('a_translation', 'like', "%{$request->question}%")
+                        ->orWhere('b_translation', 'like', "%{$request->question}%")
+                        ->orWhere('c_translation', 'like', "%{$request->question}%")
+                        ->orWhere('d_translation', 'like', "%{$request->question}%");
+                });
+            }
+        });
+
+        // Eager load translations
+        $query->with('translations');
 
         $questions = $query->get();
 
@@ -65,8 +73,9 @@ class QuizController extends Controller
             $quiz = Quiz::with([
                 'questions' => function ($query) use ($allowedTypes) {
                     $query->whereIn('type', $allowedTypes);
-                }
-            ], 'questions.translations')->get();
+                },
+                'questions.translations'
+            ])->get();
 
             return QuestionResource::collection($quiz);
         } elseif ($quiz !== null) {
@@ -74,8 +83,9 @@ class QuizController extends Controller
             $quiz = Quiz::with([
                 'questions' => function ($query) use ($allowedTypes) {
                     $query->whereIn('type', $allowedTypes);
-                }
-            ], 'questions.translations')->where('id', $quiz)->first();
+                },
+                'questions.translations',
+            ])->where('id', $quiz)->first();
 
             return new QuestionResource($quiz);
         } else {
@@ -112,7 +122,7 @@ class QuizController extends Controller
         }
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
-        ->with('questions.translations')
+            ->with('questions.translations')
             ->where('id', $quizIds)
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes, $useOfficialLimit) {

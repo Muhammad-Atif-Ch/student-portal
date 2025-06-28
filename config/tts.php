@@ -19,7 +19,7 @@ return [
   | Supported values: 'female', 'male'
   |
   */
-  'preferred_gender' => env('TTS_PREFERRED_GENDER', 'female'),
+  'preferred_gender' => env('TTS_PREFERRED_GENDER', 'male'),
 
   /*
   |--------------------------------------------------------------------------

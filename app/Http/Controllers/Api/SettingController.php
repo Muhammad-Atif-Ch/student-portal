@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\UpdateSettingRequest;
-use App\Http\Resources\Api\SettingResource;
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\SettingResource;
+use App\Http\Requests\Api\UpdateSettingRequest;
 
 class SettingController extends Controller
 {
@@ -16,6 +17,13 @@ class SettingController extends Controller
         $setting = User::where('device_id', $deviceId)->first();
 
         return new SettingResource($setting);
+    }
+
+    public function appImage()
+    {
+        $image = Setting::select('image')->first();
+
+        return new SettingResource($image);
     }
 
     public function update(UpdateSettingRequest $request)

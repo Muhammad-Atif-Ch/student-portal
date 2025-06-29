@@ -18,6 +18,7 @@ Route::withoutMiddleware(['device.check'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
     Route::get('user/device-register', [UserController::class, 'index']);
     Route::post('contact-us', [ContactUsController::class, 'index']);
+    Route::get('app-image', [SettingController::class, 'appImage']);
 });
 
 Route::group(['prefix' => 'quiz'], function () {

@@ -54,7 +54,7 @@ class Question extends Model
     public function getImageUrlAttribute()
     {
         if ($this->image) {
-            return asset('images/' . $this->image); // or use Storage::url($this->image)
+            return asset("images/{$this->image}"); // or use Storage::url($this->image)
         }
 
         return null;

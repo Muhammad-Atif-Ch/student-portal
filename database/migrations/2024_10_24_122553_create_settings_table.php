@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('color_theme')->default('white')->nullable();
             $table->boolean('mini_sidebar')->default(false)->nullable();
             $table->boolean('stiky_header')->default(true)->nullable();
+            $table->text('image')->nullable();
             $table->timestamps();
         });
     }

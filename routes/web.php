@@ -53,6 +53,8 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::get('index', [SettingController::class, 'index'])->name('index');
         Route::post('update', [SettingController::class, 'update'])->name('update');
         Route::post('reset-default', [SettingController::class, 'resetDefault'])->name('resetDefault');
+        Route::get('app-image', [SettingController::class, 'appImage'])->name('appImage');
+        Route::post('app-image-update', [SettingController::class, 'appImageUpdate'])->name('appImage.update');
     });
 
     // Translation
@@ -72,42 +74,5 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
     });
 });
-
-Route::post('/test-queue', function (Request $request) {
-    try {
-        $request->validate([
-            'api_key' => 'required|string',
-            'source_language' => 'required|string|max:10',
-            'batch_size' => 'integer|min:1|max:10'
-        ]);
-
-        DB::transaction(function () use ($request) {
-            $setting = Setting::first();
-            if ($setting) {
-                $setting->update(['translation_stopped' => false]);
-            }
-            // Cache::forget('translation_stop_flag');
-            // Cache::forget('translation_force_stop');
-            // Cache::forget('translation_stopped_at');
-            // Cache::forget('translation_immediate_stop');
-            // Cache::forget('translation_progress');
-        });
-
-        //   Queue::clear('database');
-
-        Log::info('Before dispatch');
-        // SimpleTestJob::dispatch();
-        BulkTranslateQuestionsJob::dispatch($request->api_key, $request->source_language, $request->batch_size);
-        Log::info('After dispatch');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Translation process started.'
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Error in test-queue: ' . $e->getMessage());
-        return response()->json(['error' => 'Failed to dispatch job'], 500);
-    }
-})->name('test-queue');
 
 require __DIR__ . '/auth.php';

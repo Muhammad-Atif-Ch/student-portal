@@ -18,5 +18,17 @@ class Setting extends Model
         'color_theme',
         'mini_sidebar',
         'stiky_header',
+        'image',
     ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            return asset("images/{$this->image}"); // or use Storage::url($this->image)
+        }
+
+        return null;
+    }
 }

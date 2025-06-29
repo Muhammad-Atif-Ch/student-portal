@@ -39,6 +39,9 @@
             <li class="dropdown {{ Request::is('users*') ? 'active' : '' }}">
                 <a href="{{ route('admin.users.index') }}" class="nav-link"><i data-feather="user"></i><span>Users</span></a>
             </li>
+            <li class="dropdown {{ Request::is('setting*') ? 'active' : '' }}">
+                <a href="{{ route('admin.setting.appImage') }}" class="nav-link"><i data-feather="image"></i><span>App Image</span></a>
+            </li>
 
             {{-- <li class="dropdown {{ Request::is('category*') || Request::is('question*') || Request::is('users*') ? 'active' : '' }}">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i

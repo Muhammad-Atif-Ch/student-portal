@@ -88,14 +88,27 @@ class SingleQuestionTranslationJob implements ShouldQueue
       'answer_explanation' => null
     ];
 
-    $fields = [
-      'question' => $question->question_translation ?? $question->question ?? null,
-      'a' => $question->a_translation ?? $question->a ?? null,
-      'b' => $question->b_translation ?? $question->b ?? null,
-      'c' => $question->c_translation ?? $question->c ?? null,
-      'd' => $question->d_translation ?? $question->d ?? null,
-      'answer_explanation' => $question->answer_explanation_translation ?? $question->answer_explanation ?? null,
-    ];
+    if ($language->id == 39) {
+      // 👉 Force use original fields only
+      $fields = [
+        'question' => $question->question,
+        'a' => $question->a,
+        'b' => $question->b,
+        'c' => $question->c,
+        'd' => $question->d,
+        'answer_explanation' => $question->answer_explanation,
+      ];
+    } else {
+      // 👉 Use translation if available, fallback to original
+      $fields = [
+        'question' => $question->question_translation ?: $question->question ?: null,
+        'a' => $question->a_translation ?: $question->a ?: null,
+        'b' => $question->b_translation ?: $question->b ?: null,
+        'c' => $question->c_translation ?: $question->c ?: null,
+        'd' => $question->d_translation ?: $question->d ?: null,
+        'answer_explanation' => $question->answer_explanation_translation ?: $question->answer_explanation ?: null,
+      ];
+    }
 
     foreach ($fields as $key => $text) {
       if ($this->shouldStop()) {

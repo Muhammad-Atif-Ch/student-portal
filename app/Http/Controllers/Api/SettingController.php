@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\SettingResource;
 use App\Http\Requests\Api\UpdateSettingRequest;
+use App\Models\Lenguage;
 
 class SettingController extends Controller
 {
@@ -24,6 +25,13 @@ class SettingController extends Controller
         $image = Setting::select('image')->first();
 
         return new SettingResource($image);
+    }
+
+    public function lenguages()
+    {
+        $lenguages = Lenguage::where('status', 'active')->get();
+
+        return SettingResource::collection($lenguages);
     }
 
     public function update(UpdateSettingRequest $request)

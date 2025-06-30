@@ -33,22 +33,16 @@ class QuizController extends Controller
         // Fetch the IDs of questions the student has already taken
         $query = Question::query();
 
-        // Get the translations subquery
-        $query->whereHas('translations', function ($q) use ($request, $includeAnswer) {
-            $q->where('question_translation', 'like', "%{$request->question}%");
+        $query->where('question', 'like', "%{$request->question}%");
 
-            if ($includeAnswer) {
-                $q->orWhere(function ($subQ) use ($request) {
-                    $subQ->where('a_translation', 'like', "%{$request->question}%")
-                        ->orWhere('b_translation', 'like', "%{$request->question}%")
-                        ->orWhere('c_translation', 'like', "%{$request->question}%")
-                        ->orWhere('d_translation', 'like', "%{$request->question}%");
-                });
-            }
-        });
-
-        // Eager load translations
-        $query->with('translations');
+        if ($includeAnswer) {
+            $query->orWhere(function ($subQ) use ($request) {
+                $subQ->where('a', 'like', "%{$request->question}%")
+                    ->orWhere('b', 'like', "%{$request->question}%")
+                    ->orWhere('c', 'like', "%{$request->question}%")
+                    ->orWhere('d', 'like', "%{$request->question}%");
+            });
+        }
 
         $questions = $query->get();
 

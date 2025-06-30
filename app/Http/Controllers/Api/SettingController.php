@@ -29,9 +29,9 @@ class SettingController extends Controller
 
     public function lenguages()
     {
-        $lenguages = Lenguage::where('status', 'active')->get();
+        $languages = Lenguage::where('status', 'active')->get();
 
-        return SettingResource::collection($lenguages);
+        return SettingResource::collection($languages);
     }
 
     public function update(UpdateSettingRequest $request)

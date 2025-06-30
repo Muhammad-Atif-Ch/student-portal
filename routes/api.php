@@ -46,7 +46,7 @@ Route::group(['prefix' => 'quiz'], function () {
     // Route::get('contact-us', [ContactUsController::class, 'index']);
 });
 
-Route::get('/lenguages', [SettingController::class, 'lenguages']);
+Route::get('/languages', [SettingController::class, 'languages']);
 Route::group(['prefix' => 'setting'], function () {
     // Result related routes
     Route::get('/', [SettingController::class, 'index']);

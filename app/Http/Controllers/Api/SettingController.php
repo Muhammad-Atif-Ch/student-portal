@@ -27,7 +27,7 @@ class SettingController extends Controller
         return new SettingResource($image);
     }
 
-    public function lenguages()
+    public function languages()
     {
         $languages = Lenguage::where('status', 'active')->get();
 

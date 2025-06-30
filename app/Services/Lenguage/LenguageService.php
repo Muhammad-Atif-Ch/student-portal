@@ -40,15 +40,17 @@ class LenguageService extends AbstractService
         try {
             DB::beginTransaction();
             $requestData = $request->validated();
+
+            // Update the language status
             $this->update($requestData, $id);
 
             DB::commit();
             $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
             return $this->response;
         } catch (\Exception $e) {
+            DB::rollBack();
             $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
             return $this->response;
         }
     }
-
 }

@@ -79,8 +79,9 @@
         document.querySelectorAll('.language-status-toggle').forEach(toggle => {
             toggle.addEventListener('change', function() {
                 const lenguageId = this.getAttribute('data-language-id');
-                const status = this.checked ? 'active' : 'un-active';
-                let url = "{{ route('admin.lenguage.update', ':id') }}".replace(':id', lenguageId);
+                const status = this.checked ? 'active' : 'inactive';
+                const url = "{{ route('admin.lenguage.update', ':id') }}".replace(':id', lenguageId);
+                const checkbox = this;
 
                 fetch(url, {
                         method: 'POST',
@@ -91,11 +92,33 @@
                         body: JSON.stringify({
                             status: status
                         })
-                    }).then(res => {
-                        console.log(data.message);
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
                     })
                     .then(data => {
-                        console.log(data.message);
+                        if (data.status === 'success') {
+                            iziToast.success({
+                                title: 'Success',
+                                message: 'Language status updated successfully',
+                                position: 'topRight'
+                            });
+                        } else {
+                            throw new Error(data.message || 'Failed to update status');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Revert the checkbox state
+                        checkbox.checked = !checkbox.checked;
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Failed to update language status',
+                            position: 'topRight'
+                        });
                     });
             });
         });

@@ -10,12 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('lenguages', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 5)->nullable();
-            $table->string('code_2', 10)->nullable();
+            $table->string('family', 100)->nullable();
             $table->string('name', 100)->nullable();
-            $table->string('status')->default('active');
+            $table->string('native_name', 100)->nullable();
+            $table->string('code', 10)->nullable();
+            $table->string('code_2', 10)->nullable();
+            $table->string('country_code', 10)->nullable();
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('lenguages');
+        Schema::dropIfExists('languages');
     }
 };

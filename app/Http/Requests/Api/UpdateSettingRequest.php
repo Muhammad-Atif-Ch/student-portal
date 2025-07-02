@@ -23,7 +23,7 @@ class UpdateSettingRequest extends FormRequest
     {
         return [
             "app_type" => ["nullable", "string", "in:car,bike,both"],
-            "lenguage_id" => ["nullable", "exists:lenguages,id"],
+            "language_id" => ["nullable", "exists:languages,id"],
         ];
     }
 }

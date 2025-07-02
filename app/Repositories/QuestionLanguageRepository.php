@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Core\Repositories\AbstractRepository;
 use App\Models\QuestionTranslation;
 
-class QuestionLenguageRepository extends AbstractRepository
+class QuestionLanguageRepository extends AbstractRepository
 {
     public function __construct(QuestionTranslation $model)
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Lenguage;
+namespace App\Http\Requests\Language;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLenguageRequest extends FormRequest
+class UpdateLanguageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdateLenguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required',
+            'status' => 'required|boolean',
         ];
     }
 }

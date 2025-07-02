@@ -2,12 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Models\Lenguage;
+use App\Models\Language;
 use App\Core\Repositories\AbstractRepository;
 
-class LenguageRepository extends AbstractRepository
+class LanguageRepository extends AbstractRepository
 {
-    public function __construct(Lenguage $model)
+    public function __construct(Language $model)
     {
         $this->model = $model;
     }

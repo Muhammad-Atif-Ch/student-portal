@@ -48,9 +48,6 @@
                                                     <td>{{ $question->c }}</td>
                                                     <td>{{ $question->correct_answer }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.quiz.question.language.index', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
-                                                            <i class="fa fa-language"></i>
-                                                        </a>
                                                         <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -109,17 +106,4 @@
         </div>
     </div>
 @endsection
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            if ($.fn.DataTable.isDataTable('#table-1')) {
-                $('#table-1').DataTable().destroy(); // Destroy existing instance
-            }
 
-            $('#table-1').DataTable({
-                "pageLength": 100, // Show 100 rows by default
-                "lengthMenu": [10, 25, 50, 100, 200] // Allow users to change row count
-            });
-        });
-    </script>
-@endsection

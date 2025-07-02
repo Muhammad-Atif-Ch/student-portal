@@ -83,7 +83,7 @@ class TextToSpeechConversionJob implements ShouldQueue
                     }
 
                     // Convert text to speech
-                    $audioContent = $tts->convertToSpeech($text, $translation->lenguage->code_2);
+                    $audioContent = $tts->convertToSpeech($text, $translation->language->code);
                     if ($audioContent === false) {
                         Log::error("TTS conversion failed for translation ID: {$translation->id}, field: {$field}");
                         continue;
@@ -98,7 +98,7 @@ class TextToSpeechConversionJob implements ShouldQueue
                     $translation->update([$audioField => $fileName]);
 
                     $progress['completed']++;
-                    $progress['message'] = "Converting {$field} for question {$translation->question_id} - {$translation->id} - {$translation->lenguage->name} ";
+                    $progress['message'] = "Converting {$field} for question {$translation->question_id} - {$translation->id} - {$translation->language->name} ";
                     $this->updateProgress($progress);
 
                     // Prevent rate limiting

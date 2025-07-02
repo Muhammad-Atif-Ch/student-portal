@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\QuestionLenguage;
+namespace App\Http\Requests\QuestionLanguage;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLenguageRequest extends FormRequest
+class CreateLanguageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,7 @@ class UpdateLenguageRequest extends FormRequest
     {
         return [
             'language_id' => ['required', 'integer'],
-            'title_audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
+            'title_audio_file' => 'required|mimes:mp3,wav,ogg|max:10240',
             'a_audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
             'b_audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
             'c_audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',

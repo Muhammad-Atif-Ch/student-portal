@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Language;
 use Illuminate\Database\Seeder;
-use App\Models\Lenguage;
 use Illuminate\Support\Facades\File;
 
 class LanguageSeeder extends Seeder
@@ -14,7 +14,7 @@ class LanguageSeeder extends Seeder
   public function run(): void
   {
     // Check if CSV file exists
-    $csvPath = database_path('lenguage-Sat Jun 14 2025.csv');
+    $csvPath = database_path('languages.csv');
 
     if (!File::exists($csvPath)) {
       $this->command->error('CSV file not found: ' . $csvPath);
@@ -29,13 +29,14 @@ class LanguageSeeder extends Seeder
 
     foreach ($csvData as $row) {
       if (count($row) >= 3) {
-        Lenguage::updateOrCreate(
-          ['code' => $row[0]],
+        Language::updateOrCreate(
+          ['code' => $row[3]],
           [
-            'code' => $row[0] ?? null,
-            'code_2' => $row[1] ?? null,
-            'name' => $row[2] ?? null,
-            'status' => '0'
+            'family' => $row[0] ?? null,
+            'name' => $row[1] ?? null,
+            'native_name' => $row[2] ?? null,
+            'code' => $row[3] ?? null,
+            'code_2' => $row[4] ?? null,
           ]
         );
       }

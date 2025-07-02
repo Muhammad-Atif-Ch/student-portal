@@ -4,30 +4,30 @@ namespace App\Responses;
 
 use App\Core\Responses\AbstractResponse;
 
-class QuestionLenguageResponse extends AbstractResponse
+class QuestionLanguageResponse extends AbstractResponse
 {
     public function getCreateResponseMessage(): string
     {
-        return "Question Lenguage created successfully";
+        return "Question Language created successfully";
     }
 
     public function getListResponseMessage(): string
     {
-        return "List of Questions Lenguages get successfully";
+        return "List of Questions Languages get successfully";
     }
 
     public function getUpdateResponseMessage(): string
     {
-        return "Question Lenguage updated successfully";
+        return "Question Language updated successfully";
     }
 
     public function getDeleteResponseMessage(): string
     {
-        return "Question Lenguage deleted successfully";
+        return "Question Language deleted successfully";
     }
     public function getRecordResponseMessage(): string
     {
-        return "Question Lenguage get successfully";
+        return "Question Language get successfully";
     }
 
 }

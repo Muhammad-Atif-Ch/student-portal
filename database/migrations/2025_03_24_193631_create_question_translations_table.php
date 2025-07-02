@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('quiz_id')->constrained("quizzes");
             $table->foreignId('question_id')->constrained("questions");
-            $table->foreignId('lenguage_id')->constrained("lenguages");
+            $table->foreignId('language_id')->constrained("languages");
             $table->text('question_translation')->nullable();
             $table->text('a_translation')->nullable();
             $table->text('b_translation')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->timestamps();
 
             // Add unique constraint to prevent duplicate translations
-            $table->unique(['question_id', 'lenguage_id']);
+            $table->unique(['question_id', 'language_id']);
         });
     }
 

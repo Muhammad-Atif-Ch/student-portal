@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Lenguage;
+use App\Models\Language;
 use App\Models\Question;
 use App\Models\QuestionTranslation;
 use App\Services\AzureTextToSpeech\AzureTTSService;
@@ -33,7 +33,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
   public function handle()
   {
     try {
-      $languages = Lenguage::where('status', 'active')->get();
+      $languages = Language::where('status', 'active')->get();
 
       $progress = [
         'total' => $languages->count() * 7, // 6 fields + 1 for initial setup
@@ -77,7 +77,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
       Cache::get('translation_force_stop');
   }
 
-  private function translateFields(Question $question, Lenguage $language, array &$progress): array|false
+  private function translateFields(Question $question, Language $language, array &$progress): array|false
   {
     $translations = [
       'question' => null,
@@ -123,7 +123,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
       }
 
       try {
-        $translated = $this->translate($text, $language->code_2);
+        $translated = $this->translate($text, $language->code);
         if ($translated === false) {
           Log::error("Translation failed for field: {$key}");
           return false;
@@ -170,7 +170,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
     }
   }
 
-  private function saveTranslation(Question $question, Lenguage $language, array $translations): QuestionTranslation
+  private function saveTranslation(Question $question, Language $language, array $translations): QuestionTranslation
   {
     $translationData = [
       'quiz_id' => $question->quiz_id,
@@ -185,13 +185,13 @@ class SingleQuestionTranslationJob implements ShouldQueue
     return QuestionTranslation::updateOrCreate(
       [
         'question_id' => $question->id,
-        'lenguage_id' => $language->id
+        'language_id' => $language->id
       ],
       $translationData
     );
   }
 
-  private function convertToSpeech(QuestionTranslation $translation, Lenguage $language, array &$progress)
+  private function convertToSpeech(QuestionTranslation $translation, Language $language, array &$progress)
   {
     try {
       $tts = new AzureTTSService();
@@ -220,7 +220,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
         $audioField = "{$field}_audio";
 
         // Convert text to speech
-        $audioContent = $tts->convertToSpeech($text, $language->code_2);
+        $audioContent = $tts->convertToSpeech($text, $language->code);
         if ($audioContent === false) {
           Log::error("TTS conversion failed for translation ID: {$translation->id}, field: {$field}");
           continue;

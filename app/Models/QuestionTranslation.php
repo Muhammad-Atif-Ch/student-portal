@@ -14,7 +14,7 @@ class QuestionTranslation extends Model
     protected $fillable = [
         'quiz_id',
         'question_id',
-        'lenguage_id',
+        'language_id',
         'question_translation',
         'a_translation',
         'b_translation',
@@ -48,9 +48,9 @@ class QuestionTranslation extends Model
         return $this->belongsTo(Quiz::class, 'quiz_id');
     }
 
-    public function lenguage()
+    public function language()
     {
-        return $this->belongsTo(Lenguage::class, 'lenguage_id');
+        return $this->belongsTo(Language::class, 'language_id');
     }
 
     /**
@@ -60,8 +60,8 @@ class QuestionTranslation extends Model
     {
         $deviceId = request()->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
-        $languageId = $user->lenguage_id ?? 39;
-        return $query->where('lenguage_id', $languageId);
+        $languageId = $user->language_id ?? 39;
+        return $query->where('language_id', $languageId);
     }
 
     /**

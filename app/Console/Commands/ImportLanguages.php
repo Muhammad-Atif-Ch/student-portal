@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Lenguage;
+use App\Models\Language;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -27,7 +27,7 @@ class ImportLanguages extends Command
    */
   public function handle()
   {
-    $file = $this->argument('file') ?? 'database/lenguage-Sat Jun 14 2025.csv';
+    $file = $this->argument('file') ?? 'database/language-Sat Jun 14 2025.csv';
     $csvPath = base_path($file);
 
     if (!File::exists($csvPath)) {
@@ -49,7 +49,7 @@ class ImportLanguages extends Command
 
     foreach ($csvData as $row) {
       if (count($row) >= 3) {
-        $language = Lenguage::updateOrCreate(
+        $language = Language::updateOrCreate(
           ['code' => $row[0]],
           [
             'code' => $row[0] ?? null,

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Question;
-use App\Models\Lenguage;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use App\Models\QuestionTranslation;
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ class QuestionTranslationController extends Controller
 {
   public function index()
   {
-    $languages = Lenguage::where('status', 'active')->get();
+    $languages = Language::where('status', 'active')->get();
     return view('backend.question_translations.index', compact('languages'));
   }
 

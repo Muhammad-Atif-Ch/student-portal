@@ -9,6 +9,37 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title')</title>
         @include('backend.layouts.partials.css')
+
+        <style>
+            .small-toast {
+                font-size: 1rem !important;
+                padding: 0.7rem !important;
+                min-width: 280px !important;
+                max-width: 350px !important;
+            }
+
+            .small-toast-title {
+                font-size: 1rem !important;
+                margin: 0 !important;
+                padding-left: 12px !important;
+                line-height: 1.5 !important;
+            }
+
+            .swal2-icon {
+                margin: 0 !important;
+                height: 2.5em !important;
+                width: 2.5em !important;
+                border: none !important;
+            }
+
+            .swal2-icon .swal2-icon-content {
+                font-size: 1.5em !important;
+            }
+
+            .swal2-timer-progress-bar {
+                height: 0.2rem !important;
+            }
+        </style>
     </head>
 
     <body class="@stack('body-class')">
@@ -56,8 +87,41 @@
                     stop: "{{ route('admin.translations.tts.stop') }}"
                 }
             };
+            $(document).ready(function() {
+                if ($.fn.DataTable.isDataTable('#table-1')) {
+                    $('#table-1').DataTable().destroy(); // Destroy existing instance
+                }
+
+                $('#table-1').DataTable({
+                    "pageLength": 100, // Show 100 rows by default
+                    "lengthMenu": [10, 25, 50, 100, 200] // Allow users to change row count
+                });
+            });
+
+            function showToast(icon, title) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'small-toast',
+                        title: 'small-toast-title'
+                    },
+                    iconHtml: ''
+                });
+
+                Toast.fire({
+                    icon: icon,
+                    title: title,
+                    padding: '0.7em',
+                    width: 'auto'
+                });
+            }
         </script>
-        @yield('scripts')
+
+        @stack('scripts')
     </body>
 
     <!-- index.html  21 Nov 2019 03:47:04 GMT -->

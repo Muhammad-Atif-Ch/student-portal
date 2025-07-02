@@ -1,26 +1,16 @@
 <?php
 
-use App\Models\Setting;
-use App\Jobs\SimpleTestJob;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
-use App\Jobs\BulkTranslateQuestionsJob;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\LenguageController;
+use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\ContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TranslationController;
-use App\Http\Controllers\Admin\QuestionLanguageController;
 use App\Http\Controllers\Admin\TextToSpeechController;
-use App\Http\Controllers\Admin\QuestionTranslationController;
 
 Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Profile Management
@@ -34,15 +24,16 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Quiz and Question Management
     Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy');
     Route::resource('quiz.question', QuestionController::class);
-    Route::resource('quiz.question.language', QuestionLanguageController::class);
     Route::post('import-question/{quiz}', [QuestionController::class, 'importQuestion'])->name('question.import.file');
     Route::get('destroy-question/{quiz}', [QuestionController::class, 'destroyAll'])->name('quiz.question.destroy.all');
     Route::resource('users', UserController::class);
 
-    //Lenguage
-    Route::group(['prefix' => 'lenguage', 'as' => 'lenguage.'], function () {
-        Route::get('/', [LenguageController::class, 'index'])->name('index');
-        Route::post('/update/{id}', [LenguageController::class, 'update'])->name('update')->withoutMiddleware(['auth']);
+    //Language
+    Route::group(['prefix' => 'language', 'as' => 'language.'], function () {
+        Route::get('/', [LanguageController::class, 'index'])->name('index');
+        Route::get('/edit/{id}', [LanguageController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [LanguageController::class, 'update'])->name('update');
+        Route::post('/update-status', [LanguageController::class, 'status'])->name('update.status');
     });
 
     // Contact Us

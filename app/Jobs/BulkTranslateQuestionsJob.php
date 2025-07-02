@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Setting;
-use App\Models\Lenguage;
+use App\Models\Language;
 use App\Models\Question;
 use App\Models\QuestionTranslation;
 use Illuminate\Bus\Queueable;
@@ -32,7 +32,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
             $questions = Question::whereNotNull('question')->where('question', '!=', '')
                 // ->take(20)
                 ->orderBy('quiz_id', 'asc')->get();
-            $languages = Lenguage::where('status', 'active')->get();
+            $languages = Language::where('status', 'active')->get();
 
             $progress = [
                 'total' => $questions->count() * $languages->count(),
@@ -89,15 +89,15 @@ class BulkTranslateQuestionsJob implements ShouldQueue
             Cache::get('translation_force_stop');
     }
 
-    private function isAlreadyTranslated(Question $question, Lenguage $language): bool
+    private function isAlreadyTranslated(Question $question, Language $language): bool
     {
         return QuestionTranslation::where([
             'question_id' => $question->id,
-            'lenguage_id' => $language->id
+            'language_id' => $language->id
         ])->exists();
     }
 
-    private function translateFields(Question $question, Lenguage $language): array|false
+    private function translateFields(Question $question, Language $language): array|false
     {
         // Initialize translations array with all keys set to null
         $translations = [
@@ -138,7 +138,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
             }
 
             try {
-                $translated = $this->translate($text, $language->code_2);
+                $translated = $this->translate($text, $language->code);
                 if ($translated === false) {
                     Log::error("Translation failed for field: {$key}");
                     return false;
@@ -186,7 +186,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
         }
     }
 
-    private function saveTranslation(Question $question, Lenguage $language, array $translations): void
+    private function saveTranslation(Question $question, Language $language, array $translations): void
     {
         try {
             // Ensure all required keys exist with null defaults
@@ -209,7 +209,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
             QuestionTranslation::updateOrCreate(
                 [
                     'question_id' => $question->id,
-                    'lenguage_id' => $language->id
+                    'language_id' => $language->id
                 ],
                 $translationData
             );

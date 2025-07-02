@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-@section('title', __('Add Question Translation'))
+@section('title', __('Edit Language'))
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -8,54 +8,63 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form action="{{ route('admin.quiz.question.language.store', ['quiz' => $quiz_id, 'question' => $question_id]) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
                                 @csrf
+                                @method('Patch')
                                 <div class="card-header">
-                                    <h4>Add Question Translation</h4>
+                                    <h4>Edit User</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Languages <small style="color: red">*</small></label>
-                                                <select class="form-control" name="language_id" value="{{ old('language_id') }}" required>
-                                                    <option value="" selected>Select Option</option>
-                                                    @foreach ($languages as $language)
-                                                        <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>{{ $language->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <label>Name <small style="color: red">*</small></label>
+                                                <input type="text" name="name" class="form-control" required value="{{ $user->name }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Title Audio File <small style="color: red">*</small></label>
-                                                <input type="file" name="title_audio_file" class="form-control" accept="audio/*">
+                                                <label>Email <small style="color: red">*</small></label>
+                                                <input type="email" name="email" class="form-control" required value="{{ $user->email }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>A Audio File </label>
-                                                <input type="file" name="a_audio_file" class="form-control" accept="audio/*">
+                                                <label>Mobile</label>
+                                                <input type="number" name="mobile" class="form-control" value="{{ $user->mobile }}">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>B Audio File</label>
-                                                <input type="file" name="b_audio_file" class="form-control" accept="audio/*">
+                                                <label>Address</label>
+                                                <input type="text" name="address" class="form-control" value="{{ $user->address }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>C Audio File</label>
-                                                <input type="file" name="c_audio_file" class="form-control" accept="audio/*">
+                                                <label>City</label>
+                                                <input type="text" name="city" class="form-control" value="{{ $user->city }}">
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>D Audio File</label>
-                                                <input type="file" name="d_audio_file" class="form-control" accept="audio/*">
+                                                <label>Role</label>
+                                                <select name="role_id" class="form-control" required>
+                                                    <option value="">Select Role</option>
+                                                    @foreach ($data['roles'] as $role)
+                                                        <option value="{{ $role->id }}" @if ($user->roles->contains('id', $role->id)) selected @endif>{{ $role->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Password</label>
+                                                <input type="text" name="password" class="form-control">
                                             </div>
                                         </div>
                                     </div>

@@ -9,23 +9,23 @@ use Illuminate\Support\Collection;
 use App\Models\QuestionTranslation;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
-use App\Responses\QuestionLenguageResponse;
-use App\Repositories\QuestionLenguageRepository;
+use App\Responses\QuestionLanguageResponse;
+use App\Repositories\QuestionLanguageRepository;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
-use App\Http\Requests\QuestionLenguage\CreateLenguageRequest;
-use App\Http\Requests\QuestionLenguage\UpdateLenguageRequest;
+use App\Http\Requests\QuestionLanguage\CreateLanguageRequest;
+use App\Http\Requests\QuestionLanguage\UpdateLanguageRequest;
 
-class QuestionLenguageService extends AbstractService
+class QuestionLanguageService extends AbstractService
 {
 
-    public function __construct(QuestionLenguageRepository $repository, QuestionLenguageResponse $response, Request $request)
+    public function __construct(QuestionLanguageRepository $repository, QuestionLanguageResponse $response, Request $request)
     {
         $this->repository = $repository;
         $this->response = $response;
         $this->request = $request;
     }
 
-    public function createQuestion(CreateLenguageRequest $request, $quiz_id, $question_id): AbstractResponseInterface
+    public function createQuestion(CreateLanguageRequest $request, $quiz_id, $question_id): AbstractResponseInterface
     {
         try {
             $data = $request->validated();
@@ -71,7 +71,7 @@ class QuestionLenguageService extends AbstractService
         return $this->getWhere(['quiz_id' => $quiz_id, 'question_id' => $question_id, 'id' => $id]);
     }
 
-    public function updateQuestion(UpdateLenguageRequest $request, $id): AbstractResponseInterface
+    public function updateQuestion(UpdateLanguageRequest $request, $id): AbstractResponseInterface
     {
         $data = $request->validated();
         $translation = QuestionTranslation::findOrFail($id);

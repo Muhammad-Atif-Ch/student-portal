@@ -55,7 +55,7 @@
                                                 <th>#</th>
                                                 <th>{{ __('Quiz') }}</th>
                                                 <th>{{ __('Question') }}</th>
-                                                <th>{{ __('Lenguage') }}</th>
+                                                <th>{{ __('Language') }}</th>
                                                 <th>{{ __('Question') }}</th>
                                                 <th>{{ __('A') }}</th>
                                                 <th>{{ __('B') }}</th>
@@ -76,7 +76,7 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $data->quiz->id }}</td>
                                                     <td>{{ $data->question->id }}</td>
-                                                    <td>{{ $data->lenguage->name }}</td>
+                                                    <td>{{ $data->language->name }}</td>
                                                     <td>{{ $data->question_translation }}</td>
                                                     <td>{{ $data->a_translation }}</td>
                                                     <td>{{ $data->b_translation }}</td>
@@ -173,17 +173,4 @@
     </div>
 
 @endsection
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            if ($.fn.DataTable.isDataTable('#table-1')) {
-                $('#table-1').DataTable().destroy(); // Destroy existing instance
-            }
 
-            $('#table-1').DataTable({
-                "pageLength": 100, // Show 100 rows by default
-                "lengthMenu": [10, 25, 50, 100, 200] // Allow users to change row count
-            });
-        });
-    </script>
-@endsection

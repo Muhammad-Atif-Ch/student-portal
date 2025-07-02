@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\SettingResource;
 use App\Http\Requests\Api\UpdateSettingRequest;
-use App\Models\Lenguage;
+use App\Models\Language;
 
 class SettingController extends Controller
 {
@@ -29,7 +29,7 @@ class SettingController extends Controller
 
     public function languages()
     {
-        $languages = Lenguage::where('status', 'active')->get();
+        $languages = Language::where('status', 'active')->get();
 
         return SettingResource::collection($languages);
     }
@@ -39,7 +39,7 @@ class SettingController extends Controller
         $deviceId = $request->header('Device-Id');
         $setting = User::where('device_id', $deviceId)->first();
         $setting->app_type = $request->app_type;
-        $setting->lenguage_id = $request->lenguage_id;
+        $setting->language_id = $request->language_id;
         $setting->save();
 
         return (new SettingResource($setting))->additional([

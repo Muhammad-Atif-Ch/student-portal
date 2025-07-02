@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Setting;
-use App\Models\Lenguage;
+use App\Models\Language;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,13 +17,13 @@ class TranslationController extends Controller
 {
   public function index()
   {
-    $translations = QuestionTranslation::with('quiz', 'question', 'lenguage')->get();
+    $translations = QuestionTranslation::with('quiz', 'question', 'language')->get();
     return view('backend.translations.index', compact('translations'));
   }
 
   public function createTranslation()
   {
-    $languages = Lenguage::where('status', 'active')->get();
+    $languages = Language::where('status', 'active')->get();
     $totalQuestions = Question::count();
     $translatedQuestions = QuestionTranslation::select('question_id')->distinct()->count();
 

@@ -44,13 +44,13 @@
                                                     </td>
                                                     {{-- <td> --}}
                                                         {{-- <div class="pretty p-switch pr-2">
-                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $lenguage->id }}"
-                                                                {{ $lenguage->status ? 'checked' : '' }}>
+                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $language->id }}"
+                                                                {{ $language->status ? 'checked' : '' }}>
                                                             <div class="state p-primary">
                                                                 <label></label>
                                                             </div>
                                                         </div> --}}
-                                                        {{-- <a href="{{ route('admin.lenguage.update', $lenguage->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
+                                                        {{-- <a href="{{ route('admin.language.update', $language->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
                                                     {{-- </td> --}}
                                                 </tr>
                                             @empty
@@ -74,9 +74,9 @@
     <script>
         document.querySelectorAll('.language-status-toggle').forEach(toggle => {
             toggle.addEventListener('change', function() {
-                const lenguageId = this.getAttribute('data-language-id');
+                const languageId = this.getAttribute('data-language-id');
                 const status = this.checked ? 1 : 0;
-                let url = "{{ route('admin.lenguage.update', ':id') }}".replace(':id', lenguageId);
+                let url = "{{ route('admin.language.update', ':id') }}".replace(':id', languageId);
 
                 fetch(url, {
                         method: 'POST',

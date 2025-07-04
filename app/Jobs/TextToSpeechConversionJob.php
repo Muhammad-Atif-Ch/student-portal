@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Setting;
 use App\Models\QuestionTranslation;
 use App\Helpers\UploadFile;
+use App\Models\Language;
 use App\Services\AzureTextToSpeech\AzureTTSService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,8 +30,12 @@ class TextToSpeechConversionJob implements ShouldQueue
     public function handle()
     {
         try {
+            $languages = Language::where('status', 1)->pluck('id')->toArray();
+
             $translations = QuestionTranslation::whereNotNull('question_translation')
+                ->whereIn('language_id', $languages)
                 // ->take(1)
+                ->orderBy('question_id', 'asc')
                 ->get();
 
             // Calculate total fields to convert

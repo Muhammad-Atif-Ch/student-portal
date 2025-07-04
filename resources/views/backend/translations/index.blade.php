@@ -32,10 +32,6 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            {{-- <div class="section-header">
-                <h1>{{ __('Question Translations') }}</h1>
-            </div> --}}
-
             <div class="section-body">
                 <div class="row">
                     <div class="col-12">
@@ -49,7 +45,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table table-striped" id="table-translations">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -73,7 +69,7 @@
                                         <tbody>
                                             @forelse ($translations as $data)
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->id }}</td>
                                                     <td>{{ $data->quiz->id }}</td>
                                                     <td>{{ $data->question->id }}</td>
                                                     <td>{{ $data->language->name }}</td>
@@ -163,6 +159,8 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                    <!-- Pagination Links -->
+                                    {{ $translations->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -173,4 +171,14 @@
     </div>
 
 @endsection
-
+@section('script')
+    <script>
+        $(document).ready(function() {
+            $('#table-1').DataTable({
+                paging: false, // Disable DataTables pagination since we're using Laravel's
+                ordering: true,
+                searching: true
+            });
+        });
+    </script>
+@endsection

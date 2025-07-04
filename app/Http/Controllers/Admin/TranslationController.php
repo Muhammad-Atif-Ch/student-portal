@@ -17,7 +17,7 @@ class TranslationController extends Controller
 {
   public function index()
   {
-    $translations = QuestionTranslation::with('quiz', 'question', 'language')->get();
+    $translations = QuestionTranslation::with('quiz:id', 'question:id', 'language:id,name')->paginate(100);
     return view('backend.translations.index', compact('translations'));
   }
 

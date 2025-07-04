@@ -32,7 +32,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
             $questions = Question::whereNotNull('question')->where('question', '!=', '')
                 // ->take(20)
                 ->orderBy('quiz_id', 'asc')->get();
-            $languages = Language::where('status', 'active')->get();
+            $languages = Language::where('status', 1)->get();
 
             $progress = [
                 'total' => $questions->count() * $languages->count(),

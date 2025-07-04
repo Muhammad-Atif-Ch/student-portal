@@ -94,5 +94,4 @@
 
 @push('scripts')
     <script src="{{ asset('assets/js/broadcast.js') }}"></script>
-    <script src="{{ asset('assets/js/page/tts.js') }}"></script>
 @endpush

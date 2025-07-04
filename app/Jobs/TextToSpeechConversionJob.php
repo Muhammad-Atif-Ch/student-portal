@@ -34,10 +34,10 @@ class TextToSpeechConversionJob implements ShouldQueue
                 ->get();
 
             // Calculate total fields to convert
-            $totalFields = $translations->count() * 6; // 6 fields per translation
+            $total = $translations->count();
 
             $progress = [
-                'total' => $totalFields,
+                'total' => $total,
                 'completed' => 0,
                 'status' => 'running',
                 'message' => 'Starting audio conversion...'
@@ -45,12 +45,17 @@ class TextToSpeechConversionJob implements ShouldQueue
             $this->updateProgress($progress);
 
             $tts = new AzureTTSService();
-            $uploadFile = new UploadFile();
 
             foreach ($translations as $translation) {
                 if ($this->shouldStop()) {
                     $this->updateProgress($progress, 'stopped', 'Audio conversion stopped by user');
                     return;
+                }
+
+                if (!empty($translation->question_audio) || !empty($translation->a_audio) || !empty($translation->b_audio) || !empty($translation->c_audio) || !empty($translation->answer_explanation_audio)) {
+                    $progress['completed']++;
+                    $this->updateProgress($progress);
+                    continue;
                 }
 
                 $fields = [
@@ -88,7 +93,7 @@ class TextToSpeechConversionJob implements ShouldQueue
                         Log::error("TTS conversion failed for translation ID: {$translation->id}, field: {$field}");
                         continue;
                     }
-                    
+
                     // Save audio file
                     $path = public_path('audios');
                     $fileName = "{$field}_" . time() . '.mp3';

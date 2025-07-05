@@ -79,18 +79,18 @@ class TextToSpeechConversionJob implements ShouldQueue
                     }
 
                     if (empty($text)) {
-                        $progress['completed']++;
-                        $this->updateProgress($progress);
+                        // $progress['completed']++;
+                        // $this->updateProgress($progress);
                         continue;
                     }
 
-                    // Check if audio needs update
                     $audioField = "{$field}_audio";
-                    if (!$this->shouldUpdateAudio($translation, $audioField)) {
-                        $progress['completed']++;
-                        $this->updateProgress($progress);
-                        continue;
-                    }
+                    // Check if audio needs update
+                    // if (!$this->shouldUpdateAudio($translation, $audioField)) {
+                    //     $progress['completed']++;
+                    //     $this->updateProgress($progress);
+                    //     continue;
+                    // }
 
                     // Convert text to speech
                     $audioContent = $tts->convertToSpeech($text, $translation->language->code);
@@ -131,21 +131,21 @@ class TextToSpeechConversionJob implements ShouldQueue
             Cache::get('tts_force_stop');
     }
 
-    private function shouldUpdateAudio(QuestionTranslation $translation, string $audioField): bool
-    {
-        // If audio doesn't exist, should convert
-        if (!$translation->$audioField) {
-            return true;
-        }
+    // private function shouldUpdateAudio(QuestionTranslation $translation, string $audioField): bool
+    // {
+    //     // If audio doesn't exist, should convert
+    //     if (!$translation->$audioField) {
+    //         return true;
+    //     }
 
-        // If text was updated after audio was created, should reconvert
-        $audioPath = Storage::path('public/' . $translation->$audioField);
-        if (!file_exists($audioPath)) {
-            return true;
-        }
+    //     // If text was updated after audio was created, should reconvert
+    //     $audioPath = Storage::path('public/' . $translation->$audioField);
+    //     if (!file_exists($audioPath)) {
+    //         return true;
+    //     }
 
-        return $translation->updated_at > filemtime($audioPath);
-    }
+    //     return $translation->updated_at > filemtime($audioPath);
+    // }
 
     private function updateProgress(array &$progress, ?string $status = null, ?string $message = null): void
     {

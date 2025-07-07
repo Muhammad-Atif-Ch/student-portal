@@ -1017,6 +1017,7 @@ function initTTSProgress() {
                     timerProgressBar: true,
                 });
             } else {
+                
                 updateProgressUI(data);
             }
         } catch (error) {
@@ -1044,7 +1045,6 @@ function initTTSProgress() {
 
     function updateProgressUI(data) {
         if (!data) return;
-
         // Handle both data structures (direct and nested)
         const percent = parseFloat(data.percentage || data.percent || 0);
         const progress = data.progress || data;
@@ -1052,7 +1052,7 @@ function initTTSProgress() {
         const status = progress.status || "running";
         const completed = parseInt(progress.completed || 0);
         const total = parseInt(progress.total || 0);
-
+        
         // Validate progress data
         if (isNaN(percent) || isNaN(completed) || isNaN(total)) {
             console.warn("Invalid progress data values:", {
@@ -1209,8 +1209,7 @@ function initTTSProgress() {
                     completionMessage = "Voice conversion was stopped by user.";
                     alertType = "warning";
                 } else if (status === "error") {
-                    completionMessage =
-                        "Voice conversion encountered an error.";
+                    completionMessage = message;
                     alertType = "error";
                 }
 

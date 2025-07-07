@@ -94,25 +94,28 @@ class TextToSpeechConversionJob implements ShouldQueue
 
                     // Convert text to speech
                     $audioContent = $tts->convertToSpeech($text, $translation->language->code);
-                    if ($audioContent === false) {
-                        Log::error("TTS conversion failed for translation ID: {$translation->id}, field: {$field}");
-                        continue;
+                    if ($audioContent['status'] === false) {
+                        $progress['status'] = "error";
+                        $progress['message'] = "TTS conversion failed. The reason is: {$audioContent['message']}";
+                        $this->updateProgress($progress);
+                        break;
                     }
+                    if (!is_array($audioContent)) {
+                        // Save audio file
+                        $path = public_path('audios');
+                        $fileName = "{$field}_" . time() . '.mp3';
+                        file_put_contents($path . '/' . $fileName, $audioContent);
 
-                    // Save audio file
-                    $path = public_path('audios');
-                    $fileName = "{$field}_" . time() . '.mp3';
-                    file_put_contents($path . '/' . $fileName, $audioContent);
+                        // Update translation record
+                        $translation->update([$audioField => $fileName]);
 
-                    // Update translation record
-                    $translation->update([$audioField => $fileName]);
+                        $progress['completed']++;
+                        $progress['message'] = "Converting {$field} for question {$translation->question_id} - {$translation->id} - {$translation->language->name} ";
+                        $this->updateProgress($progress);
 
-                    $progress['completed']++;
-                    $progress['message'] = "Converting {$field} for question {$translation->question_id} - {$translation->id} - {$translation->language->name} ";
-                    $this->updateProgress($progress);
-
-                    // Prevent rate limiting
-                    usleep(500000);
+                        // Prevent rate limiting
+                        usleep(500000);
+                    }
                 }
             }
 
@@ -149,6 +152,7 @@ class TextToSpeechConversionJob implements ShouldQueue
 
     private function updateProgress(array &$progress, ?string $status = null, ?string $message = null): void
     {
+        Log::info('updateProgress', ['progress' => $progress, 'status' => $status, 'message' => $message]);
         if ($status) {
             $progress['status'] = $status;
         }

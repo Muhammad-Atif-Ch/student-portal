@@ -19,7 +19,7 @@ class AzureTTSService
     // $this->endpoint = env('AZURE_SPEECH_API_URL');
   }
 
-  public function convertToSpeech(string $text, string $language): string|false
+  public function convertToSpeech(string $text, string $language): string|array
   {
     try {
       // Get voice for language
@@ -53,13 +53,20 @@ class AzureTTSService
         'body' => $response->body(),
         'headers' => $response->headers()
       ]);
-      return false;
+
+      return [
+        'status' => false,
+        'message' => $response->body(),
+      ];
     } catch (\Exception $e) {
       Log::error('Azure TTS Exception', [
         'message' => $e->getMessage(),
         'trace' => $e->getTraceAsString()
       ]);
-      return false;
+      return [
+        'status' => false,
+        'message' => $e->getMessage(),
+      ];
     }
   }
 

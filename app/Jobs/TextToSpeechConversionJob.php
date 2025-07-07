@@ -35,7 +35,7 @@ class TextToSpeechConversionJob implements ShouldQueue
             $translations = QuestionTranslation::whereNotNull('question_translation')
                 ->whereIn('language_id', $languages)
                 // ->take(1)
-                ->orderBy('question_id', 'asc')
+                ->orderBy('id', 'asc')
                 ->get();
 
             // Calculate total fields to convert

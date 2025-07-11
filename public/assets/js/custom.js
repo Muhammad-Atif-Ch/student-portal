@@ -927,7 +927,7 @@ function initTTSProgress() {
         }
         isInitialCheck = false;
         // Then set up the interval
-        intervalId = setInterval(fetchProgress, 5000);
+        intervalId = setInterval(fetchProgress, 10000);
     }
 
     function checkExistingProgress() {

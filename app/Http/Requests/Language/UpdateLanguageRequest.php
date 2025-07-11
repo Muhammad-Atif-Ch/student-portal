@@ -22,7 +22,12 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|boolean',
+            'family' => 'sometimes',
+            'name' => 'sometimes',
+            'native_name' => 'sometimes',
+            'code' => 'sometimes',
+            'code_2' => 'sometimes',
+            'status' => 'nullable|sometimes|boolean',
         ];
     }
 }

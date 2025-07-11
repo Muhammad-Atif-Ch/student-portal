@@ -32,7 +32,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::group(['prefix' => 'language', 'as' => 'language.'], function () {
         Route::get('/', [LanguageController::class, 'index'])->name('index');
         Route::get('/edit/{id}', [LanguageController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [LanguageController::class, 'update'])->name('update');
+        Route::patch('/update/{id}', [LanguageController::class, 'update'])->name('update');
         Route::post('/update-status', [LanguageController::class, 'status'])->name('update.status');
     });
 

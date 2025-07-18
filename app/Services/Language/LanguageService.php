@@ -11,6 +11,7 @@ use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
 use App\Repositories\LanguageRepository;
+use App\Http\Requests\Language\StoreLanguageRequest;
 use App\Http\Requests\Language\UpdateLanguageRequest;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
 
@@ -34,6 +35,25 @@ class LanguageService extends AbstractService
     public function showLanguage($id): Model
     {
         return $this->getWhere(['id' => $id]);
+    }
+
+    public function storeLanguage(StoreLanguageRequest $request): AbstractResponseInterface
+    {
+        try {
+            DB::beginTransaction();
+            $requestData = $request->validated();
+
+            // Careate the language status
+            $this->create($requestData);
+
+            DB::commit();
+            $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
+            return $this->response;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
+            return $this->response;
+        }
     }
 
     public function updateLanguage(UpdateLanguageRequest $request, $id): AbstractResponseInterface

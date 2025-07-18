@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use App\Services\Language\LanguageService;
+use App\Http\Requests\Language\StoreLanguageRequest;
 use App\Http\Requests\Language\UpdateLanguageRequest;
 
 class LanguageController extends Controller
@@ -20,6 +21,17 @@ class LanguageController extends Controller
     {
         $languages = $this->service->listLanguage();
         return view('backend.language.index', compact('languages'));
+    }
+
+    public function create()
+    {
+        return view('backend.language.create');
+    }
+
+    public function store(StoreLanguageRequest $request)
+    {
+        $response = $this->service->storeLanguage($request);
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.language.index');
     }
 
     public function edit(string $id)

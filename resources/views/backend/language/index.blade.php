@@ -7,8 +7,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Language List</h4>
+                                <div>
+                                    <a href="{{ route('admin.language.create') }}" class="btn btn-primary">Add Language</a>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">

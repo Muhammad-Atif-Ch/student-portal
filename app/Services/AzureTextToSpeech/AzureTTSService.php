@@ -93,7 +93,7 @@ class AzureTTSService
   {
     // This is a simplified version. You might want to create a more comprehensive mapping
     // or fetch this dynamically from Azure's voice list API
-    $voices = $voices = [
+    $voices = [
       'en' => [
         'female' => ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'],
         'male' => ['locale' => 'en-US', 'gender' => 'Male', 'name' => 'en-US-GuyNeural']

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Response;
 use App\Services\Language\LanguageService;
 use App\Http\Requests\Language\StoreLanguageRequest;
 use App\Http\Requests\Language\UpdateLanguageRequest;
+use App\Models\Language;
 
 class LanguageController extends Controller
 {
@@ -65,6 +66,12 @@ class LanguageController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function destroy(Language $language)
+    {
+        $response = $this->service->destroy($language);
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.language.index');
     }
 
 }

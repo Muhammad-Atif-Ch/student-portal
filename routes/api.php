@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\ContactUsController;
+use App\Models\ContactUs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\QuizController;
@@ -8,15 +8,17 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ResultController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\MembershipController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
-use App\Models\ContactUs;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
 Route::withoutMiddleware(['device.check'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
-    Route::get('user/device-register', [UserController::class, 'index']);
+    Route::get('user/device-register', [UserController::class, 'register']);
     Route::post('contact-us', [ContactUsController::class, 'index']);
     Route::get('app-image', [SettingController::class, 'appImage']);
 });
@@ -47,9 +49,32 @@ Route::group(['prefix' => 'quiz'], function () {
 });
 
 Route::get('/languages', [SettingController::class, 'languages']);
+
 Route::group(['prefix' => 'setting'], function () {
     // Result related routes
     Route::get('/', [SettingController::class, 'index']);
     Route::post('update', [SettingController::class, 'update']);
 });
+
+Route::group(['prefix' => 'notification'], function () {
+    // Result related routes
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+});
+
+// // Membership management routes
+// Route::prefix('membership')->group(function () {
+//     Route::get('/check-access', [MembershipController::class, 'checkAccess']);
+//     Route::get('/details', [MembershipController::class, 'getDetails']);
+//     Route::get('/history', [MembershipController::class, 'getHistory']);
+//     Route::post('/create-free', [MembershipController::class, 'createFree']);
+//     Route::post('/create-premium', [MembershipController::class, 'createPremium']);
+//     Route::post('/extend', [MembershipController::class, 'extend']);
+//     Route::post('/upgrade-premium', [MembershipController::class, 'upgradeToPremium']);
+
+//     // Admin routes
+//     Route::get('/stats', [MembershipController::class, 'getStats']);
+//     Route::get('/expiring', [MembershipController::class, 'getExpiringMemberships']);
+// });
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\ContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TranslationController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\TextToSpeechController;
 
 Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
@@ -36,6 +37,14 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::get('/edit/{id}', [LanguageController::class, 'edit'])->name('edit');
         Route::patch('/update/{id}', [LanguageController::class, 'update'])->name('update');
         Route::post('/update-status', [LanguageController::class, 'status'])->name('update.status');
+        Route::delete('/destroy/{language}', [LanguageController::class, 'destroy'])->name('destroy');
+    });
+
+    //Custom Notification
+    Route::group(['prefix' => 'notification', 'as' => 'notification.'], function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/create', [NotificationController::class, 'create'])->name('create');
+        Route::post('/store', [NotificationController::class, 'store'])->name('store');
     });
 
     // Contact Us

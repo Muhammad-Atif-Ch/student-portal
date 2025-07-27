@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\ManageMemberships;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\AuthenticationException;
@@ -34,6 +35,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'device.check' => \App\Http\Middleware\CheckDeviceId::class,
         ]);
     })
+    ->withCommands([
+        ManageMemberships::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, $request) {
             // Handle API exceptions only for JSON requests

@@ -240,7 +240,7 @@ class QuizController extends Controller
                 ])->pluck('question_id');
 
                 // Fetch the wrong questions first (limit to quizLimit)
-                $wrongQuestions = Question::whereIn('id', $wrongAttemptedQuestionIds)
+                $wrongQuestions = Question::with('translations')->whereIn('id', $wrongAttemptedQuestionIds)
                     ->where('quiz_id', $quizId)
                     ->whereIn('type', $allowedTypes)
                     ->inRandomOrder()
@@ -261,15 +261,15 @@ class QuizController extends Controller
                 // STEP 4: Fetch remaining random new questions (excluding previously used and wrong ones)
                 $remainingQuestions = collect();
                 if ($remainingLimit > 0) {
-                    $remainingQuestions = Question::whereNotIn('id', $alreadyAttemptedIds)
+                    $remainingQuestions = Question::with('translations')->whereNotIn('id', $alreadyAttemptedIds)
                         ->whereNotIn('id', $wrongQuestions->pluck('id'))
                         ->where('quiz_id', $quizId)
                         ->whereIn('type', $allowedTypes)
                         ->inRandomOrder()
                         ->limit($remainingLimit)
                         ->get();
-
                     $actualRemainingCount = $remainingQuestions->count();
+
 
                     // STEP 5: If still not enough, reset history and fetch again
                     if ($actualRemainingCount < $remainingLimit) {
@@ -281,7 +281,7 @@ class QuizController extends Controller
 
                         $needed = $remainingLimit - $actualRemainingCount;
 
-                        $extraQuestions = Question::whereNotIn('id', $wrongQuestions->pluck('id'))
+                        $extraQuestions = Question::with('translations')->whereNotIn('id', $wrongQuestions->pluck('id'))
                             ->where('quiz_id', $quizId)
                             ->whereIn('type', $allowedTypes)
                             ->inRandomOrder()
@@ -309,8 +309,8 @@ class QuizController extends Controller
 
                 QuestionHistory::insert($historyData);
 
-                $quiz->setRelation('questions.translations', $finalQuestions);
-
+                $quiz->setRelation('questions', $finalQuestions);
+                
                 return $quiz;
             });
 

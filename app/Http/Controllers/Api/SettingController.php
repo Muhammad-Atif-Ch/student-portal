@@ -29,7 +29,7 @@ class SettingController extends Controller
 
     public function languages()
     {
-        $languages = Language::where('status', '1')->get();
+        $languages = Language::where('show', '1')->get();
 
         return SettingResource::collection($languages);
     }

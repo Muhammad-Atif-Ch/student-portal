@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('code_2', 10)->nullable();
             $table->string('country_code', 10)->nullable();
             $table->boolean('status')->default(false);
+            $table->boolean('show')->default(false);
             $table->timestamps();
         });
     }

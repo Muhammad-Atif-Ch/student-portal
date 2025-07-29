@@ -44,7 +44,58 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="mt-2">
+                                    <h5>{{ __('Search Translation') }}</h5>
+                                    <form method="post" action="{{ route("admin.translations.search") }}">
+                                        @csrf
+                                        @method('post')
+                                        <div class="row">
+                                            <div class="col-12 col-md-2 col-lg-2">
+                                                <div class="form-group">
+                                                    <label>Quiz ID</label>
+                                                    <input type="text" name="quiz_id" class="form-control" placeholder="Quiz ID" value="{{ old('quiz_id') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-2 col-lg-2">
+                                                <div class="form-group">
+                                                    <label>Question ID</label>
+                                                    <input type="text" name="question_id" class="form-control" placeholder="Question ID" value="{{ old('question_id') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-3 col-lg-3">
+                                                <div class="form-group">
+                                                    <label>Language ID </label>
+                                                    <select class="form-control" name="language_id">
+                                                        <option value="" selected>Select Option</option>
+                                                        @foreach ($languages as $language)
+                                                            <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>{{ $language->name }}, {{ $language->code }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-3 col-lg-3">
+                                                <div class="form-group">
+                                                    <label>Type </label>
+                                                    <select class="form-control" name="type">
+                                                        <option value="" selected>Select Option</option>
+                                                        <option value="car" {{ old('type') == 'car' ? 'selected' : '' }}>Car</option>
+                                                        <option value="bike" {{ old('type') == 'bike' ? 'selected' : '' }}>Bike</option>
+                                                        <option value="both" {{ old('type') == 'both' ? 'selected' : '' }}>Both</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-2 col-lg-2">
+                                                <div class="form-group">
+                                                    <label> </label>
+                                                    <button class="form-control btn btn-primary mt-2" type="submit">Search</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="table-responsive mt-4">
                                     <table class="table table-striped" id="table-translations">
                                         <thead>
                                             <tr>
@@ -174,7 +225,7 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $('#table-1').DataTable({
+            $('#table-translations').DataTable({
                 paging: false, // Disable DataTables pagination since we're using Laravel's
                 ordering: true,
                 searching: true

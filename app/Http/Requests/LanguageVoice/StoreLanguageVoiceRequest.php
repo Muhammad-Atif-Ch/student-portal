@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Language;
+namespace App\Http\Requests\LanguageVoice;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLanguageRequest extends FormRequest
+class StoreLanguageVoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +23,15 @@ class StoreLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'family' => 'required|string|max:255',
+            'language_id' => 'required|exists:languages,id',
+            'gender' => [
+                'required',
+                'in:Female,Male',
+                Rule::unique('language_voices', 'gender')
+                    ->where('language_id', $this->input('language_id'))
+            ],
+            'locale' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'native_name' => 'required|string|max:255',
-            'code' => 'required|string|max:10',
-            'code_2' => 'nullable|string|max:10',
-            'status' => 'required|boolean',
-            'show' => 'required|boolean',
         ];
     }
 }

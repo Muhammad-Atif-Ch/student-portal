@@ -1,48 +1,48 @@
 <?php
 
-namespace App\Services\Language;
+namespace App\Services\LanguageVoice;
 
 use App\Helpers\ResponseCode;
-use App\Responses\UserResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Responses\LanguageResponse;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use App\Repositories\LanguageRepository;
-use App\Http\Requests\Language\StoreLanguageRequest;
-use App\Http\Requests\Language\UpdateLanguageRequest;
+use App\Responses\LanguageVoiceResponse;
+use App\Repositories\LanguageVoiceRepository;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
+use App\Http\Requests\LanguageVoice\StoreLanguageVoiceRequest;
+use App\Http\Requests\LanguageVoice\UpdateLanguageVoiceRequest;
 
-class LanguageService extends AbstractService
+class LanguageVoiceService extends AbstractService
 {
     protected $roleRepository;
 
-    public function __construct(LanguageRepository $repository, LanguageResponse $response, Request $request)
+    public function __construct(LanguageVoiceRepository $repository, LanguageVoiceResponse $response, Request $request)
     {
         $this->repository = $repository;
         $this->response = $response;
         $this->request = $request;
     }
 
-    public function listLanguage()
+    public function listLanguageVoice($languageId): Collection
     {
-        return $this->repository->getListWithoutPagination();
+        $users = $this->repository->getListWithoutPagination(['language_id' => $languageId]);
+        return $users;
     }
 
-    public function showLanguage($id): Model
+    public function showLanguageVoice($languageId, $id): Model
     {
-        return $this->getWhere(['id' => $id]);
+        return $this->getWhere(['id' => $id, 'language_id' => $languageId]);
     }
 
-    public function storeLanguage(StoreLanguageRequest $request): AbstractResponseInterface
+    public function storeLanguageVoice(StoreLanguageVoiceRequest $request): AbstractResponseInterface
     {
         try {
             DB::beginTransaction();
             $requestData = $request->validated();
 
-            // Careate the language status
+            // Careate the languageVoice status
             $this->create($requestData);
 
             DB::commit();
@@ -55,13 +55,13 @@ class LanguageService extends AbstractService
         }
     }
 
-    public function updateLanguage(UpdateLanguageRequest $request, $id): AbstractResponseInterface
+    public function updateLanguageVoice(UpdateLanguageVoiceRequest $request, $languageId, $id): AbstractResponseInterface
     {
         try {
             DB::beginTransaction();
             $requestData = $request->validated();
 
-            // Update the language status
+            // Update the languageVoice status
             $this->update($requestData, $id);
 
             DB::commit();
@@ -74,30 +74,12 @@ class LanguageService extends AbstractService
         }
     }
 
-    public function updateLanguageStatus($data): AbstractResponseInterface
+    public function updateLanguageVoiceStatus($data): AbstractResponseInterface
     {
         try {
             DB::beginTransaction();
 
-            // Update the language status
-            $this->update($data, $data['id']);
-
-            DB::commit();
-            $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
-            return $this->response;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
-            return $this->response;
-        }
-    }
-
-    public function delete($data): AbstractResponseInterface
-    {
-        try {
-            DB::beginTransaction();
-
-            // Update the language status
+            // Update the languageVoice status
             $this->update($data, $data['id']);
 
             DB::commit();

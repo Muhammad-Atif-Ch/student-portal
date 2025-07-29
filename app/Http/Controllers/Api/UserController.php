@@ -38,7 +38,7 @@ class UserController extends Controller
         $user->assignRole($role);
 
         // Create free membership automatically
-        $membership = $this->membershipService->createFreeMembership($user);
+        $this->membershipService->createFreeMembership($user);
 
         return response()->json([
             'success' => 'Device registered successfully',

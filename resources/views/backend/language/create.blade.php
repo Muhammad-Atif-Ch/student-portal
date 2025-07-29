@@ -57,6 +57,15 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Show</label>
+                                               <select name="show" class="form-control">
+                                                   <option value="0" selected>No</option>
+                                                    <option value="1">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Language;
+namespace App\Http\Requests\Api\Membership;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLanguageRequest extends FormRequest
+class CreateMembershipRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,7 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'family' => 'sometimes',
-            'name' => 'sometimes',
-            'native_name' => 'sometimes',
-            'code' => 'sometimes',
-            'code_2' => 'sometimes',
-            'status' => 'nullable|sometimes|boolean',
-            'show' => 'nullable|sometimes|boolean',
+            'purchase_token' => 'required|string',
         ];
     }
 }

@@ -18,6 +18,26 @@ class Language extends Model
         'code',
         'code_2',
         'country_code',
-        'status'
+        'status',
+        'show'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($language) {
+            $language->questionTranslations()->delete();
+        });
+    }
+
+    public function questionTranslations()
+    {
+        return $this->hasMany(QuestionTranslation::class);
+    }
+
+    public function voices()
+    {
+        return $this->hasMany(LanguageVoice::class);
+    }
 }

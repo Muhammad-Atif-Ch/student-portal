@@ -64,17 +64,8 @@ Route::group(['prefix' => 'notification'], function () {
 });
 
 // // Membership management routes
-// Route::prefix('membership')->group(function () {
-//     Route::get('/check-access', [MembershipController::class, 'checkAccess']);
-//     Route::get('/details', [MembershipController::class, 'getDetails']);
-//     Route::get('/history', [MembershipController::class, 'getHistory']);
-//     Route::post('/create-free', [MembershipController::class, 'createFree']);
-//     Route::post('/create-premium', [MembershipController::class, 'createPremium']);
-//     Route::post('/extend', [MembershipController::class, 'extend']);
-//     Route::post('/upgrade-premium', [MembershipController::class, 'upgradeToPremium']);
-
-//     // Admin routes
-//     Route::get('/stats', [MembershipController::class, 'getStats']);
-//     Route::get('/expiring', [MembershipController::class, 'getExpiringMemberships']);
-// });
+Route::prefix('membership')->group(function () {
+    Route::get('/', [MembershipController::class, 'index']);
+    Route::post('/store', [MembershipController::class, 'store']);
+});
 

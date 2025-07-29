@@ -9,7 +9,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('title')</title>
         @include('backend.layouts.partials.css')
-
+        @yield('style')
         <style>
             .small-toast {
                 font-size: 1rem !important;
@@ -120,8 +120,6 @@
                 });
             }
         </script>
-
-        @stack('scripts')
     </body>
 
     <!-- index.html  21 Nov 2019 03:47:04 GMT -->

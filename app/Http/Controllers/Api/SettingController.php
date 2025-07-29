@@ -37,12 +37,12 @@ class SettingController extends Controller
     public function update(UpdateSettingRequest $request)
     {
         $deviceId = $request->header('Device-Id');
-        $setting = User::where('device_id', $deviceId)->first();
-        $setting->app_type = $request->app_type;
-        $setting->language_id = $request->language_id;
-        $setting->save();
+        $user = User::where('device_id', $deviceId)->first();
+        $user->app_type = $request->app_type;
+        $user->language_id = $request->language_id;
+        $user->save();
 
-        return (new SettingResource($setting))->additional([
+        return (new SettingResource($user))->additional([
             'message' => 'Setting updated successfully',
         ]);
     }

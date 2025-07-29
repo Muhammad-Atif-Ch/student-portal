@@ -49,6 +49,15 @@
                                                 <input type="text" name="code_2" class="form-control" value="{{ $language->code_2 }}">
                                             </div>
                                         </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Show</label>
+                                               <select name="show" class="form-control">
+                                                   <option value="0" {{ $language->show == 0 ? 'selected' : '' }}>No</option>
+                                                    <option value="1" {{ $language->show == 1 ? 'selected' : '' }}>Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

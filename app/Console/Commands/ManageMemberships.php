@@ -31,7 +31,7 @@ class ManageMemberships extends Command
         })->with('membership')->get();
 
         foreach ($freeUsers as $user) {
-            $user->membership->update(['status' => 0, 'is_active' => false]);
+            $user->membership->update(['status' => 0]);
             $this->info("Free membership for user {$user->id} deactivated (expired + grace period).");
         }
 
@@ -49,10 +49,9 @@ class ManageMemberships extends Command
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new MembershipService)->verifySubscription($packageName, $subscriptionId, $purchaseToken);
-            dd('data', $data);
+            //dd('data', $data, 'nextt ', isset($data['expiryTimeMillis']) && $data['expiryTimeMillis'] > now()->getTimestampMs());
 
             if ($data) {
-                // if ($user->membership) {
                 // Update membership with new data
                 $user->membership->update([
                     'start_date' => Carbon::createFromTimestampMs($data['startTimeMillis'] ?? null),
@@ -60,13 +59,13 @@ class ManageMemberships extends Command
                     'auto_renewing' => $data['autoRenewing'] ?? false,
                     'order_id' => $data['orderId'] ?? null,
                     'price_currency_code' => $data['priceCurrencyCode'] ?? null,
-                    'price_amount_micros' => $data['priceAmountMicros'] ?? null,
+                    'price_amount_micros' => ($data['priceAmountMicros'] / 1000000) ?? null,
                     'country_code' => $data['countryCode'] ?? null,
                     'cancel_reason' => $data['cancelReason'] ?? null,
                     'purchase_type' => $data['purchaseType'] ?? null,
                     'acknowledgement_state' => $data['acknowledgementState'] ?? null,
                     'raw_response' => $data,
-                    'is_active' => isset($data['expiryTimeMillis']) && $data['expiryTimeMillis'] > now()->getTimestampMs(),
+                    'status' => isset($data['expiryTimeMillis']) && $data['expiryTimeMillis'] > now()->getTimestampMs(),
                 ]);
 
                 $this->info("Membership for user {$user->id} updated.");

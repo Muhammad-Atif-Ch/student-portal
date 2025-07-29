@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Language;
+namespace App\Http\Requests\LanguageVoice;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLanguageRequest extends FormRequest
+class UpdateLanguageVoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,10 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'family' => 'sometimes',
-            'name' => 'sometimes',
-            'native_name' => 'sometimes',
-            'code' => 'sometimes',
-            'code_2' => 'sometimes',
-            'status' => 'nullable|sometimes|boolean',
-            'show' => 'nullable|sometimes|boolean',
+            'language_id' => 'sometimes|exists:languages,id',
+            'gender' => 'sometimes|in:Female,Male',
+            'locale' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
         ];
     }
 }

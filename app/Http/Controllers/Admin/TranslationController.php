@@ -15,10 +15,15 @@ use App\Jobs\BulkTranslateQuestionsJob;
 
 class TranslationController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $translations = QuestionTranslation::with('quiz:id', 'question:id', 'language:id,name')->paginate(100);
-    return view('backend.translations.index', compact('translations'));
+    $where = collect($request->only(['quiz_id', 'question_id', 'language_id', 'type']))
+      ->filter(fn($value) => !is_null($value))
+      ->toArray();
+
+    $translations = QuestionTranslation::with('quiz:id', 'question:id', 'language:id,name')->where($where)->paginate(100);
+    $languages = Language::get();
+    return view('backend.translations.index', compact('translations', 'languages'));
   }
 
   public function createTranslation()

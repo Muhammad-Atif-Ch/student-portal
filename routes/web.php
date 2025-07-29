@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\TextToSpeechController;
+use App\Http\Controllers\Admin\LanguageVoiceController;
 
 Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Profile Management
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::resource('quiz.question', QuestionController::class);
     Route::post('import-question/{quiz}', [QuestionController::class, 'importQuestion'])->name('question.import.file');
     Route::get('destroy-question/{quiz}', [QuestionController::class, 'destroyAll'])->name('quiz.question.destroy.all');
+    Route::delete('question/{question}/remove-image', [QuestionController::class, 'removeImage'])->name('question.removeImage');
     Route::resource('users', UserController::class);
 
     //Language
@@ -38,7 +40,19 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::patch('/update/{id}', [LanguageController::class, 'update'])->name('update');
         Route::post('/update-status', [LanguageController::class, 'status'])->name('update.status');
         Route::delete('/destroy/{language}', [LanguageController::class, 'destroy'])->name('destroy');
+
+        // Language Voice
+        Route::group(['prefix' => '{language}/language-voice', 'as' => 'voice.'], function () {
+            Route::get('/', [LanguageVoiceController::class, 'index'])->name('index');
+            Route::get('/create', [LanguageVoiceController::class, 'create'])->name('create');
+            Route::post('/store', [LanguageVoiceController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [LanguageVoiceController::class, 'edit'])->name('edit');
+            Route::patch('/update/{id}', [LanguageVoiceController::class, 'update'])->name('update');
+            Route::delete('/destroy/{languageVoice}', [LanguageVoiceController::class, 'destroy'])->name('destroy');
+        });
     });
+
+
 
     //Custom Notification
     Route::group(['prefix' => 'notification', 'as' => 'notification.'], function () {
@@ -62,6 +76,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Translation
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
         Route::get('/', [TranslationController::class, 'index'])->name('index');
+        Route::post('/search', [TranslationController::class, 'index'])->name('search');
         // Translation Api
         Route::get('create-translation', [TranslationController::class, 'createTranslation'])->name('createTranslation');
         Route::post('translation/start', [TranslationController::class, 'translateAll'])->name('start');

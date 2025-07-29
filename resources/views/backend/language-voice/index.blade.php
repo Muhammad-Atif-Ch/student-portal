@@ -8,9 +8,9 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Language List</h4>
+                                <h4>{{ $language->name }} Language List</h4>
                                 <div>
-                                    <a href="{{ route('admin.language.create') }}" class="btn btn-primary">Add Language</a>
+                                    <a href="{{ route('admin.language.voice.create', $language->id) }}" class="btn btn-primary">Add Language Voice</a>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -19,45 +19,26 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th class="col-2">Family</th>
-                                                <th class="col-2">Name</th>
-                                                <th class="col-2">Native Name</th>
-                                                <th class="col-1">Code</th>
-                                                <th class="col-1">Code 2</th>
-                                                <th class="col-1">Status</th>
-                                                <th class="col-1">Show</th>
-                                                <th class="col-3">Action</th>
+                                                <th>Language</th>
+                                                <th>Gender</th>
+                                                <th>locale</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($languages as $language)
+                                            @forelse ($languageVoices as $data)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $language->family }}</td>
-                                                    <td>{{ $language->name }}</td>
-                                                    <td>{{ $language->native_name }}</td>
-                                                    <td>{{ $language->code ?? 'N/A' }}</td>
-                                                    <td>{{ $language->code_2 ?? 'N/A' }}</td>
+                                                    <td>{{ $data->language->code }}</td>
+                                                    <td>{{ $data->gender }}</td>
+                                                    <td>{{ $data->locale }}</td>
+                                                    <td>{{ $data->name }}</td>
                                                     <td>
-                                                        <div class="custom-control custom-switch">
-                                                            <input type="checkbox" class="custom-control-input language-status-toggle" id="status_{{ $language->id }}"
-                                                                data-language-id="{{ $language->id }}" {{ $language->status ? 'checked' : '' }}>
-                                                            <label class="custom-control-label" for="status_{{ $language->id }}"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge {{ $language->show ? 'bg-primary' : 'bg-warning' }}">
-                                                            {{ $language->show ? 'Yes' : 'No' }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('admin.language.voice.index', $language->id) }}" class="btn btn-primary btn-sm">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.language.edit', $language->id) }}" class="btn btn-primary btn-sm">
+                                                        <a href="{{ route('admin.language.voice.edit', ['language' => $data->language_id, 'id' => $data->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.language.destroy', $language->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('admin.language.voice.destroy', ['language' => $data->language_id, 'languageVoice' => $data->id]) }}" method="POST" class="d-inline">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

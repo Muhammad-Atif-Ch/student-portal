@@ -112,4 +112,24 @@ class QuestionController extends Controller
         $response = $this->service->destroyAll($quiz_id);
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
+
+    public function removeImage(Request $request, Question $question)
+    {
+        $type = $request->input('type');
+        if ($type === 'image') {
+            $fileField = 'image';
+        } elseif ($type === 'visual_explanation') {
+            $fileField = 'visual_explanation';
+        } else {
+            return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
+        }
+
+        $filePath = public_path('images/' . $question->$fileField);
+        if ($question->$fileField && file_exists($filePath)) {
+            unlink($filePath);
+            $question->$fileField = null;
+            $question->save();
+        }
+        return response()->json(['success' => true, 'message' => "Image remove successfully"]);
+    }
 }

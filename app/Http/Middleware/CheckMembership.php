@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Services\MembershipService;
+use App\Services\Membership\MembershipService;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckMembership
@@ -22,44 +23,34 @@ class CheckMembership
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Get user ID from request
-        $userId = $request->input('user_id') ?? $request->user_id ?? $request->header('X-User-ID');
+        $deviceId = $request->header('Device-ID');
 
-        if (!$userId) {
-            return response()->json([
-                'error' => 'User ID required',
-                'message' => 'Please provide user_id in request'
-            ], 400);
+        if (!$deviceId) {
+            return response()->json(['error' => 'Device ID required'], 400);
         }
 
         // Find user
-        $user = User::find($userId);
+        $user = User::with('membership')->where('device_id', $deviceId)->first();
 
         if (!$user) {
             return response()->json([
                 'error' => 'User not found',
-                'message' => 'Invalid user ID provided'
+                'message' => 'Invalid user provided'
             ], 404);
         }
 
         // Check membership access
-        $accessInfo = $this->membershipService->canUserAccessApp($user);
+        $accessInfo = $user->membership;
 
-        if (!$accessInfo['can_access']) {
+        if ($accessInfo->status == false) {
             return response()->json([
                 'error' => 'Access denied',
-                'message' => $accessInfo['message'],
+                'message' => "your membership expired. Please renew it.",
                 'membership_required' => true,
-                'membership_type' => $accessInfo['membership_type'],
-                'end_date' => $accessInfo['end_date']
+                'membership_type' => $accessInfo->membership_type,
+                'end_date' => $accessInfo->end_date
             ], 403);
         }
-
-        // Add user and membership info to request
-        $request->merge([
-            'user_instance' => $user,
-            'membership_info' => $accessInfo
-        ]);
 
         return $next($request);
     }

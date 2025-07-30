@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\ThrottleRequests::with('60'), // Fixed syntax
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckDeviceId::class,
+            \App\Http\Middleware\CheckMembership::class,
         ]);
 
         // OR register as a named middleware (to apply selectively)
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'device.check' => \App\Http\Middleware\CheckDeviceId::class,
+            'membership.check' => \App\Http\Middleware\CheckMembership::class,
         ]);
     })
     ->withCommands([

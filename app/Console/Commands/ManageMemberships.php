@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Services\Membership\MembershipService;
+use App\Models\Membership;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Concerns\ToArray;
+use App\Services\Membership\MembershipService;
 
 class ManageMemberships extends Command
 {
@@ -21,8 +23,7 @@ class ManageMemberships extends Command
 
     public function handle()
     {
-        $now = now();
-
+        $now = Carbon::now();
         // Free memberships to deactivate
         $freeUsers = User::whereHas('membership', function ($query) use ($now) {
             $query->where('membership_type', 'free')
@@ -41,6 +42,8 @@ class ManageMemberships extends Command
                 ->where('status', 1)
                 ->where('end_date', '<', $now);
         })->with('membership')->get();
+
+        $this->info("Found {$premiumUsers->count()} users with expired premium memberships");
 
         foreach ($premiumUsers as $user) {
             // dd($user->membership->toArray());

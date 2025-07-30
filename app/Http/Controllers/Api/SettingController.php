@@ -15,7 +15,7 @@ class SettingController extends Controller
     public function index(Request $request)
     {
         $deviceId = $request->header('Device-Id');
-        $setting = User::where('device_id', $deviceId)->first();
+        $setting = User::with('membership')->where('device_id', $deviceId)->first();
 
         return new SettingResource($setting);
     }

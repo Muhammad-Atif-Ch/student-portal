@@ -55,8 +55,8 @@ class MembershipController extends Controller
                 'user_id' => $user->id,
             ], [
                 'membership_type' => 'premium',
-                'start_date' => Carbon::createFromTimestampMs($data['startTimeMillis'] ?? null),
-                'end_date' => Carbon::createFromTimestampMs($data['expiryTimeMillis'] ?? null),
+                'start_date' => Carbon::createFromTimestampMs($data['startTimeMillis'] ?? null)->setTimezone('UTC'),
+                'end_date' => Carbon::createFromTimestampMs($data['expiryTimeMillis'] ?? null)->setTimezone('UTC'),
                 'auto_renewing' => $data['autoRenewing'] ?? false,
                 'order_id' => $data['orderId'] ?? null,
                 'price_currency_code' => $data['priceCurrencyCode'] ?? null,

@@ -28,9 +28,10 @@ class Membership extends Model
     ];
 
     protected $casts = [
+        'raw_response' => 'array',
+        'auto_renewing' => 'boolean',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'status' => 'boolean',
     ];
 
     public function user()
@@ -38,81 +39,15 @@ class Membership extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Scope to get active memberships.
-     */
-    public function scopeActive($query)
+    public function setRawResponseAttribute($value)
     {
-        return $query->where('status', true);
+        $this->attributes['raw_response'] = is_array($value) ? json_encode($value) : $value;
     }
 
-    /**
-     * Scope to get expired memberships.
-     */
-    public function scopeExpired($query)
+    // Automatically convert JSON back to array when retrieving
+    public function getRawResponseAttribute($value)
     {
-        return $query->where('end_date', '<', now())
-            ->where('status', true);
-    }
-
-    /**
-     * Scope to get valid memberships (active and not expired).
-     */
-    public function scopeValid($query)
-    {
-        return $query->where('status', true)
-            ->where(function ($q) {
-                $q->whereNull('end_date')
-                    ->orWhere('end_date', '>', now());
-            });
-    }
-
-    /**
-     * Check if membership is expired.
-     */
-    public function isExpired(): bool
-    {
-        return $this->end_date && $this->end_date < now();
-    }
-
-    /**
-     * Check if membership is valid.
-     */
-    public function isValid(): bool
-    {
-        return $this->status && !$this->isExpired();
-    }
-
-    /**
-     * Get days remaining in membership.
-     */
-    public function getDaysRemaining(): int
-    {
-        if (!$this->end_date || $this->isExpired()) {
-            return 0;
-        }
-
-        return now()->diffInDays($this->end_date);
-    }
-
-    /**
-     * Deactivate membership.
-     */
-    public function deactivate(): bool
-    {
-        return $this->update(['status' => false]);
-    }
-
-    /**
-     * Extend membership.
-     */
-    public function extend(string $duration = '1 month'): bool
-    {
-        $newEndDate = $this->end_date ?
-            $this->end_date->modify('+' . $duration) :
-            now()->modify('+' . $duration);
-
-        return $this->update(['end_date' => $newEndDate]);
+        return json_decode($value, true);
     }
 
 

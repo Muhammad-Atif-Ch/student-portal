@@ -30,8 +30,6 @@ class MembershipController extends Controller
 
     public function store(CreateMembershipRequest $request)
     {
-        $now = Carbon::now();
-
         $deviceId = $request->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
 
@@ -46,11 +44,17 @@ class MembershipController extends Controller
         $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
         $data = (new MembershipService)->verifySubscription($packageName, $subscriptionId, $purchaseToken);
-        //dd('data', $data, 'nextt ', isset($data['expiryTimeMillis']) && $data['expiryTimeMillis'] > now()->getTimestampMs());
 
+        // dd($data);
         if ($data) {
+            // Check if this is fallback data
+            $isFallback = isset($data['is_fallback']) && $data['is_fallback'];
+
             // Update membership with new data
-            $user->membership->update([
+            $user->membership()->updateOrCreate([
+                'user_id' => $user->id,
+            ], [
+                'membership_type' => 'premium',
                 'start_date' => Carbon::createFromTimestampMs($data['startTimeMillis'] ?? null),
                 'end_date' => Carbon::createFromTimestampMs($data['expiryTimeMillis'] ?? null),
                 'auto_renewing' => $data['autoRenewing'] ?? false,
@@ -65,9 +69,13 @@ class MembershipController extends Controller
                 'status' => isset($data['expiryTimeMillis']) && $data['expiryTimeMillis'] > now()->getTimestampMs(),
             ]);
 
-            return response()->json(['error' => "Membership for user {$user->id} updated."], 200);
+            $message = $isFallback
+                ? "Membership created with fallback data due to network issues. Please try again later."
+                : "Membership for user {$user->id} updated.";
+
+            return response()->json(['success' => $message], 200);
         } else {
-            return response()->json(['error' => "Failed to verify subscription for user {$user->id}: " . $data->body()], 400);
+            return response()->json(['error' => "Failed to verify subscription for user {$user->id}. Please check your internet connection and try again."], 400);
         }
     }
 

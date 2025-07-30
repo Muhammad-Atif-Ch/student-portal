@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\ManageMemberships;
+use App\Console\Commands\TestGoogleApiConnection;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\AuthenticationException;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withCommands([
         ManageMemberships::class,
+        TestGoogleApiConnection::class,
     ])
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, $request) {

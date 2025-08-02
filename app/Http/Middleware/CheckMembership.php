@@ -21,7 +21,7 @@ class CheckMembership
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, $type = 'premium'): Response
     {
         $deviceId = $request->header('Device-ID');
 
@@ -42,7 +42,7 @@ class CheckMembership
         // Check membership access
         $accessInfo = $user->membership;
 
-        if ($accessInfo->status == false) {
+        if ($accessInfo->status == 0) {
             return response()->json([
                 'error' => 'Access denied',
                 'message' => "your membership expired. Please renew it.",
@@ -50,6 +50,16 @@ class CheckMembership
                 'membership_type' => $accessInfo->membership_type,
                 'end_date' => $accessInfo->end_date
             ], 403);
+        }
+
+        // If route requires 'premium', and user is not premium → reject
+        if ($type === 'premium' && $accessInfo->membership_type !== 'premium') {
+            return response()->json(['message' => 'Upgrade to premium to access this feature.'], Response::HTTP_FORBIDDEN);
+        }
+
+        // If route requires 'free' and user is not free → reject (optional)
+        if ($type === 'free' && $accessInfo->membership_type !== 'free') {
+            return response()->json(['message' => 'This route is only available for free users.'], Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);

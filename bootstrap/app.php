@@ -35,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'device.check' => \App\Http\Middleware\CheckDeviceId::class,
-            'membership.check' => \App\Http\Middleware\CheckMembership::class,
+            'membership' => \App\Http\Middleware\CheckMembership::class,
         ]);
     })
     ->withCommands([

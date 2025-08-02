@@ -41,7 +41,7 @@ class CheckMembership
 
         // Check membership access
         $accessInfo = $user->membership;
-
+dd($accessInfo, $accessInfo->status == false);
         if ($accessInfo->status == false) {
             return response()->json([
                 'error' => 'Access denied',

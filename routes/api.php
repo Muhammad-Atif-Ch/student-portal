@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
-Route::withoutMiddleware(['device.check'])->group(function () {
+Route::withoutMiddleware(['device.check', 'membership.check'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
     Route::get('user/device-register', [UserController::class, 'register']);
     Route::post('contact-us', [ContactUsController::class, 'index']);

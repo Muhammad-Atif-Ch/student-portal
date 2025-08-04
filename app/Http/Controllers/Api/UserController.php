@@ -45,4 +45,17 @@ class UserController extends Controller
             'data' => $user,
         ], 201);
     }
+
+    public function userStatus(Request $request)
+    {
+        $deviceId = $request->header('Device-ID');
+
+        // Check if device exists
+        $user = User::with('membership')->where('device_id', $deviceId)->first();
+
+        return response()->json([
+            'success' => 'Success',
+            'data' => $user,
+        ], 201);
+    }
 }

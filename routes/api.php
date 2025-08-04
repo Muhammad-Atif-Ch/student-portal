@@ -21,9 +21,9 @@ Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('user/device-register', [UserController::class, 'register']);
     Route::post('contact-us', [ContactUsController::class, 'index']);
     Route::get('app-image', [SettingController::class, 'appImage']);
+    Route::get('user-status', [UserController::class, 'userStatus']);
+    Route::get('languages', [SettingController::class, 'languages']);
 });
-
-Route::get('user-status', [UserController::class, 'userStatus']);
 
 // Routes only for premium users
 Route::group(['middleware' => 'membership:premium'], function () {
@@ -52,8 +52,6 @@ Route::group(['middleware' => 'membership:premium'], function () {
         // Route::get('contact-us', [ContactUsController::class, 'index']);
     });
 
-    Route::get('/languages', [SettingController::class, 'languages']);
-
     // setting routes
     Route::group(['prefix' => 'setting'], function () {
         // Result related routes
@@ -80,9 +78,7 @@ Route::group(['middleware' => 'membership:free'], function () {
     Route::group(['prefix' => 'quiz'], function () {
         Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
     });
-
-    Route::get('/languages', [SettingController::class, 'languages']);
-
+    
     // setting routes
     Route::group(['prefix' => 'setting'], function () {
         // Result related routes

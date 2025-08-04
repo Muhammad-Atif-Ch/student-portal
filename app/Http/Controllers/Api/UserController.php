@@ -48,10 +48,20 @@ class UserController extends Controller
 
     public function userStatus(Request $request)
     {
+        if (!$request->hasHeader('Device-ID')) {
+            return response()->json(['message' => 'Missing header: Device-ID'], 422);
+        }
+        
         $deviceId = $request->header('Device-ID');
 
         // Check if device exists
         $user = User::with('membership')->where('device_id', $deviceId)->first();
+        // dd($user);
+        if ($user == null) {
+            return response()->json([
+                'error' => 'Device not found',
+            ], 404);
+        }
 
         return response()->json([
             'success' => 'Success',

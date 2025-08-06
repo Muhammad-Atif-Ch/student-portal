@@ -21,7 +21,7 @@ class CheckMembership
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $type = 'premium'): Response
+    public function handle(Request $request, Closure $next, $type): Response
     {
         $deviceId = $request->header('Device-ID');
 
@@ -51,15 +51,28 @@ class CheckMembership
                 'end_date' => $accessInfo->end_date
             ], 403);
         }
+        
+        // Handle different access types
+        switch ($type) {
+            case 'premium':
+                if ($accessInfo->membership_type !== 'premium') {
+                    return response()->json(['message' => 'Upgrade to premium to access this feature.'], Response::HTTP_FORBIDDEN);
+                }
+                break;
 
-        // If route requires 'premium', and user is not premium → reject
-        if ($type === 'premium' && $accessInfo->membership_type !== 'premium') {
-            return response()->json(['message' => 'Upgrade to premium to access this feature.'], Response::HTTP_FORBIDDEN);
-        }
+            case 'free':
+                // Allow both free and premium users
+                if (!in_array($accessInfo->membership_type, ['free', 'premium'])) {
+                    return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
+                }
+                break;
 
-        // If route requires 'free' and user is not free → reject (optional)
-        if ($type === 'free' && $accessInfo->membership_type !== 'free') {
-            return response()->json(['message' => 'This route is only available for free users.'], Response::HTTP_FORBIDDEN);
+            case 'free_only':
+                // Only free users allowed
+                if ($accessInfo->membership_type !== 'free') {
+                    return response()->json(['message' => 'This route is only available for free users.'], Response::HTTP_FORBIDDEN);
+                }
+                break;
         }
 
         return $next($request);

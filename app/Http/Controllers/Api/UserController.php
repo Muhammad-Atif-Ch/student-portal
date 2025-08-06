@@ -66,6 +66,6 @@ class UserController extends Controller
         return response()->json([
             'success' => 'Success',
             'data' => $user,
-        ], 201);
+        ], 200);
     }
 }

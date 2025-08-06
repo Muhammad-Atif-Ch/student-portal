@@ -26,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\ThrottleRequests::with('60'), // Fixed syntax
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckDeviceId::class,
-            \App\Http\Middleware\CheckMembership::class,
         ]);
 
         // OR register as a named middleware (to apply selectively)

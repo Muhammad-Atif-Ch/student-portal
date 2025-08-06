@@ -13,9 +13,6 @@ use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
 Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
     Route::get('user/device-register', [UserController::class, 'register']);
@@ -26,11 +23,11 @@ Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
 });
 
 // Routes only for premium users
-Route::group(['middleware' => 'membership:premium'], function () {
+Route::middleware('membership:premium')->group( function () {
     Route::group(['prefix' => 'quiz'], function () {
         Route::get('/', [QuizController::class, 'index']);
         Route::get('search-question', [QuizController::class, 'searchQuestion']);
-        Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
+        // Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
         Route::get('get-practice-question', [QuizController::class, 'getPracticeQuestion']);
         Route::get('get-official-question', [QuizController::class, 'getOfficialQuestion']);
         Route::post('store', [QuizController::class, 'store']);
@@ -52,13 +49,6 @@ Route::group(['middleware' => 'membership:premium'], function () {
         // Route::get('contact-us', [ContactUsController::class, 'index']);
     });
 
-    // setting routes
-    Route::group(['prefix' => 'setting'], function () {
-        // Result related routes
-        Route::get('/', [SettingController::class, 'index']);
-        Route::post('update', [SettingController::class, 'update']);
-    });
-
     Route::group(['prefix' => 'notification'], function () {
         // Result related routes
         Route::get('/', [NotificationController::class, 'index']);
@@ -66,15 +56,10 @@ Route::group(['middleware' => 'membership:premium'], function () {
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
     });
 
-    // // Membership management routes
-    Route::prefix('membership')->group(function () {
-        Route::get('/', [MembershipController::class, 'index']);
-        Route::post('/store', [MembershipController::class, 'store']);
-    });
 });
 
 // Route only for free users
-Route::group(['middleware' => 'membership:free'], function () {
+Route::middleware('membership:free')->group( function () {
     Route::group(['prefix' => 'quiz'], function () {
         Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
     });

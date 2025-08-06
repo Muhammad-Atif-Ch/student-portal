@@ -31,7 +31,8 @@ class UserController extends Controller
 
         // Create new user
         $user = User::create([
-            'device_id' => $deviceId // Dummy password for device-only users
+            'device_id' => $deviceId, // Dummy password for device-only users
+            'language_id' => 41,
         ]);
 
         $role = Role::where(['name' => 'student'])->first();
@@ -39,6 +40,8 @@ class UserController extends Controller
 
         // Create free membership automatically
         $this->membershipService->createFreeMembership($user);
+
+        $user->refresh()->load('membership');
 
         return response()->json([
             'success' => 'Device registered successfully',

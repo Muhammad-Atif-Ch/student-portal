@@ -28,7 +28,8 @@ class User extends Authenticatable
         'image',
         'device_id',
         'language_id',
-        'fcm_token'
+        'fcm_token',
+        'app_type'
     ];
 
     /**

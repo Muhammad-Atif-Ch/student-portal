@@ -23,10 +23,8 @@ Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
 });
 
 // Routes only for premium users
-Route::middleware('membership:premium')->group( function () {
+Route::middleware('membership:premium')->group(function () {
     Route::group(['prefix' => 'quiz'], function () {
-        Route::get('/', [QuizController::class, 'index']);
-        Route::get('search-question', [QuizController::class, 'searchQuestion']);
         // Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
         Route::get('get-practice-question', [QuizController::class, 'getPracticeQuestion']);
         Route::get('get-official-question', [QuizController::class, 'getOfficialQuestion']);
@@ -59,11 +57,13 @@ Route::middleware('membership:premium')->group( function () {
 });
 
 // Route only for free users
-Route::middleware('membership:free')->group( function () {
+Route::middleware('membership:free')->group(function () {
     Route::group(['prefix' => 'quiz'], function () {
+        Route::get('/', [QuizController::class, 'index']);
+        Route::get('search-question', [QuizController::class, 'searchQuestion']);
         Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
     });
-    
+
     // setting routes
     Route::group(['prefix' => 'setting'], function () {
         // Result related routes

@@ -10,7 +10,7 @@ return [
   |
   */
 
-  'package_name' => env('GOOGLE_PLAY_PACKAGE_NAME', 'com.ddt_car_bike_ireland'),
+  'package_name' => env('GOOGLE_PLAY_PACKAGE_NAME', 'com.dtt_car_bike_ireland'),
 
   'api' => [
     'base_url' => 'https://androidpublisher.googleapis.com/androidpublisher/v3',

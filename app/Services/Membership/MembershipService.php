@@ -36,7 +36,7 @@ class MembershipService
   }
 
   public function verifySubscription(string $packageName, string $subscriptionId, string $purchaseToken)
-  {
+  {//dd($packageName, $subscriptionId, $purchaseToken);
     $baseUrl = config('google-play.api.base_url');
     $accessToken = $this->getGoogleAccessToken(); // Your existing method
     $url = "{$baseUrl}/applications/{$packageName}/purchases/subscriptions/{$subscriptionId}/tokens/{$purchaseToken}";
@@ -70,7 +70,7 @@ class MembershipService
         return $this->createFallbackMembershipData();
       }
 
-      return null;
+      return $e->getMessage();
     }
   }
 

@@ -33,7 +33,7 @@ class UserController extends Controller
         $user = User::create([
             'device_id' => $deviceId, // Dummy password for device-only users
             'language_id' => 41,
-            'app_type' => 'both'
+            'app_type' => 'car'
         ]);
 
         $role = Role::where(['name' => 'student'])->first();

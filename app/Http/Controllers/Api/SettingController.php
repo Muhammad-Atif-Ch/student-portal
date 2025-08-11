@@ -40,6 +40,7 @@ class SettingController extends Controller
         $user = User::where('device_id', $deviceId)->first();
         $user->app_type = $request->app_type;
         $user->language_id = $request->language_id;
+        $user->fcm_token = $request->fcm_token;
         $user->save();
 
         return (new SettingResource($user))->additional([

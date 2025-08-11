@@ -23,6 +23,7 @@ class UpdateSettingRequest extends FormRequest
     {
         return [
             "app_type" => ["nullable", "string", "in:car,bike,both"],
+            "fcm_token" => ["nullable", "string"],
             "language_id" => ["nullable", "exists:languages,id"],
         ];
     }

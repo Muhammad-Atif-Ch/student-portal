@@ -20,6 +20,12 @@ Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('app-image', [SettingController::class, 'appImage']);
     Route::get('user-status', [UserController::class, 'userStatus']);
     Route::get('languages', [SettingController::class, 'languages']);
+
+    // Membership management routes
+    Route::prefix('membership')->group(function () {
+        Route::get('/', [MembershipController::class, 'index']);
+        Route::post('/store', [MembershipController::class, 'store']);
+    });
 });
 
 // Routes only for premium users
@@ -71,10 +77,6 @@ Route::middleware('membership:free')->group(function () {
         Route::post('update', [SettingController::class, 'update']);
     });
 
-    // // Membership management routes
-    Route::prefix('membership')->group(function () {
-        Route::get('/', [MembershipController::class, 'index']);
-        Route::post('/store', [MembershipController::class, 'store']);
-    });
+    
 });
 

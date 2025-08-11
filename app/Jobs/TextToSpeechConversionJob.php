@@ -32,7 +32,7 @@ class TextToSpeechConversionJob implements ShouldQueue
         try {
             $languages = Language::where('status', 1)->pluck('id')->toArray();
 
-            $translations = QuestionTranslation::whereNotNull('question_translation')
+            $translations = QuestionTranslation::with('language.voices')->whereNotNull('question_translation')
                 ->whereIn('language_id', $languages)
                 // ->take(1)
                 ->orderBy('id', 'asc')
@@ -40,10 +40,11 @@ class TextToSpeechConversionJob implements ShouldQueue
 
             // Calculate total fields to convert
             $total = $translations->count();
-            // log::info("start translation", [
-            //     "total" => $total,
-            //     "language" => $languages
-            // ]);
+            Log::info("start translation", [
+                "total" => $total,
+                "language" => $languages,
+                "translations" => $translations
+            ]);
             $progress = [
                 'total' => $total,
                 'completed' => 0,
@@ -59,15 +60,6 @@ class TextToSpeechConversionJob implements ShouldQueue
                     $this->updateProgress($progress, 'stopped', 'Audio conversion stopped by user');
                     return;
                 }
-                log::info('empty check', [
-                    'id' => $translation->id,
-                    'question' => $translation->question_audio,
-                    'a' => $translation->a_audio,
-                    'b' => $translation->b_audio,
-                    'c' => $translation->c_audio,
-                    'answer_explanation' => $translation->answer_explanation_audio,
-                    'test' => !empty($translation->question_audio) && !empty($translation->a_audio) && !empty($translation->b_audio) && !empty($translation->c_audio) && !empty($translation->answer_explanation_audio)
-                ]);
                 if (!empty($translation->question_audio) && !empty($translation->a_audio) && !empty($translation->b_audio) && !empty($translation->c_audio) && !empty($translation->answer_explanation_audio)) {
                     $progress['completed']++;
                     $this->updateProgress($progress);
@@ -101,7 +93,7 @@ class TextToSpeechConversionJob implements ShouldQueue
                     }
 
                     // Convert text to speech
-                    $audioContent = $tts->convertToSpeech($text, $translation->language->code);
+                    $audioContent = $tts->convertToSpeech($text, $translation->language);
 
                     log::info("convert to speach", [
                         "field name" => $audioField,

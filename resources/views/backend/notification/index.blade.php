@@ -35,10 +35,14 @@
                                         </thead>
                                         <tbody>
                                             @forelse ($notifications as $notification)
+                                            @php
+                                                $data = json_decode($notification->data)
+
+                                            @endphp
                                                 <tr>
-                                                    <td>{{ $notification->id }}</td>
-                                                    <td>{{ $notification->subject }}</td>
-                                                    <td>{{ $notification->message }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->subject }}</td>
+                                                    <td>{{ $data->message }}</td>
                                                     {{-- <td>
                                                         <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>

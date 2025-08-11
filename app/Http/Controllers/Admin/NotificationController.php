@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Services\FcmNotification\FcmNotificationService;
 use Illuminate\Support\Facades\Http;
+use App\Notifications\CustomNotification;
+use App\Services\FcmNotification\FcmNotificationService;
 
 class NotificationController extends Controller
 {
@@ -43,16 +44,25 @@ class NotificationController extends Controller
         ]);
 
         // Create a new notification
-        Notification::create([
+        // Notification::create([
+        //     'subject' => $request->subject,
+        //     'message' => $request->message,
+        // ]);
+        $data = [
             'subject' => $request->subject,
             'message' => $request->message,
-        ]);
+        ];
 
-        $tokens = User::pluck('fcm_token');
+        $users = User::whereNotNull('fcm_token')->get();
+        if($users->isEmpty())
+        {
+            return redirect()->route('admin.notification.index')->with('error', 'User not found.');
+        }
 
-        foreach ($tokens as $token) {
+        foreach ($users as $user) {
+            $user->notify(new CustomNotification($data));
             $this->fcmNotificationService->sendFcmNotification(
-                $token,
+                $user->fcm_token,
                 $request->subject,
                 $request->message,
             );

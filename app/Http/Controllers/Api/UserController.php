@@ -16,12 +16,18 @@ class UserController extends Controller
     {
         $this->membershipService = $membershipService;
     }
+
     public function register(Request $request)
     {
         $deviceId = $request->header('Device-ID');
 
         // Check if device exists
         $existingDevice = User::where('device_id', $deviceId)->first();
+        if ($existingDevice && $request->filled('fcm_token')) {
+            $existingDevice->update([
+                "fcm_token" => $request->fcm_token,
+            ]);
+        }
 
         if ($existingDevice) {
             return response()->json([
@@ -33,7 +39,8 @@ class UserController extends Controller
         $user = User::create([
             'device_id' => $deviceId, // Dummy password for device-only users
             'language_id' => 41,
-            'app_type' => 'car'
+            'app_type' => 'car',
+            "fcm_token" => $request->fcm_token,
         ]);
 
         $role = Role::where(['name' => 'student'])->first();

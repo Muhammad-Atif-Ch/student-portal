@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 
 Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
-    Route::get('user/device-register', [UserController::class, 'register']);
+    Route::post('user/device-register', [UserController::class, 'register']);
     Route::post('contact-us', [ContactUsController::class, 'index']);
     Route::get('app-image', [SettingController::class, 'appImage']);
     Route::get('user-status', [UserController::class, 'userStatus']);

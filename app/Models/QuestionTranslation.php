@@ -61,7 +61,7 @@ class QuestionTranslation extends Model
     {
         $deviceId = request()->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
-        $languageId = $user->language_id ?? 39;
+        $languageId = $user->language_id ?? 41;
         return $query->where('language_id', $languageId);
     }
 

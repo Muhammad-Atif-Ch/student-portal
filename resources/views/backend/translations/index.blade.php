@@ -46,9 +46,9 @@
                             <div class="card-body">
                                 <div class="mt-2">
                                     <h5>{{ __('Search Translation') }}</h5>
-                                    <form method="post" action="{{ route("admin.translations.search") }}">
+                                    <form method="post" action="{{ route('admin.translations.index') }}">
                                         @csrf
-                                        @method('post')
+                                        @method('get')
                                         <div class="row">
                                             <div class="col-12 col-md-2 col-lg-2">
                                                 <div class="form-group">
@@ -123,7 +123,7 @@
                                                     <td>{{ $data->id }}</td>
                                                     <td>{{ $data->quiz->id }}</td>
                                                     <td>{{ $data->question->id }}</td>
-                                                    <td>{{ $data->language->name }}</td>
+                                                    <td>{{ $data->language_id }} , {{ $data->language->name }}</td>
                                                     <td>{{ $data->question_translation }}</td>
                                                     <td>{{ $data->a_translation }}</td>
                                                     <td>{{ $data->b_translation }}</td>
@@ -205,7 +205,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td class="text-center" colspan="10"> No data found</td>
+                                                    <td class="text-center" colspan="16"> No data found</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>

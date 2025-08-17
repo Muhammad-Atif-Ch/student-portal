@@ -45,7 +45,7 @@ class ResultController extends Controller
                         date('Y-m-d H:i', strtotime($request->date))
                     ]);
                 }
-            ])
+            ], 'questions.translations')
             ->get()
             ->map(function ($quiz) {
                 $attempted = 0;
@@ -80,7 +80,7 @@ class ResultController extends Controller
 
         $userId = User::where('device_id', $deviceId)->first()->id;
 
-        $resultIds = StudentQuizHistory::with('question')->where('user_id', $userId)
+        $resultIds = StudentQuizHistory::with('question.translations')->where('user_id', $userId)
             ->where('type', $request->type)
             ->whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') = ?", [
                 date('Y-m-d H:i', strtotime($request->created_at))
@@ -95,12 +95,16 @@ class ResultController extends Controller
     {
         $deviceId = $request->header('Device-Id');
 
-        $userId = User::where('device_id', $deviceId)->first()->id;
+        $user = User::where('device_id', $deviceId)->first();
+        $userId = $user->id;
 
-        $totalQuestions = Question::count();
+        $totalQuestions = Question::where('type', $user->app_type)->count();
 
         $result = StudentQuizHistory::where('user_id', $userId)
             ->where('type', 'official')
+            ->whereHas('question', function ($q) use ($user) {
+                $q->where('type', $user->app_type);
+            })
             ->selectRaw('
                 COUNT(DISTINCT question_id) as total_seen_questions,
                 COUNT(*) as total_attempted_questions,

@@ -310,7 +310,7 @@ class QuizController extends Controller
                 QuestionHistory::insert($historyData);
 
                 $quiz->setRelation('questions', $finalQuestions);
-                
+
                 return $quiz;
             });
 
@@ -330,6 +330,23 @@ class QuizController extends Controller
                 $now = Carbon::now();
 
                 foreach ($validatedData['data'] as $item) {
+                    if ($item['correct'] == 1) {
+                        // Check if an old wrong answer exists
+                        $updated = StudentQuizHistory::where('user_id', $userId)
+                            ->where('quiz_id', $item['quiz_id'])
+                            ->where('question_id', $item['question_id'])
+                            ->where('correct', 0)
+                            ->update([
+                                'correct' => 1,
+                                'updated_at' => $now
+                            ]);
+
+                        // If old record updated → skip inserting new
+                        if ($updated > 0) {
+                            continue;
+                        }
+                    }
+
                     $bulkData[] = [
                         'user_id' => $userId,
                         'quiz_id' => $item['quiz_id'],
@@ -376,7 +393,7 @@ class QuizController extends Controller
     {
         $studentQuizHistory = StudentQuizHistory::where('correct', 0)->pluck('question_id')->toArray();
 
-        $question = Question::with('quiz', 'translations')->whereIn('id', $studentQuizHistory)->get();
+        $question = Question::with('quiz', 'translations', 'studentQuizHistories')->whereIn('id', $studentQuizHistory)->get();
 
         return QuestionResource::collection($question);
     }
@@ -390,18 +407,19 @@ class QuizController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $userId = $user->id;
-
         $quizzes = Quiz::with('questions.translations')->get();
 
-        $filteredQuizzes = $quizzes->map(function ($quiz) use ($userId) {
+
+        $filteredQuizzes = $quizzes->map(function ($quiz) use ($user) {
+            $userId = $user->id;
+
             // Get IDs of questions already seen by the user for this quiz
             $seenQuestionIds = QuestionHistory::where('user_id', $userId)
                 ->where('quiz_id', $quiz->id)
                 ->pluck('question_id');
 
             // Filter out already seen questions
-            $unseenQuestions = $quiz->questions->whereNotIn('id', $seenQuestionIds);
+            $unseenQuestions = $quiz->questions->whereNotIn('id', $seenQuestionIds)->where('type', $user->app_type);
 
             // Attach filtered questions back to the quiz
             $quiz->setRelation('questions', $unseenQuestions);

@@ -76,7 +76,6 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Translation
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
         Route::get('/', [TranslationController::class, 'index'])->name('index');
-        Route::post('/search', [TranslationController::class, 'index'])->name('search');
         // Translation Api
         Route::get('create-translation', [TranslationController::class, 'createTranslation'])->name('createTranslation');
         Route::post('translation/start', [TranslationController::class, 'translateAll'])->name('start');

@@ -38,10 +38,13 @@ class SettingController extends Controller
     {
         $deviceId = $request->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
-        $user->app_type = $request->app_type;
-        $user->language_id = $request->language_id;
-        $user->fcm_token = $request->fcm_token;
-        $user->save();
+        $user->update([
+            'app_type' => $request->app_type,
+            'language_id' => $request->language_id,
+            'fcm_token' => $request->fcm_token,
+        ]);
+
+        $user->refresh();
 
         return (new SettingResource($user))->additional([
             'message' => 'Setting updated successfully',

@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\QuizResource;
 use App\Http\Resources\Api\QuestionResource;
 use App\Http\Requests\Api\CreateQuestionRequest;
+use App\Models\PreviousTest;
 
 class QuizController extends Controller
 {
@@ -321,25 +322,40 @@ class QuizController extends Controller
     {
         try {
             $deviceId = $request->header('Device-Id');
-            $userId = User::where('device_id', $deviceId)->first()->id;
+            $user = User::where('device_id', $deviceId)->first();
+
             $validatedData = $request->validated();
+            $now = Carbon::now();
 
             // Use database transaction for data integrity
-            $result = DB::transaction(function () use ($validatedData, $userId) {
+            $result = DB::transaction(function () use ($validatedData, $user, $now) {
+                $correct = 0;
+                $inCorrect = 0;
+                $total = 0;
+                $type = "";
+                $questionIds = [];
                 $bulkData = [];
-                $now = Carbon::now();
+                $userId = $user->id;
 
                 foreach ($validatedData['data'] as $item) {
+                    $total++;
+                    $type = $item['type'];
                     if ($item['correct'] == 1) {
-                        // Check if an old wrong answer exists
-                        $updated = StudentQuizHistory::where('user_id', $userId)
-                            ->where('quiz_id', $item['quiz_id'])
-                            ->where('question_id', $item['question_id'])
-                            ->where('correct', 0)
-                            ->update([
-                                'correct' => 1,
-                                'updated_at' => $now
-                            ]);
+                        $correct++;
+                    } else {
+                        $inCorrect++;
+                    }
+                    $questionIds[] = $item['question_id'];
+
+                    $studentHistory = StudentQuizHistory::where('user_id', $userId)
+                        ->where('quiz_id', $item['quiz_id'])
+                        ->where('question_id', $item['question_id'])
+                        ->first();
+                    if ($studentHistory) {
+                        $updated = $studentHistory->update([
+                            'correct' => $item['correct'],
+                            'updated_at' => $now
+                        ]);
 
                         // If old record updated → skip inserting new
                         if ($updated > 0) {
@@ -358,9 +374,23 @@ class QuizController extends Controller
                         'updated_at' => $now,
                     ];
                 }
+                
+                $testData = [
+                    'user_id' => $userId,
+                    'type' => $type,
+                    'question_type' => $user->app_type,
+                    'question_ids' => json_encode($questionIds),
+                    'test_datetime' => $now->format('Y-m-d H:i'),
+                    'correct_answers' => $correct,
+                    'incorrect_answers' => $inCorrect,
+                    'total_attempts' => $total,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
 
                 // Bulk insert
                 StudentQuizHistory::insert($bulkData);
+                PreviousTest::create($testData);
 
                 return [
                     'inserted_count' => count($bulkData),
@@ -368,19 +398,7 @@ class QuizController extends Controller
                 ];
             });
 
-            $now = Carbon::now();
-            $result = StudentQuizHistory::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as test_datetime, 
-                    type,
-                    SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers,
-                    SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers,
-                    COUNT(*) as total_attempts")
-                ->where('user_id', $userId)
-                ->whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') = ?", [
-                    date('Y-m-d H:i', strtotime($now->format('Y-m-d H:i')))
-                ])
-                ->groupBy('test_datetime', 'type')
-                ->orderBy('test_datetime', 'DESC')
-                ->get();
+            $result = PreviousTest::where('user_id', $user->id)->where("test_datetime", $now->format('Y-m-d H:i'))->first();
 
             return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {
@@ -419,7 +437,7 @@ class QuizController extends Controller
                 ->pluck('question_id');
 
             // Filter out already seen questions
-            $unseenQuestions = $quiz->questions->whereNotIn('id', $seenQuestionIds)->where('type', $user->app_type);
+            $unseenQuestions = $quiz->questions->whereNotIn('id', $seenQuestionIds)->whereIn('type', [$user->app_type, 'both']);
 
             // Attach filtered questions back to the quiz
             $quiz->setRelation('questions', $unseenQuestions);

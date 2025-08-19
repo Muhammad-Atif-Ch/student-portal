@@ -33,9 +33,9 @@ class ResultController extends Controller
         $userId = $user->id;
         $date = Carbon::parse($request->date);
         // Fetching the test results grouped by date and type   
-        $result = PreviousTest::where('user_id', $userId)->where('question_type', $user->app_type)->where('type', $request->type)->where('test_datetime', $date)->get();
+        $result = PreviousTest::where('user_id', $userId)->where('question_type', $user->app_type)->where('id', $request->id)->first();
 
-        return ResultResource::collection($result);
+        return new ResultResource($result);
     }
 
     public function previousTestResultDetails(Request $request)
@@ -51,7 +51,7 @@ class ResultController extends Controller
         $results = Quiz::with([
             'questions' => function ($q) use ($questionIds) {
                 $q->whereIn('id', $questionIds)
-                    ->with('translations'); // nested eager load
+                    ->with('translations', 'studentQuizHistories'); // nested eager load
             }
         ])->get();
 

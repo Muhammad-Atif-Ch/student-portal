@@ -48,7 +48,7 @@ class Question extends Model
     }
     public function studentQuizHistories()
     {
-        return $this->hasMany(StudentQuizHistory::class, 'question_id');
+        return $this->hasOne(StudentQuizHistory::class, 'question_id');
     }
 
     public function getImageUrlAttribute()

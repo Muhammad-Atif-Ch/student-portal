@@ -8,8 +8,10 @@ use App\Models\Quiz;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\Question;
+use App\Models\PreviousTest;
 use Illuminate\Http\Request;
 use App\Models\QuestionHistory;
+use App\Models\PreviousTestQuiz;
 use App\Models\StudentQuizHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +19,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\QuizResource;
 use App\Http\Resources\Api\QuestionResource;
 use App\Http\Requests\Api\CreateQuestionRequest;
-use App\Models\PreviousTest;
 
 class QuizController extends Controller
 {
@@ -67,9 +68,8 @@ class QuizController extends Controller
         if ($quiz == 'all') {
             $quiz = Quiz::with([
                 'questions' => function ($query) use ($allowedTypes) {
-                    $query->whereIn('type', $allowedTypes);
-                },
-                'questions.translations'
+                    $query->whereIn('type', $allowedTypes)->with('translations');
+                }
             ])->get();
 
             return QuestionResource::collection($quiz);
@@ -77,12 +77,11 @@ class QuizController extends Controller
             // Fetch the IDs of questions the student has already taken
             $quiz = Quiz::with([
                 'questions' => function ($query) use ($allowedTypes) {
-                    $query->whereIn('type', $allowedTypes);
-                },
-                'questions.translations',
-            ])->where('id', $quiz)->first();
+                    $query->whereIn('type', $allowedTypes)->with('translations');
+                }
+            ])->where('id', $quiz)->get();
 
-            return new QuestionResource($quiz);
+            return QuestionResource::collection($quiz);
         } else {
             return response()->json(['error' => 'Invalid request'], 400);
         }
@@ -333,8 +332,8 @@ class QuizController extends Controller
                 $inCorrect = 0;
                 $total = 0;
                 $type = "";
-                $questionIds = [];
                 $bulkData = [];
+                $quizWiseQuestions = [];
                 $userId = $user->id;
 
                 foreach ($validatedData['data'] as $item) {
@@ -345,7 +344,7 @@ class QuizController extends Controller
                     } else {
                         $inCorrect++;
                     }
-                    $questionIds[] = $item['question_id'];
+                    $quizWiseQuestions[$item['quiz_id']][] = $item['question_id'];
 
                     $studentHistory = StudentQuizHistory::where('user_id', $userId)
                         ->where('quiz_id', $item['quiz_id'])
@@ -374,23 +373,33 @@ class QuizController extends Controller
                         'updated_at' => $now,
                     ];
                 }
-                
-                $testData = [
+
+                $previousTest = PreviousTest::create([
                     'user_id' => $userId,
                     'type' => $type,
                     'question_type' => $user->app_type,
-                    'question_ids' => json_encode($questionIds),
                     'test_datetime' => $now->format('Y-m-d H:i'),
                     'correct_answers' => $correct,
                     'incorrect_answers' => $inCorrect,
                     'total_attempts' => $total,
                     'created_at' => $now,
                     'updated_at' => $now,
-                ];
+                ]);
+
+                $quizRows = [];
+                foreach ($quizWiseQuestions as $quizId => $qIds) {
+                    $quizRows[] = [
+                        'previous_test_id' => $previousTest->id,
+                        'quiz_id' => $quizId,
+                        'question_ids' => json_encode($qIds),
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
 
                 // Bulk insert
                 StudentQuizHistory::insert($bulkData);
-                PreviousTest::create($testData);
+                PreviousTestQuiz::insert($quizRows);
 
                 return [
                     'inserted_count' => count($bulkData),
@@ -398,7 +407,7 @@ class QuizController extends Controller
                 ];
             });
 
-            $result = PreviousTest::where('user_id', $user->id)->where("test_datetime", $now->format('Y-m-d H:i'))->first();
+            $result = PreviousTest::with('PreviousTestQuizes')->where('user_id', $user->id)->where("test_datetime", $now->format('Y-m-d H:i'))->first();
 
             return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {

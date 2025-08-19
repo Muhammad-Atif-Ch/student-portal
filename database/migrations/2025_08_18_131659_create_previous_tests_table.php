@@ -17,7 +17,7 @@ return new class extends Migration
             $table->dateTime('test_datetime');
             $table->string('type'); // e.g., 'practice', 'official'
             $table->string('question_type'); // e.g., 'car', 'bike'
-            $table->json('question_ids'); // Store question IDs or details as JSON
+            
             $table->integer('correct_answers')->default(0);
             $table->integer('incorrect_answers')->default(0);
             $table->integer('total_attempts')->default(0);

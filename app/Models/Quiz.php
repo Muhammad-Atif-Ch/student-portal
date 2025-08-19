@@ -19,8 +19,8 @@ class Quiz extends Model
         return $this->hasMany(Question::class, 'quiz_id');
     }
 
-    // public function quizHistotry()
-    // {
-    //     return $this->hasManyThrough(StudentQuizHistory::class, Question::class, 'quiz_id', 'question_id', 'id', 'id');
-    // }
+    public function previousTestQuiz()
+    {
+        return $this->hasMany(PreviousTestQuiz::class);
+    }
 }

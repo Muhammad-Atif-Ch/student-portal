@@ -12,6 +12,7 @@ use App\Models\StudentQuizHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Api\ResultResource;
+use App\Http\Resources\Api\QuestionResource;
 
 class ResultController extends Controller
 {
@@ -21,7 +22,7 @@ class ResultController extends Controller
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
 
-        $result = PreviousTest::where('user_id', $userId)->where('question_type', $user->app_type)->get();
+        $result = PreviousTest::with('PreviousTestQuizes.quiz')->where('user_id', $userId)->where('question_type', $user->app_type)->get();
 
         return ResultResource::collection($result);
     }
@@ -33,7 +34,7 @@ class ResultController extends Controller
         $userId = $user->id;
         $date = Carbon::parse($request->date);
         // Fetching the test results grouped by date and type   
-        $result = PreviousTest::where('user_id', $userId)->where('question_type', $user->app_type)->where('id', $request->id)->first();
+        $result = PreviousTest::with('PreviousTestQuizes.quiz')->where('user_id', $userId)->where('question_type', $user->app_type)->findOrFail($request->id);
 
         return new ResultResource($result);
     }
@@ -45,8 +46,14 @@ class ResultController extends Controller
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
 
-        $previousTest = PreviousTest::where('user_id', $userId)->findOrFail($request->id);
-        $questionIds = json_decode($previousTest->question_ids, true);
+        $previousTest = PreviousTest::with('previousTestQuizes')
+            ->where('user_id', $userId)
+            ->findOrFail($request->id);
+
+        // collect all question_ids from related quizzes
+        $questionIds = collect($previousTest->previousTestQuizes)
+            ->flatMap(fn($quiz) => json_decode($quiz->question_ids, true))
+            ->toArray();
 
         $results = Quiz::with([
             'questions' => function ($q) use ($questionIds) {
@@ -55,7 +62,7 @@ class ResultController extends Controller
             }
         ])->get();
 
-        return ResultResource::collection($results);
+        return QuestionResource::collection($results);
     }
 
     public function resultSummary(Request $request)
@@ -87,7 +94,7 @@ class ResultController extends Controller
         ];
 
 
-        return new ResultResource($response);
+        return new QuestionResource($response);
     }
 
     public function resultCategory(Request $request)
@@ -142,6 +149,6 @@ class ResultController extends Controller
 
 
 
-        return ResultResource::collection($quizzes);
+        return QuestionResource::collection($quizzes);
     }
 }

@@ -51,6 +51,16 @@ class Question extends Model
         return $this->hasOne(StudentQuizHistory::class, 'question_id');
     }
 
+    public function getPreviousQuestionsAttribute()
+    {
+        if ($this->previousTestQuiz && $this->previousTestQuiz->question_ids) {
+            $questionIds = json_decode($this->previousTestQuiz->question_ids, true);
+            return Question::whereIn('id', $questionIds)->get();
+        }
+
+        return collect();
+    }
+
     public function getImageUrlAttribute()
     {
         if ($this->image) {

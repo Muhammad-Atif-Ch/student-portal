@@ -19,4 +19,9 @@ class PreviousTest extends Model
         'incorrect_answers',
         'total_attempts',
     ];
+
+    public function PreviousTestQuizes()
+    {
+        return $this->hasMany(PreviousTestQuiz::class, 'previous_test_id');
+    }
 }

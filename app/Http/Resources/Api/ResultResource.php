@@ -25,7 +25,7 @@ class ResultResource extends JsonResource
             'correct_answers' => $this->correct_answers,
             'incorrect_answers' => $this->incorrect_answers,
             'total_attempts' => $this->total_attempts,
-            'quizzes' => PreviousTestQuizResource::collection($this->whenLoaded('PreviousTestQuizes')),
+            'quizzes' => PreviousTestQuizResource::collection($this->whenLoaded('previousTestQuizes')),
         ];
     }
 }

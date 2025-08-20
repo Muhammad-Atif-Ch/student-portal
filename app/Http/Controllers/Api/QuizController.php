@@ -408,7 +408,7 @@ class QuizController extends Controller
                 ];
             });
 
-            $result = PreviousTest::with('PreviousTestQuizes')->where('user_id', $user->id)->where("test_datetime", $now->format('Y-m-d H:i'))->first();
+            $result = PreviousTest::with('previousTestQuizes')->where('user_id', $user->id)->where("test_datetime", $now->format('Y-m-d H:i'))->first();
 
             return response()->json(['data' => $result, 'success' => 'Quiz history saved successfully'], 200);
         } catch (Exception $e) {

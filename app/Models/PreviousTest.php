@@ -20,7 +20,7 @@ class PreviousTest extends Model
         'total_attempts',
     ];
 
-    public function PreviousTestQuizes()
+    public function previousTestQuizes()
     {
         return $this->hasMany(PreviousTestQuiz::class, 'previous_test_id');
     }

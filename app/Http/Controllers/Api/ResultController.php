@@ -9,6 +9,7 @@ use App\Models\Question;
 use App\Models\PreviousTest;
 use Illuminate\Http\Request;
 use App\Models\StudentQuizHistory;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Api\ResultResource;
@@ -22,7 +23,7 @@ class ResultController extends Controller
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
 
-        $result = PreviousTest::with('PreviousTestQuizes.quiz')->where('user_id', $userId)->where('question_type', $user->app_type)->get();
+        $result = PreviousTest::with('previousTestQuizes.quiz')->where('user_id', $userId)->where('question_type', $user->app_type)->get();
 
         return ResultResource::collection($result);
     }
@@ -32,11 +33,50 @@ class ResultController extends Controller
         $deviceId = $request->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
-        $date = Carbon::parse($request->date);
-        // Fetching the test results grouped by date and type   
-        $result = PreviousTest::with('PreviousTestQuizes.quiz')->where('user_id', $userId)->where('question_type', $user->app_type)->findOrFail($request->id);
 
-        return new ResultResource($result);
+        $previousQuestionIds = PreviousTest::with('previousTestQuizes')
+            ->where('user_id', $userId)
+            ->where('question_type', $user->app_type)
+            ->findOrFail($request->id);
+
+        $result = [];
+
+        foreach ($previousQuestionIds->previousTestQuizes as $value) {
+            $question_ids = json_decode($value->question_ids, true);
+
+            // quiz stats
+            $studentQuizHistories = StudentQuizHistory::select(
+                'quiz_id',
+                DB::raw("SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers"),
+                DB::raw("SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers")
+            )
+                ->where('user_id', $userId)
+                ->whereIn('question_id', $question_ids)
+                ->where('type', $previousQuestionIds->type)
+                ->groupBy('quiz_id')
+                ->first();
+
+            if ($studentQuizHistories) {
+                $quiz = Quiz::select('id', 'title')
+                    ->withCount([
+                        'questions' => function ($q) use ($user) {
+                            return $q->whereIn('type', [$user->app_type, 'both']);
+                        }
+                    ]) // total_questions
+                    ->find($studentQuizHistories->quiz_id);
+
+                $result[] = [
+                    'quiz_id' => $quiz->id,
+                    'quiz_title' => $quiz->title,
+                    'total_questions' => $quiz->questions_count,
+                    'attempted_questions' => $studentQuizHistories->correct_answers + $studentQuizHistories->incorrect_answers,
+                    'correct_answers' => $studentQuizHistories->correct_answers,
+                    'incorrect_answers' => $studentQuizHistories->incorrect_answers,
+                ];
+            }
+        }
+
+        return new QuestionResource($result);
     }
 
     public function previousTestResultDetails(Request $request)

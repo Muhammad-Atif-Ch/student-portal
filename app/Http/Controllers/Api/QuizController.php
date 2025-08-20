@@ -34,7 +34,7 @@ class QuizController extends Controller
 
         // Fetch the IDs of questions the student has already taken
         $query = Question::query();
-
+        $query->with('translations');
         $query->where('question', 'like', "%{$request->question}%");
 
         if ($includeAnswer) {
@@ -116,8 +116,8 @@ class QuizController extends Controller
         }
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
-            ->with('questions.translations')
-            ->where('id', $quizIds)
+            ->with('questions')
+            ->whereIn('id', $quizIds)
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes, $useOfficialLimit) {
                 $quizId = $quiz->id;
@@ -202,6 +202,7 @@ class QuizController extends Controller
 
                 QuestionHistory::insert($historyData);
 
+                $finalQuestions->load('translations');
                 $quiz->setRelation('questions', $finalQuestions);
 
                 return $quiz;
@@ -225,7 +226,7 @@ class QuizController extends Controller
         };
 
         $quizzes = Quiz::select('id', 'title', 'official_test_question')
-            ->with('questions.translations')
+            ->with('questions')
             ->get()
             ->map(function ($quiz) use ($userId, $allowedTypes) {
                 $quizId = $quiz->id;
@@ -308,7 +309,7 @@ class QuizController extends Controller
                 })->toArray();
 
                 QuestionHistory::insert($historyData);
-
+                $finalQuestions->load('translations');
                 $quiz->setRelation('questions', $finalQuestions);
 
                 return $quiz;

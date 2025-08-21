@@ -32,9 +32,13 @@ class QuizController extends Controller
     {
         $includeAnswer = $request->include_answer;
 
+        $deviceId = $request->header('Device-Id');
+        $user = User::where('device_id', $deviceId)->first();
+
         // Fetch the IDs of questions the student has already taken
         $query = Question::query();
         $query->with('translations');
+        $query->where('type', $user->app_type);
         $query->where('question', 'like', "%{$request->question}%");
 
         if ($includeAnswer) {
@@ -443,7 +447,7 @@ class QuizController extends Controller
             $userId = $user->id;
 
             // Get IDs of questions already seen by the user for this quiz
-            $seenQuestionIds = QuestionHistory::where('user_id', $userId)
+            $seenQuestionIds = StudentQuizHistory::where('user_id', $userId)
                 ->where('quiz_id', $quiz->id)
                 ->pluck('question_id');
 

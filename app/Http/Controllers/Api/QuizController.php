@@ -353,6 +353,7 @@ class QuizController extends Controller
                         ->first();
                     if ($studentHistory) {
                         $updated = $studentHistory->update([
+                            'answer' => $item['answer'],
                             'correct' => $item['correct'],
                             'updated_at' => $now
                         ]);

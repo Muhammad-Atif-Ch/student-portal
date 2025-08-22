@@ -424,9 +424,11 @@ class QuizController extends Controller
 
     public function previousIncorrect()
     {
-        $studentQuizHistory = StudentQuizHistory::where('correct', 0)->pluck('question_id')->toArray();
+        $deviceId = request()->header('Device-Id');
+        $user = User::where('device_id', $deviceId)->first();
+        $studentQuizHistory = StudentQuizHistory::where(['correct' => 0, 'user_id' => $user->id])->pluck('question_id')->toArray();
 
-        $question = Question::with('quiz', 'translations', 'studentQuizHistories')->whereIn('id', $studentQuizHistory)->get();
+        $question = Question::with('quiz', 'translations', 'studentQuizHistories')->whereIn('id', $studentQuizHistory)->where('type', $user->app_type)->get();
 
         return QuestionResource::collection($question);
     }

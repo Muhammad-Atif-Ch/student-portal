@@ -338,7 +338,7 @@ class QuizController extends Controller
                 $total = 0;
                 $type = "";
                 $bulkData = [];
-                $quizWiseQuestions = [];
+                $pretestBulkData = [];
                 $userId = $user->id;
 
                 foreach ($validatedData['data'] as $item) {
@@ -349,8 +349,16 @@ class QuizController extends Controller
                     } else {
                         $inCorrect++;
                     }
-                    $quizWiseQuestions[$item['quiz_id']][] = $item['question_id'];
-
+                    
+                    $pretestBulkData[] = [
+                        'quiz_id' => $item['quiz_id'],
+                        'question_id' => $item['question_id'],
+                        'answer' => $item['answer'],
+                        'correct' => $item['correct'],
+                        'type' => $item['type'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
                     $studentHistory = StudentQuizHistory::where('user_id', $userId)
                         ->where('quiz_id', $item['quiz_id'])
                         ->where('question_id', $item['question_id'])
@@ -392,20 +400,14 @@ class QuizController extends Controller
                     'updated_at' => $now,
                 ]);
 
-                $quizRows = [];
-                foreach ($quizWiseQuestions as $quizId => $qIds) {
-                    $quizRows[] = [
-                        'previous_test_id' => $previousTest->id,
-                        'quiz_id' => $quizId,
-                        'question_ids' => json_encode($qIds),
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
-                }
+                // Add previous_test_id without foreach
+                $pretestBulkData = array_map(function ($row) use ($previousTest) {
+                    return $row + ['previous_test_id' => $previousTest->id];
+                }, $pretestBulkData);
 
                 // Bulk insert
                 StudentQuizHistory::insert($bulkData);
-                PreviousTestQuiz::insert($quizRows);
+                PreviousTestQuiz::insert($pretestBulkData);
 
                 return [
                     'inserted_count' => count($bulkData),

@@ -12,7 +12,10 @@ class PreviousTestQuiz extends Model
     protected $fillable = [
         'previous_test_id',
         'quiz_id',
-        'question_ids',
+        'question_id',
+        'type',
+        'answer',
+        'correct',
     ];
 
     public function previousTest()
@@ -23,5 +26,10 @@ class PreviousTestQuiz extends Model
     public function quiz()
     {
         return $this->belongsTo(Quiz::class, 'quiz_id');
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class, 'question_id');
     }
 }

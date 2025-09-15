@@ -51,6 +51,11 @@ class Question extends Model
         return $this->hasOne(StudentQuizHistory::class, 'question_id');
     }
 
+    public function previousTestQuestion()
+    {
+        return $this->hasOne(PreviousTestQuiz::class, 'question_id');
+    }
+
     public function getPreviousQuestionsAttribute()
     {
         if ($this->previousTestQuiz && $this->previousTestQuiz->question_ids) {

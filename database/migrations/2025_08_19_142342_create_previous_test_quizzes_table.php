@@ -14,7 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('previous_test_id')->constrained('previous_tests')->onDelete('cascade');
             $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
-            $table->json('question_ids'); // Store question IDs or details as JSON
+            $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
+            $table->string('answer')->nullable();
+            $table->boolean('correct');
+            $table->enum('type', ['official', 'practice', 'read']);
             $table->timestamps();
         });
     }

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
 use App\Models\Quiz;
 use App\Models\User;
 use App\Models\Question;
 use App\Models\PreviousTest;
 use Illuminate\Http\Request;
+use App\Models\PreviousTestQuiz;
 use App\Models\StudentQuizHistory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Api\ResultResource;
 use App\Http\Resources\Api\QuestionResource;
 
@@ -34,47 +33,33 @@ class ResultController extends Controller
         $user = User::where('device_id', $deviceId)->first();
         $userId = $user->id;
 
-        $previousQuestionIds = PreviousTest::with('previousTestQuizes')
+        $previousTest = PreviousTest::with('previousTestQuizes')
             ->where('user_id', $userId)
             ->where('question_type', $user->app_type)
             ->findOrFail($request->id);
 
-        $result = [];
-
-        foreach ($previousQuestionIds->previousTestQuizes as $value) {
-            $question_ids = json_decode($value->question_ids, true);
-
-            // quiz stats
-            $studentQuizHistories = StudentQuizHistory::select(
+        $quizStats = PreviousTestQuiz::where('previous_test_id', $previousTest->id)
+            ->select(
                 'quiz_id',
                 DB::raw("SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_answers"),
-                DB::raw("SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers")
+                DB::raw("SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END) as incorrect_answers"),
+                DB::raw("COUNT(*) as attempted_questions")
             )
-                ->where('user_id', $userId)
-                ->whereIn('question_id', $question_ids)
-                ->where('type', $previousQuestionIds->type)
-                ->groupBy('quiz_id')
-                ->first();
+            ->groupBy('quiz_id')
+            ->get();
 
-            if ($studentQuizHistories) {
-                $quiz = Quiz::select('id', 'title')
-                    ->withCount([
-                        'questions' => function ($q) use ($user) {
-                            return $q->whereIn('type', [$user->app_type, 'both']);
-                        }
-                    ]) // total_questions
-                    ->find($studentQuizHistories->quiz_id);
+        $result = $quizStats->map(function ($stat) {
+            $quiz = Quiz::withCount('questions')->find($stat->quiz_id);
 
-                $result[] = [
-                    'quiz_id' => $quiz->id,
-                    'quiz_title' => $quiz->title,
-                    'total_questions' => $quiz->questions_count,
-                    'attempted_questions' => $studentQuizHistories->correct_answers + $studentQuizHistories->incorrect_answers,
-                    'correct_answers' => $studentQuizHistories->correct_answers,
-                    'incorrect_answers' => $studentQuizHistories->incorrect_answers,
-                ];
-            }
-        }
+            return [
+                'quiz_id' => $quiz->id,
+                'quiz_title' => $quiz->title,
+                'total_questions' => $quiz->questions_count,
+                'attempted_questions' => $stat->attempted_questions,
+                'correct_answers' => $stat->correct_answers,
+                'incorrect_answers' => $stat->incorrect_answers,
+            ];
+        });
 
         return new QuestionResource($result);
     }
@@ -90,17 +75,17 @@ class ResultController extends Controller
             ->where('user_id', $userId)
             ->findOrFail($request->id);
 
-        // collect all question_ids from related quizzes
-        $questionIds = collect($previousTest->previousTestQuizes)
-            ->flatMap(fn($quiz) => json_decode($quiz->question_ids, true))
-            ->toArray();
+        // Collect quiz_ids and question_ids
+        $quizIds = $previousTest->previousTestQuizes->pluck('quiz_id')->unique();
+        $questionIds = $previousTest->previousTestQuizes->pluck('question_id');
 
+        // Load quizzes with only the attempted questions
         $results = Quiz::with([
             'questions' => function ($q) use ($questionIds) {
                 $q->whereIn('id', $questionIds)
-                    ->with('translations', 'studentQuizHistories'); // nested eager load
+                    ->with('translations', 'previousTestQuestion');
             }
-        ])->get();
+        ])->whereIn('id', $quizIds)->get();
 
         return QuestionResource::collection($results);
     }

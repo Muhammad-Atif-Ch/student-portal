@@ -18,8 +18,11 @@ class PreviousTestQuizResource extends JsonResource
         return [
             'id' => $this->id,
             'previous_test_id' => $this->previous_test_id,
-            'quiz_name' => $this->whenLoaded('quiz', fn () => $this->quiz->title),
-            'question_ids' => json_decode($this->question_ids, true),
+            'quiz_name' => $this->whenLoaded('quiz', fn() => $this->quiz->title),
+            'question_id' => $this->question_id,
+            'type' => $this->type,
+            'answer' => $this->answer,
+            'correct' => $this->correct,
         ];
     }
 }

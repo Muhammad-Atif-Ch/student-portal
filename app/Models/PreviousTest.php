@@ -14,7 +14,6 @@ class PreviousTest extends Model
         'test_datetime',
         'type',
         'question_type',
-        'question_ids',
         'correct_answers',
         'incorrect_answers',
         'total_attempts',

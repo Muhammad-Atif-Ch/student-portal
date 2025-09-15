@@ -33,24 +33,20 @@
                                                     <td>{{ $data->email }}</td>
                                                     <td>{{ $data->subject ?? 'N/A' }}</td>
                                                     <td>
-                                                        <span class="badge badge-{{ $data->status !== 'pending' ? 'success' : 'danger' }}">{{ $data->status !== 'pending' ? 'Solved' : 'Pending' }}</span>
-                                                        {{-- <div class="pretty p-switch pr-2">
-                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $data->id }}"
-                                                                {{ $data->status ? 'checked' : '' }}>
-                                                            <div class="state p-primary">
-                                                                <label></label>
-                                                            </div>
-                                                        </div> --}}
+                                                        <span class="badge status-toggle badge-{{ $data->status !== 'pending' ? 'success' : 'danger' }}" data-id="{{ $data->id }}"
+                                                            data-status="{{ $data->status }}" style="cursor:pointer; user-select:none;">
+                                                            {{ $data->status !== 'pending' ? 'Solved' : 'Pending' }}
+                                                        </span>
                                                     </td>
                                                     {{-- <td> --}}
-                                                        {{-- <div class="pretty p-switch pr-2">
+                                                    {{-- <div class="pretty p-switch pr-2">
                                                             <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $language->id }}"
                                                                 {{ $language->status ? 'checked' : '' }}>
                                                             <div class="state p-primary">
                                                                 <label></label>
                                                             </div>
                                                         </div> --}}
-                                                        {{-- <a href="{{ route('admin.language.update', $language->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
+                                                    {{-- <a href="{{ route('admin.language.update', $language->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
                                                     {{-- </td> --}}
                                                 </tr>
                                             @empty
@@ -70,30 +66,39 @@
         @include('backend.layouts.partials.setting_sidebar')
     </div>
 @endsection
-@section('scripts')
+@push('scripts')
     <script>
-        document.querySelectorAll('.language-status-toggle').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                const languageId = this.getAttribute('data-language-id');
-                const status = this.checked ? 1 : 0;
-                let url = "{{ route('admin.language.update', ':id') }}".replace(':id', languageId);
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.status-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    console.log("Clicked badge with ID:", this.dataset.id); // ✅ test log
+                    const contactId = this.dataset.id;
+                    const currentStatus = this.dataset.status;
+                    const newStatus = currentStatus === 'pending' ? 'resolved' : 'pending';
+                    let url = "{{ route('admin.contact-us.update', ':id') }}".replace(':id', contactId);
 
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            status: status
+                    fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                status: newStatus
+                            })
+                        }).then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                // update badge instantly
+                                this.dataset.status = newStatus;
+                                this.textContent = newStatus === 'pending' ? 'Pending' : 'Solved';
+                                this.classList.toggle('badge-success', newStatus !== 'pending');
+                                this.classList.toggle('badge-danger', newStatus === 'pending');
+                            }
                         })
-                    }).then(res => {
-                        console.log(data.message);
-                    })
-                    .then(data => {
-                        console.log(data.message);
-                    });
+                        .catch(err => console.error(err));
+                });
             });
         });
     </script>
-@endsection
+@endpush

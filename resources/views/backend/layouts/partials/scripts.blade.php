@@ -35,11 +35,23 @@
 
 <!-- In the head section -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@stack('scripts')
+
 <script>
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
         }
     });
 
@@ -87,3 +99,5 @@
         @endif
     });
 </script>
+
+@stack('scripts')

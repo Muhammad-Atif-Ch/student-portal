@@ -78,12 +78,18 @@ class ResultController extends Controller
         // Collect quiz_ids and question_ids
         $quizIds = $previousTest->previousTestQuizes->pluck('quiz_id')->unique();
         $questionIds = $previousTest->previousTestQuizes->pluck('question_id');
-dd($previousTest->previousTestQuizes->toArray(), $questionIds->toArray(), $quizIds->toArray());
+        $previousTestId = $previousTest->id;
+
         // Load quizzes with only the attempted questions
         $results = Quiz::with([
-            'questions' => function ($q) use ($questionIds) {
+            'questions' => function ($q) use ($questionIds, $previousTestId) {
                 $q->whereIn('id', $questionIds)
-                    ->with('translations', 'previousTestQuestion');
+                    ->with([
+                        'translations',
+                        'previousTestQuestion' => function ($pq) use ($previousTestId) {
+                            $pq->where('previous_test_id', $previousTestId);
+                        }
+                    ]);
             }
         ])->whereIn('id', $quizIds)->get();
 

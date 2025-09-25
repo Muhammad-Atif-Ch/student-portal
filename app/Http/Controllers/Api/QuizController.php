@@ -349,7 +349,7 @@ class QuizController extends Controller
                     } else {
                         $inCorrect++;
                     }
-                    
+
                     $pretestBulkData[] = [
                         'quiz_id' => $item['quiz_id'],
                         'question_id' => $item['question_id'],
@@ -427,10 +427,36 @@ class QuizController extends Controller
     public function previousIncorrect()
     {
         $deviceId = request()->header('Device-Id');
-        $user = User::where('device_id', $deviceId)->first();
-        $studentQuizHistory = StudentQuizHistory::where(['correct' => 0, 'user_id' => $user->id])->pluck('question_id')->toArray();
+        $user = User::where('device_id', $deviceId)->firstOrFail();
 
-        $question = Question::with('quiz', 'translations', 'studentQuizHistories')->whereIn('id', $studentQuizHistory)->where('type', $user->app_type)->get();
+        // Load all quizzes attempted by the user
+        $question = Quiz::with([
+            'questions' => function ($q) use ($user) {
+                $q->whereHas('previousTestQuestion.previousTest', function ($pq) use ($user) {
+                    $pq->where('user_id', $user->id);
+                })
+                    ->whereHas('previousTestQuestion', function ($pq) {
+                        $pq->where('correct', 0);
+                    })
+                    ->with([
+                        'translations',
+                        'previousTestQuestion' => function ($q) use ($user) {
+                            $q->whereHas('previousTest', function ($pq) use ($user) {
+                                $pq->where('user_id', $user->id); // only latest incorrect attempt
+                            });
+                            $q->where('correct', 0)
+                                ->orderBy('created_at', 'desc') // latest attempt
+                                ->limit(1);
+
+                        }
+                    ]);
+            }
+        ])->whereHas('questions.previousTestQuestion', function ($pq) use ($user) {
+            $pq->where('correct', 0);
+            $pq->whereHas('previousTest', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        })->get();
 
         return QuestionResource::collection($question);
     }

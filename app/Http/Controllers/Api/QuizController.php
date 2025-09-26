@@ -432,19 +432,19 @@ class QuizController extends Controller
         // Load all quizzes attempted by the user
         $question = Quiz::with([
             'questions' => function ($q) use ($user) {
-                $q->whereHas('previousTestQuestion.previousTest', function ($pq) use ($user) {
-                    $pq->where('user_id', $user->id);
+                $q->whereHas('previousTestQuestion', function ($pq) use ($user) {
+                    $pq->where('correct', 0);
+                    $pq->whereHas('previousTest', function ($pq) use ($user) {
+                        $pq->where('user_id', $user->id);
+                    });
                 })
-                    ->whereHas('previousTestQuestion', function ($pq) {
-                        $pq->where('correct', 0);
-                    })
                     ->with([
                         'translations',
                         'previousTestQuestion' => function ($q) use ($user) {
-                            $q->whereHas('previousTest', function ($pq) use ($user) {
-                                $pq->where('user_id', $user->id); // only latest incorrect attempt
-                            });
                             $q->where('correct', 0)
+                                ->whereHas('previousTest', function ($pq) use ($user) {
+                                    $pq->where('user_id', $user->id); // only latest incorrect attempt
+                                })
                                 ->orderBy('created_at', 'desc') // latest attempt
                                 ->limit(1);
 

@@ -7,12 +7,13 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\QuestionController;
-use App\Http\Controllers\Admin\ContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\TextToSpeechController;
+use App\Http\Controllers\Frontend\ContactUsController as FrontendContactUsController;
 use App\Http\Controllers\Admin\LanguageVoiceController;
+use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
 
 Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Profile Management
@@ -52,8 +53,6 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         });
     });
 
-
-
     //Custom Notification
     Route::group(['prefix' => 'notification', 'as' => 'notification.'], function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
@@ -62,8 +61,8 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     });
 
     // Contact Us
-    Route::get('contact-us', [ContactUsController::class, 'index'])->name('contact-us.index');
-    Route::post('contact-us/update/{id}', [ContactUsController::class, 'updateStatus'])->name('contact-us.update');
+    Route::get('contact-us', [AdminContactUsController::class, 'index'])->name('contact-us.index');
+    Route::post('contact-us/update/{id}', [AdminContactUsController::class, 'updateStatus'])->name('contact-us.update');
 
     // Settings
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
@@ -89,6 +88,17 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::post('text-to-speech/start', [TextToSpeechController::class, 'convertAll'])->name('tts.start');
         Route::get('text-to-speech/progress', [TextToSpeechController::class, 'getProgress'])->name('tts.progress');
         Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
+    });
+});
+
+
+/* Frontend */
+
+// Contact Us
+Route::group(['as' => 'frontend.'], function () {
+    Route::group(['prefix' => 'contact', 'as' => 'contact.'], function () {
+        Route::get('/', [FrontendContactUsController::class, 'index'])->name('index');
+        Route::post('store', [FrontendContactUsController::class, 'store'])->name('store');
     });
 });
 

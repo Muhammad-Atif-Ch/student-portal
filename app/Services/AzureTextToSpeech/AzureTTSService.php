@@ -270,14 +270,14 @@ class AzureTTSService
     //   ],
     // ];
 
-    
+
     // Default to female voice if language not found
     $defaultVoice = ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'];
-    
+
     if (!$language->voices || $language->voices->isEmpty()) {
       Log::warning("No voices available for language", [
-          'language_code' => $language->code,
-          'language_name' => $language->name
+        'language_code' => $language->code,
+        'language_name' => $language->name
       ]);
       return $defaultVoice;
     }
@@ -289,11 +289,11 @@ class AzureTTSService
 
     // Get voice preference from settings or default to female
     $preferredGender = strtolower(config('tts.preferred_gender', 'female'));
-    
+
     $preferredVoice = $language->voices->first(function ($voice) use ($preferredGender) {
       return strtolower($voice['gender']) === $preferredGender;
-  });
-
+    })->toArray();
+    
     return $preferredVoice ?? $defaultVoice;
   }
 }

@@ -23,7 +23,10 @@ class NotificationController extends Controller
     public function index()
     {
         // Fetch notifications from the database
-        $notifications = Notification::all();
+        $notifications = Notification::select(
+            'data->subject as subject',
+            'data->message as message'
+        )->distinct()->get();
 
         // Return the view with notifications data
         return view('backend.notification.index', compact('notifications'));
@@ -54,8 +57,7 @@ class NotificationController extends Controller
         ];
 
         $users = User::whereNotNull('fcm_token')->get();
-        if($users->isEmpty())
-        {
+        if ($users->isEmpty()) {
             return redirect()->route('admin.notification.index')->with('error', 'User not found.');
         }
 
@@ -72,5 +74,5 @@ class NotificationController extends Controller
         return redirect()->route('admin.notification.index')->with('success', 'Notification created successfully.');
     }
 
-    
+
 }

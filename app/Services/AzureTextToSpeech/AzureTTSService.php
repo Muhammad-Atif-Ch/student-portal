@@ -290,10 +290,18 @@ class AzureTTSService
     // Get voice preference from settings or default to female
     $preferredGender = strtolower(config('tts.preferred_gender', 'female'));
 
-    $preferredVoice = $language->voices->first(function ($voice) use ($preferredGender) {
+    // $preferredVoice = $language->voices->first(function ($voice) use ($preferredGender) {
+    //   return strtolower($voice['gender']) === $preferredGender;
+    // })->toArray();
+
+    // return $preferredVoice ?? $defaultVoice;
+
+    $preferredVoiceModel = $language->voices->first(function ($voice) use ($preferredGender) {
       return strtolower($voice['gender']) === $preferredGender;
-    })->toArray();
-    
+    });
+
+    $preferredVoice = $preferredVoiceModel ? $preferredVoiceModel->toArray() : null;
+
     return $preferredVoice ?? $defaultVoice;
   }
 }

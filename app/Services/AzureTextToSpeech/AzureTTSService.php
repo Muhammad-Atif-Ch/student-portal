@@ -93,7 +93,7 @@ class AzureTTSService
   {
     // This is a simplified version. You might want to create a more comprehensive mapping
     // or fetch this dynamically from Azure's voice list API
-    //dd($language->toArray());
+    // dd($language->toArray());
     // $voices = [
     //   'en' => [
     //     'female' => ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'],
@@ -296,12 +296,12 @@ class AzureTTSService
 
     // return $preferredVoice ?? $defaultVoice;
 
-    $preferredVoiceModel = $language->voices->first(function ($voice) use ($preferredGender) {
-      return strtolower($voice['gender']) === $preferredGender;
-    });
-
-    $preferredVoice = $preferredVoiceModel ? $preferredVoiceModel->toArray() : null;
-
-    return $preferredVoice ?? $defaultVoice;
+    $preferredVoice = optional(
+      $language->voices->first(function ($voice) use ($preferredGender) {
+        return strtolower($voice['gender']) === $preferredGender;
+      })
+    )->toArray();
+    Log::info('Selected voice for language', $preferredVoice ?: $defaultVoice);
+    return $preferredVoice ?: $defaultVoice;
   }
 }

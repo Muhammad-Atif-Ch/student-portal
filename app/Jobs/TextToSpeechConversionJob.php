@@ -42,8 +42,8 @@ class TextToSpeechConversionJob implements ShouldQueue
             $total = $translations->count();
             Log::info("start translation", [
                 "total" => $total,
-                "language" => $languages,
-                "translations" => $translations
+                // "language" => $languages,
+                // "translations" => $translations
             ]);
             $progress = [
                 'total' => $total,

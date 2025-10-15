@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Responses\UserResponse;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Membership\MembershipService;
 use App\Services\Membership\IAPMembershipService;
@@ -50,6 +51,11 @@ class MembershipController extends Controller
 
         // dd($user->membership->toArray());
         if ($user->platform === 'ios') {
+            Log::info('Raw Purchase Token:', [
+                //'token' => $request->purchase_token,
+                'decoded' => base64_decode($request->purchase_token) ? 'valid base64' : 'invalid base64',
+            ]);
+
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);

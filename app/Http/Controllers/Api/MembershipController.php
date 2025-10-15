@@ -51,15 +51,9 @@ class MembershipController extends Controller
 
         // dd($user->membership->toArray());
         if ($user->platform === 'ios') {
-            Log::info('Raw Purchase Token:', [
-                //'token' => $request->purchase_token,
-                'decoded' => base64_decode($request->purchase_token) ? 'valid base64' : 'invalid base64',
-            ]);
-
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);
-            dd($data, $data['latest_receipt_info'] ?? null, $purchaseToken, $request->purchase_token);
 
             $subscription = [
                 'user_id' => $user->id,

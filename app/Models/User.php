@@ -29,7 +29,8 @@ class User extends Authenticatable
         'device_id',
         'language_id',
         'fcm_token',
-        'app_type'
+        'app_type',
+        'platform'
     ];
 
     /**

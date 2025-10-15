@@ -33,12 +33,13 @@ class MembershipController extends Controller
     {
         $deviceId = $request->header('Device-Id'); //shared_secret
         $user = User::where('device_id', $deviceId)->first();
+        dd($user, $request->platform);
         $user->platform = $request->platform;
         $user->purchase_token = $request->purchase_token;
         $user->save();
 
         $user->refresh();
-dd($user);
+
         // dd($user->membership->toArray());
         if ($user->platform === 'ios') {
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately

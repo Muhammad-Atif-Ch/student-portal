@@ -30,7 +30,7 @@ class MembershipController extends Controller
     }
 
     public function store(CreateMembershipRequest $request)
-    {
+    {dd($request->platform);
         $deviceId = $request->header('Device-Id'); //shared_secret
         $user = User::where('device_id', $deviceId)->first();
         $user->platform = $request->platform;

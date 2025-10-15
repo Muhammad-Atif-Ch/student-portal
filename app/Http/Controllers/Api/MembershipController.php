@@ -41,10 +41,10 @@ class MembershipController extends Controller
 
         // dd($user->membership->toArray());
         if ($user->platform === 'ios') {
-            $purchaseToken = $request->purchase_token; // Adjust if you store purchaseToken separately
+            $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($purchaseToken);
-            dd($data, $data['latest_receipt_info'] ?? null);
+            dd($data, $data['latest_receipt_info'] ?? null, $purchaseToken, $request->purchase_token);
 
             $subscription = [
                 'user_id' => $user->id,

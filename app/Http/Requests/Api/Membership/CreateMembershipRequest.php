@@ -24,7 +24,6 @@ class CreateMembershipRequest extends FormRequest
         return [
             'purchase_token' => 'required|string',
             'platform' => 'required|in:android,ios',
-            'shared_secret' => 'sometimes|string',
         ];
     }
 }

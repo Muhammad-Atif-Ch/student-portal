@@ -122,10 +122,11 @@ class MembershipController extends Controller
                     ? "Membership created with fallback data due to network issues. Please try again later."
                     : "Membership for user {$user->id} updated.";
             }
-            return response()->json(['success' => $message], 200);
         } else {
             return response()->json(['error' => "Failed to verify subscription for user {$user->id}. Please check your internet connection and try again."], 400);
         }
+
+        return response()->json(['success' => $message], 200);
     }
 
     // public function edit($id)

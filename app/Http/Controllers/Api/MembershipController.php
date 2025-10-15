@@ -44,7 +44,7 @@ class MembershipController extends Controller
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($purchaseToken);
-            // dd($data, $data['latest_receipt_info'][0]['product_id']);
+            dd($data, $data['latest_receipt_info'] ?? null);
 
             $subscription = [
                 'user_id' => $user->id,

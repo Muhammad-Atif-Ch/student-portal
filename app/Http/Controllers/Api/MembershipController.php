@@ -33,7 +33,6 @@ class MembershipController extends Controller
     {
         $deviceId = $request->header('Device-Id'); //shared_secret
         $user = User::where('device_id', $deviceId)->first();
-        dd($user, $request->platform);
         $user->platform = $request->platform;
         $user->purchase_token = $request->purchase_token;
         $user->save();

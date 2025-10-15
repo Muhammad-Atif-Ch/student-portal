@@ -22,7 +22,7 @@ class CreateMembershipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'purchase_token' => 'required|string|max:20000',
+            'purchase_token' => 'required|string|max:200000',
             'platform' => 'required|in:android,ios',
         ];
     }

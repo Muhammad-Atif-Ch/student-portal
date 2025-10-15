@@ -33,6 +33,15 @@ class MembershipController extends Controller
     {
         $deviceId = $request->header('Device-Id'); //shared_secret
         $user = User::where('device_id', $deviceId)->first();
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+
         $user->platform = $request->platform;
         $user->purchase_token = $request->purchase_token;
         $user->save();
@@ -43,7 +52,7 @@ class MembershipController extends Controller
         if ($user->platform === 'ios') {
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
-            $data = (new IAPMembershipService)->verifySubscription($purchaseToken);
+            $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);
             dd($data, $data['latest_receipt_info'] ?? null, $purchaseToken, $request->purchase_token);
 
             $subscription = [

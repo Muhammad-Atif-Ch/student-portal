@@ -2,13 +2,10 @@
 
 namespace App\Services\Membership;
 
-use Carbon\Carbon;
 use Google\Client;
-use App\Models\User;
 use App\Models\Membership;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection;
 
 class MembershipService
 {

@@ -23,7 +23,8 @@ return new class extends Migration {
             $table->text('image')->nullable()->comment('profile image');
             $table->enum('app_type', ['car', 'bike', 'both'])->default('both');
             $table->string('fcm_token')->nullable()->comment('Firebase Cloud Messaging token');
-            $table->string('purchase_token')->nullable();
+            $table->enum('platform', ['android', 'ios'])->nullable();
+            $table->longText('purchase_token')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

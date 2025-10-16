@@ -125,8 +125,10 @@ class MembershipController extends Controller
         } else {
             return response()->json(['error' => "Failed to verify subscription for user {$user->id}. Please check your internet connection and try again."], 400);
         }
+        $user->refresh();
+        $user->load('membership');
 
-        return response()->json(['success' => $message], 200);
+        return response()->json(['success' => $message, 'data' => $user], 200);
     }
 
     // public function edit($id)

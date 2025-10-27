@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('ios_memberships', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('membership_type', ['free', 'premium'])->default('free');
             $table->string('product_id', 256)->nullable();
             $table->string('transaction_id', 256)->nullable();
             $table->string('original_transaction_id', 256)->nullable();

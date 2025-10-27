@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasOne(Membership::class);
     }
 
+    public function iosMembership(): HasOne
+    {
+        return $this->hasOne(IosMembership::class);
+    }
+
     /**
      * Get the active and valid membership for the user.
      * 
@@ -149,16 +154,16 @@ class User extends Authenticatable
     /**
      * Create free membership for user.
      */
-    public function createFreeMembership(): Membership
-    {
-        // Deactivate existing active memberships
-        $this->memberships()->active()->update(['is_active' => false]);
+    // public function createFreeMembership(): Membership
+    // {
+    //     // Deactivate existing active memberships
+    //     $this->memberships()->active()->update(['is_active' => false]);
 
-        return $this->memberships()->create([
-            'membership_type' => 'free',
-            'start_date' => now(),
-            'end_date' => now()->addMonth(),
-            'is_active' => true
-        ]);
-    }
+    //     return $this->memberships()->create([
+    //         'membership_type' => 'free',
+    //         'start_date' => now(),
+    //         'end_date' => now()->addMonth(),
+    //         'is_active' => true
+    //     ]);
+    // }
 }

@@ -4,6 +4,7 @@ namespace App\Services\Membership;
 
 use Google\Client;
 use App\Models\Membership;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -44,30 +45,27 @@ class MembershipService
         ->retry(3, 1000) // Retry 3 times with 1 second delay
         ->withToken($accessToken)
         ->get($url);
-        
-      // dd($response);
+
       if ($response->successful()) {
-        return $response->json();
+        return [
+          'success' => true,
+          'data' => $response->json()
+        ];
       } else {
         throw new \Exception("Google API error: " . $response->body());
       }
 
-    } catch (\Throwable $e) {
-      // Log the error for debugging
-      Log::error("Failed to verify subscription: " . $e->getMessage());
+    } catch (Exception $e) {
+      Log::error('Unexpected error verifying subscription', [
+        'exception' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+      ]);
 
-      // If it's a network connectivity issue, create a fallback membership
-      if (
-        str_contains($e->getMessage(), 'cURL error 28') ||
-        str_contains($e->getMessage(), 'Failed to connect') ||
-        str_contains($e->getMessage(), 'timeout')
-      ) {
-
-        Log::warning("Network connectivity issue detected. Creating fallback membership.");
-        return $this->createFallbackMembershipData();
-      }
-
-      return $e->getMessage();
+      return [
+        'success' => false,
+        'error' => 'UNKNOWN_ERROR',
+        'message' => 'An unexpected error occurred while verifying the subscription.'
+      ];
     }
   }
 

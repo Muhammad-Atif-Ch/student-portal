@@ -57,6 +57,7 @@ class MembershipController extends Controller
 
             $subscription = [
                 'user_id' => $user->id,
+                'membership_type' => 'premium',
                 'product_id' => $data['latest_receipt_info'][0]['product_id'],
                 'transaction_id' => $data['latest_receipt_info'][0]['transaction_id'],
                 'original_transaction_id' => $data['latest_receipt_info'][0]['original_transaction_id'],

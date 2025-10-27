@@ -2,8 +2,7 @@
 
 namespace App\Services\Membership;
 
-use Exception;
-use App\Models\Membership;
+use App\Models\IosMembership;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
@@ -11,24 +10,14 @@ class IAPMembershipService
 {
   public function createFreeMembership($user)
   {
-    return Membership::updateOrCreate(
+    return IosMembership::updateOrCreate(
       ['user_id' => $user->id],
       [
         'user_id' => $user->id,
-        'product_id' => null,
-        'transaction_id' => null,
-        'original_transaction_id' => null,
-        'purchase_date' => null,
-        'expires_date' => null,
-        'is_trial_period' => null,
-        'is_in_intro_offer_period' => null,
-        'subscription_group_identifier' => null,
-        'auto_renew_status' => null,
-        'auto_renew_product_id' => null,
-        'environment' => null,
-        'receipt_data' => null,
-        'raw_response' => null,
-        'status' => null,
+        'membership_type' => 'free',
+        'purchase_date' => now(),
+        'expires_date' => now()->addDay(),
+        'status' => 1,
       ]
     );
   }

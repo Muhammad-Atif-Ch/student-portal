@@ -11,6 +11,7 @@ class IosMembership extends Model
 
     protected $fillable = [
         'user_id',
+        'membership_type',
         'product_id',
         'transaction_id',
         'original_transaction_id',

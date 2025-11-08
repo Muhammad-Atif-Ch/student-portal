@@ -78,7 +78,7 @@ class MembershipController extends Controller
 
                 $env = $data['environment'] ?? 'Unknown';
                 // Update membership with new data
-                $user->membership()->updateOrCreate([
+                $user->iosMembership()->updateOrCreate([
                     'user_id' => $user->id,
                 ], $subscription);
 

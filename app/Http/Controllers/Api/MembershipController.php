@@ -75,7 +75,7 @@ class MembershipController extends Controller
                     'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,
                     'auto_renew_product_id' => $data['renewal']['autoRenewProductId'] ?? null,
                     'raw_response' => json_encode($data['raw']),
-                    'status' => $expiresDate > now()->getTimestampMs(),
+                    'status' => $data['transaction']['expiresDate'] > now()->getTimestampMs(),
                 ];
 
                 $env = $data['environment'] ?? 'Unknown';

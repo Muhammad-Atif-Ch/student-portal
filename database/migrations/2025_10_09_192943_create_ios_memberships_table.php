@@ -20,8 +20,8 @@ return new class extends Migration {
             $table->string('environment', 256)->nullable(); // sandbox or production
             $table->dateTime('purchase_date')->nullable();
             $table->dateTime('expires_date')->nullable();
-            $table->boolean('is_trial_period')->nullable();
-            $table->boolean('is_in_intro_offer_period')->nullable();
+            $table->string('price')->nullable();
+            $table->string('currency')->nullable();
             $table->string('subscription_group_identifier', 256)->nullable();
             $table->boolean('auto_renew_status')->default(false);
             $table->string('auto_renew_product_id', 256)->nullable();

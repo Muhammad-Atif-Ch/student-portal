@@ -77,6 +77,59 @@ Route::middleware('membership:free')->group(function () {
         Route::post('update', [SettingController::class, 'update']);
     });
 
-    
+
+});
+
+// In routes/web.php or api.php - TEMPORARY DEBUG ROUTE
+Route::get('/test-apple-jwt', function () {
+    $privateKeyPath = storage_path('app/private/SubscriptionKey_KYZT3B6GHH.p8');
+    $privateKey = file_get_contents($privateKeyPath);
+
+    $issuerId = '59657095-081e-43e1-a6df-25491de40042';
+    $keyId = 'KYZT3B6GHH';
+    $bundleId = 'com.dtt-car-bike-ireland';
+
+    $now = time();
+
+    $payload = [
+        'iss' => $issuerId,
+        'iat' => $now,
+        'exp' => $now + 300,
+        'aud' => 'appstoreconnect-v1',
+        'bid' => $bundleId,
+    ];
+
+    try {
+        $jwt = \Firebase\JWT\JWT::encode(
+            $payload,
+            $privateKey,
+            'ES256',
+            $keyId
+        );
+
+        // Decode the token to inspect it
+        $parts = explode('.', $jwt);
+        $header = json_decode(base64_decode($parts[0]), true);
+        $decodedPayload = json_decode(base64_decode($parts[1]), true);
+
+        return response()->json([
+            'success' => true,
+            'jwt' => $jwt,
+            'header' => $header,
+            'payload' => $decodedPayload,
+            'private_key_info' => [
+                'exists' => file_exists($privateKeyPath),
+                'starts_with' => substr($privateKey, 0, 27),
+                'length' => strlen($privateKey),
+            ]
+        ]);
+
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
 });
 

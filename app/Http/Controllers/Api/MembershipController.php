@@ -54,39 +54,35 @@ class MembershipController extends Controller
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);
+            // dd($data);
 
-            $subscription = [
-                'user_id' => $user->id,
-                'membership_type' => 'premium',
-                'product_id' => $data['latest_receipt_info'][0]['product_id'],
-                'transaction_id' => $data['latest_receipt_info'][0]['transaction_id'],
-                'original_transaction_id' => $data['latest_receipt_info'][0]['original_transaction_id'],
-                'environment' => $data['environment'],
-                'purchase_date' => $data['latest_receipt_info'][0]['purchase_date'],
-                'expires_date' => $data['latest_receipt_info'][0]['expires_date'],
-                'is_trial_period' => $data['latest_receipt_info'][0]['is_trial_period'],
-                'is_in_intro_offer_period' => $data['latest_receipt_info'][0]['is_in_intro_offer_period'],
-                'subscription_group_identifier' => $data['latest_receipt_info'][0]['subscription_group_identifier'] ?? null,
-                'auto_renew_status' => $data['pending_renewal_info'][0]['auto_renew_status'] ?? null,
-                'auto_renew_product_id' => $data['pending_renewal_info'][0]['auto_renew_product_id'] ?? null,
-                'receipt_data' => $data['latest_receipt'],
-                'raw_response' => json_encode($data),
-                'status' => $data['status'],
-            ];
+            if ($data['transaction'] !== null) {
+                $subscription = [
+                    'user_id' => $user->id,
+                    'membership_type' => 'premium',
+                    'product_id' => $data['transaction']['productId'],
+                    'transaction_id' => $data['transaction']['transactionId'],
+                    'original_transaction_id' => $data['transaction']['originalTransactionId'],
+                    'environment' => $data['transaction']['environment'],
+                    'purchase_date' => $data['transaction']['purchaseDate'],
+                    'expires_date' => $data['transaction']['expiresDate'],
+                    'price' => $data['transaction']['price'],
+                    'currency' => $data['transaction']['currency'],
+                    'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
+                    'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,
+                    'auto_renew_product_id' => $data['renewal']['autoRenewProductId'] ?? null,
+                    'receipt_data' => $data['transaction'],
+                    'raw_response' => json_encode($data['raw']),
+                    'status' => $data['raw']['data'][0]['lastTransactions'][0]['status'],
+                ];
 
-            if ($data) {
                 $env = $data['environment'] ?? 'Unknown';
-                // Check if this is fallback data
-                $isFallback = isset($data['is_fallback']) && $data['is_fallback'];
-
                 // Update membership with new data
                 $user->membership()->updateOrCreate([
                     'user_id' => $user->id,
                 ], $subscription);
 
-                $message = $isFallback
-                    ? "Membership created via fallback verification (Environment: {$env})."
-                    : "Membership updated successfully (Environment: {$env}).";
+                $message = "Membership updated successfully (Environment: {$env}).";
             }
         } else if ($user->platform === 'android') {
             $packageName = config('google-play.package_name'); // Store in config/google-play.php
@@ -131,19 +127,4 @@ class MembershipController extends Controller
 
         return response()->json(['success' => $message, 'data' => $user], 200);
     }
-
-    // public function edit($id)
-    // {
-    //     // Logic to show form for editing an existing membership plan
-    // }
-
-    // public function update(Request $request, $id)
-    // {
-    //     // Logic to update an existing membership plan
-    // }
-
-    // public function destroy($id)
-    // {
-    //     // Logic to delete a membership plan
-    // }
 }

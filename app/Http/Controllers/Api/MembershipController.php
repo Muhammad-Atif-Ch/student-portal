@@ -83,6 +83,8 @@ class MembershipController extends Controller
                 ], $subscription);
 
                 $message = "Membership updated successfully (Environment: {$env}).";
+                $user->refresh();
+                $user->load('iosMembership');
             } else {
                 return response()->json(['error' => $data], 400);
             }
@@ -120,12 +122,13 @@ class MembershipController extends Controller
                 $message = $isFallback
                     ? "Membership created with fallback data due to network issues. Please try again later."
                     : "Membership for user {$user->id} updated.";
+                $user->refresh();
+                $user->load('membership');
             }
         } else {
             return response()->json(['error' => "Failed to verify subscription for user {$user->id}. Please check your internet connection and try again."], 400);
         }
-        $user->refresh();
-        $user->load('membership');
+
 
         return response()->json(['success' => $message, 'data' => $user], 200);
     }

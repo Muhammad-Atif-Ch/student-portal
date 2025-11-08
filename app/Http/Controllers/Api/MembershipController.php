@@ -83,6 +83,8 @@ class MembershipController extends Controller
                 ], $subscription);
 
                 $message = "Membership updated successfully (Environment: {$env}).";
+            } else {
+                return response()->json(['error' => $data], 400);
             }
         } else if ($user->platform === 'android') {
             $packageName = config('google-play.package_name'); // Store in config/google-play.php

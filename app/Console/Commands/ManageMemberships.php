@@ -30,7 +30,7 @@ class ManageMemberships extends Command
                     $q->where('status', 1)
                         ->where('end_date', '<', $now);
                 })->orWhereHas('iosMembership', function ($q) use ($now) {
-                    $q->whereIn('status', [1, 2])
+                    $q->where('status', 1)
                         ->where('expires_date', '<', $now);
                 });
             })

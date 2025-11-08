@@ -30,7 +30,7 @@ class ManageMemberships extends Command
                     $q->where('status', 1)
                         ->where('end_date', '<', $now);
                 })->orWhereHas('iosMembership', function ($q) use ($now) {
-                    $q->where('status', 1)
+                    $q->whereIn('status', [1, 2])
                         ->where('expires_date', '<', $now);
                 });
             })
@@ -94,20 +94,20 @@ class ManageMemberships extends Command
                     $subscription = [
                         'user_id' => $user->id,
                         'membership_type' => 'premium',
-                        'product_id' => $data['latest_receipt_info'][0]['product_id'],
-                        'transaction_id' => $data['latest_receipt_info'][0]['transaction_id'],
-                        'original_transaction_id' => $data['latest_receipt_info'][0]['original_transaction_id'],
-                        'environment' => $data['environment'],
-                        'purchase_date' => Carbon::parse($data['latest_receipt_info'][0]['purchase_date'])->toDateTimeString(),
-                        'expires_date' => Carbon::parse($data['latest_receipt_info'][0]['expires_date'])->toDateTimeString(),
-                        'is_trial_period' => filter_var($data['latest_receipt_info'][0]['is_trial_period'], FILTER_VALIDATE_BOOLEAN),
-                        'is_in_intro_offer_period' => filter_var($data['latest_receipt_info'][0]['is_in_intro_offer_period'], FILTER_VALIDATE_BOOLEAN),
-                        'subscription_group_identifier' => $data['latest_receipt_info'][0]['subscription_group_identifier'] ?? null,
-                        'auto_renew_status' => $data['pending_renewal_info'][0]['auto_renew_status'] ?? null,
-                        'auto_renew_product_id' => $data['pending_renewal_info'][0]['auto_renew_product_id'] ?? null,
-                        'receipt_data' => $data['latest_receipt'],
-                        'raw_response' => json_encode($data),
-                        'status' => $data['status'],
+                        'product_id' => $data['transaction']['productId'],
+                        'transaction_id' => $data['transaction']['transactionId'],
+                        'original_transaction_id' => $data['transaction']['originalTransactionId'],
+                        'environment' => $data['transaction']['environment'],
+                        'purchase_date' => $data['transaction']['purchaseDate'],
+                        'expires_date' => $data['transaction']['expiresDate'],
+                        'price' => $data['transaction']['price'],
+                        'currency' => $data['transaction']['currency'],
+                        'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
+                        'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,
+                        'auto_renew_product_id' => $data['renewal']['autoRenewProductId'] ?? null,
+                        'receipt_data' => $data['transaction'],
+                        'raw_response' => json_encode($data['raw']),
+                        'status' => $data['raw']['data'][0]['lastTransactions'][0]['status'],
                     ];
                     if ($data) {
                         // Update membership with new data

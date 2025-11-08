@@ -54,7 +54,7 @@ class MembershipController extends Controller
             $purchaseToken = $user->purchase_token; // Adjust if you store purchaseToken separately
 
             $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);
-            // dd($data);
+            dd($data);
 
             if ($data) {
                 $subscription = [

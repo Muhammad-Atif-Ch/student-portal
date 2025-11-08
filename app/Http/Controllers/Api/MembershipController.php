@@ -57,6 +57,9 @@ class MembershipController extends Controller
             // dd($data);
 
             if ($data) {
+                $purchaseDate = Carbon::createFromTimestampMs($data['transaction']['purchaseDate'])->toDateTimeString();
+                $expiresDate = Carbon::createFromTimestampMs($data['transaction']['expiresDate'])->toDateTimeString();
+
                 $subscription = [
                     'user_id' => $user->id,
                     'membership_type' => 'premium',
@@ -64,8 +67,8 @@ class MembershipController extends Controller
                     'transaction_id' => $data['transaction']['transactionId'],
                     'original_transaction_id' => $data['transaction']['originalTransactionId'],
                     'environment' => $data['transaction']['environment'],
-                    'purchase_date' => $data['transaction']['purchaseDate'],
-                    'expires_date' => $data['transaction']['expiresDate'],
+                    'purchase_date' => $purchaseDate,
+                    'expires_date' => $expiresDate,
                     'price' => $data['transaction']['price'],
                     'currency' => $data['transaction']['currency'],
                     'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,

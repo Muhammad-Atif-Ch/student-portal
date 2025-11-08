@@ -56,7 +56,7 @@ class MembershipController extends Controller
             $data = (new IAPMembershipService)->verifySubscription($request->purchase_token);
             // dd($data);
 
-            if ($data['transaction'] !== null) {
+            if ($data) {
                 $subscription = [
                     'user_id' => $user->id,
                     'membership_type' => 'premium',

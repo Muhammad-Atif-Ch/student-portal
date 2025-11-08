@@ -71,7 +71,6 @@ class MembershipController extends Controller
                     'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
                     'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,
                     'auto_renew_product_id' => $data['renewal']['autoRenewProductId'] ?? null,
-                    'receipt_data' => $data['transaction'],
                     'raw_response' => json_encode($data['raw']),
                     'status' => $data['raw']['data'][0]['lastTransactions'][0]['status'],
                 ];

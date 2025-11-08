@@ -23,7 +23,6 @@ class IosMembership extends Model
         'subscription_group_identifier',
         'auto_renew_status',
         'auto_renew_product_id',
-        'receipt_data',
         'raw_response',
         'status',
     ];

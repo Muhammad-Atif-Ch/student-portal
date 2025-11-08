@@ -25,7 +25,6 @@ return new class extends Migration {
             $table->string('subscription_group_identifier', 256)->nullable();
             $table->boolean('auto_renew_status')->default(false);
             $table->string('auto_renew_product_id', 256)->nullable();
-            $table->longText('receipt_data')->nullable();
             $table->json('raw_response')->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();

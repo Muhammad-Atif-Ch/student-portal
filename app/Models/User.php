@@ -68,6 +68,13 @@ class User extends Authenticatable
         return $this->hasOne(IosMembership::class);
     }
 
+    public function getActiveMembershipAttribute()
+    {
+        return $this->platform === 'ios'
+            ? $this->iosMembership
+            : $this->membership;
+    }
+
     /**
      * Get the active and valid membership for the user.
      * 

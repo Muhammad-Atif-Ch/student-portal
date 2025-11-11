@@ -30,7 +30,7 @@ class CheckMembership
         }
 
         // Find user
-        $user = User::with('membership')->where('device_id', $deviceId)->first();
+        $user = User::where('device_id', $deviceId)->first();
 
         if (!$user) {
             return response()->json([
@@ -38,9 +38,7 @@ class CheckMembership
                 'message' => 'Invalid user provided'
             ], 404);
         }
-
-        // Check membership access
-        $accessInfo = $user->membership;
+        $accessInfo = $user->active_membership;
 
         if ($accessInfo->status == 0) {
             return response()->json([
@@ -51,7 +49,7 @@ class CheckMembership
                 'end_date' => $accessInfo->end_date
             ], 403);
         }
-        
+
         // Handle different access types
         switch ($type) {
             case 'premium':

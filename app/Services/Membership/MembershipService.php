@@ -47,10 +47,7 @@ class MembershipService
         ->get($url);
 
       if ($response->successful()) {
-        return [
-          'success' => true,
-          'data' => $response->json()
-        ];
+        return $response->json();
       } else {
         throw new \Exception("Google API error: " . $response->body());
       }

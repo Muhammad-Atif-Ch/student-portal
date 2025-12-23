@@ -40,14 +40,30 @@ class CheckMembership
         }
         $accessInfo = $user->active_membership;
 
+        // if ($accessInfo->status == 0) {
+        //     return response()->json([
+        //         'error' => 'Access denied',
+        //         'message' => "your membership expired. Please renew it.",
+        //         'membership_required' => true,
+        //         'membership_type' => $accessInfo->membership_type,
+        //         'end_date' => $accessInfo->end_date
+        //     ], 403);
+        // }
+
         if ($accessInfo->status == 0) {
+            // ✅ Only FREE routes allowed
+            if ($type === 'free') {
+                return $next($request);
+            }
+
+            // ❌ Everything else blocked
             return response()->json([
                 'error' => 'Access denied',
-                'message' => "your membership expired. Please renew it.",
+                'message' => 'Your membership has expired. Only free features are available.',
                 'membership_required' => true,
                 'membership_type' => $accessInfo->membership_type,
-                'end_date' => $accessInfo->end_date
-            ], 403);
+                'end_date' => $accessInfo->end_date,
+            ], Response::HTTP_FORBIDDEN);
         }
 
         // Handle different access types
@@ -62,13 +78,6 @@ class CheckMembership
                 // Allow both free and premium users
                 if (!in_array($accessInfo->membership_type, ['free', 'premium'])) {
                     return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
-                }
-                break;
-
-            case 'free_only':
-                // Only free users allowed
-                if ($accessInfo->membership_type !== 'free') {
-                    return response()->json(['message' => 'This route is only available for free users.'], Response::HTTP_FORBIDDEN);
                 }
                 break;
         }

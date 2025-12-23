@@ -76,8 +76,6 @@ Route::middleware('membership:free')->group(function () {
         Route::get('/', [SettingController::class, 'index']);
         Route::post('update', [SettingController::class, 'update']);
     });
-
-
 });
 
 

@@ -34,7 +34,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
   {
     try {
       Log::info('Job started', ['job' => static::class]);
-      $languages = Language::where('status', 'active')->get();
+      $languages = Language::where('status', '1')->get();
 
       $progress = [
         'total' => $languages->count() * 7, // 6 fields + 1 for initial setup
@@ -44,7 +44,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
         'question_id' => $this->question->id
       ];
       $this->updateProgress($progress);
-      
+
       Log::info('Languages', ['languages' => $languages->toArray()]);
 
       foreach ($languages as $language) {

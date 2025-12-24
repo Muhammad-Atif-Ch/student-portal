@@ -32,8 +32,8 @@ class SingleQuestionTranslationJob implements ShouldQueue
 
   public function handle()
   {
-    Log::info('Job started', ['job' => static::class]);
     try {
+      Log::info('Job started', ['job' => static::class]);
       $languages = Language::where('status', 'active')->get();
 
       $progress = [
@@ -69,7 +69,6 @@ class SingleQuestionTranslationJob implements ShouldQueue
       Log::error('Single question translation job failed: ' . $e->getMessage());
       $this->updateProgress($progress, 'error', 'Process failed: ' . $e->getMessage());
     }
-    Log::info('Job completed successfully', ['job' => static::class]);
   }
 
   private function shouldStop(): bool

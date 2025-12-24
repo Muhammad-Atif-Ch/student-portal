@@ -39,17 +39,7 @@ class CheckMembership
             ], 404);
         }
         $accessInfo = $user->active_membership;
-
-        // if ($accessInfo->status == 0) {
-        //     return response()->json([
-        //         'error' => 'Access denied',
-        //         'message' => "your membership expired. Please renew it.",
-        //         'membership_required' => true,
-        //         'membership_type' => $accessInfo->membership_type,
-        //         'end_date' => $accessInfo->end_date
-        //     ], 403);
-        // }
-
+        dd($accessInfo, $type, $user->toArray());
         if ($accessInfo->status == 0) {
             // ✅ Only FREE routes allowed
             if ($type === 'free') {

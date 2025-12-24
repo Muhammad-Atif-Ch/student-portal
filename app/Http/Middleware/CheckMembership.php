@@ -39,7 +39,7 @@ class CheckMembership
             ], 404);
         }
         $accessInfo = $user->active_membership;
-        dd($accessInfo, $type, $user->toArray());
+        // dd($accessInfo, $type, $user->toArray());
         if ($accessInfo->status == 0) {
             // ✅ Only FREE routes allowed
             if ($type === 'free') {

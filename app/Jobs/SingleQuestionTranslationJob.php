@@ -45,10 +45,8 @@ class SingleQuestionTranslationJob implements ShouldQueue
       ];
       $this->updateProgress($progress);
 
-      Log::info('Languages', ['languages' => $languages->toArray()]);
-
       foreach ($languages as $language) {
-        Log::info('Translating foreach start', ['stop or not' => $this->shouldStop()]);
+        // Log::info('Translating foreach start', ['stop or not' => $this->shouldStop()]);
         if ($this->shouldStop()) {
           $this->updateProgress($progress, 'stopped', 'Process stopped by user');
           return;

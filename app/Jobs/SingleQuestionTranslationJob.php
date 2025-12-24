@@ -73,6 +73,11 @@ class SingleQuestionTranslationJob implements ShouldQueue
 
   private function shouldStop(): bool
   {
+    Log::info("Job stop check", [
+      'immediate_stop' => Cache::get('translation_immediate_stop'),
+      'stop_flag' => Cache::get('translation_stop_flag'),
+      'force_stop' => Cache::get('translation_force_stop')
+    ]);
     return Cache::get('translation_immediate_stop') ||
       Cache::get('translation_stop_flag') ||
       Cache::get('translation_force_stop');
@@ -131,9 +136,11 @@ class SingleQuestionTranslationJob implements ShouldQueue
         }
         $translations[$key] = $translated;
 
-        // $progress['completed']++;
-        // $progress['message'] = "Translated {$key} for language {$language->name}";
-        // $this->updateProgress($progress);
+        Log::info("Translated field {$key}", [
+          'original' => $text,
+          'translated' => $translated,
+          'language' => $language->name
+        ]);
       } catch (\Exception $e) {
         Log::error("Error translating field {$key}: " . $e->getMessage());
         return false;
@@ -270,5 +277,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
 
     // Store progress in cache with unique key for this question
     Cache::put("translation_progress_question_{$this->question->id}", $progress, 3600);
+
+    Log::info('Progress updated', ['progress' => $progress]);
   }
 }

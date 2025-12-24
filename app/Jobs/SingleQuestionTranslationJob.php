@@ -44,6 +44,8 @@ class SingleQuestionTranslationJob implements ShouldQueue
         'question_id' => $this->question->id
       ];
       $this->updateProgress($progress);
+      
+      Log::info('Languages', ['languages' => $languages->toArray()]);
 
       foreach ($languages as $language) {
         Log::info('Translating foreach start', ['stop or not' => $this->shouldStop()]);

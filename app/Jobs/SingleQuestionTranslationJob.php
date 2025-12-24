@@ -174,23 +174,35 @@ class SingleQuestionTranslationJob implements ShouldQueue
 
   private function saveTranslation(Question $question, Language $language, array $translations): QuestionTranslation
   {
-    $translationData = [
-      'quiz_id' => $question->quiz_id,
-      'question_translation' => $translations['question'] ?? null,
-      'a_translation' => $translations['a'] ?? null,
-      'b_translation' => $translations['b'] ?? null,
-      'c_translation' => $translations['c'] ?? null,
-      'd_translation' => $translations['d'] ?? null,
-      'answer_explanation_translation' => $translations['answer_explanation'] ?? null,
-    ];
+    try {
+      $translationData = [
+        'quiz_id' => $question->quiz_id,
+        'question_translation' => $translations['question'] ?? null,
+        'a_translation' => $translations['a'] ?? null,
+        'b_translation' => $translations['b'] ?? null,
+        'c_translation' => $translations['c'] ?? null,
+        'd_translation' => $translations['d'] ?? null,
+        'answer_explanation_translation' => $translations['answer_explanation'] ?? null,
+      ];
 
-    return QuestionTranslation::updateOrCreate(
-      [
+      // Log translation data
+      Log::info('Saving translation', [
         'question_id' => $question->id,
-        'language_id' => $language->id
-      ],
-      $translationData
-    );
+        'language_id' => $language->id,
+        'translations' => $translations
+      ]);
+
+      return QuestionTranslation::updateOrCreate(
+        [
+          'question_id' => $question->id,
+          'language_id' => $language->id
+        ],
+        $translationData
+      );
+    } catch (\Exception $e) {
+      Log::error('Logging translation data failed: ' . $e->getMessage());
+      return new QuestionTranslation(); // Return empty model on failure
+    }
   }
 
   private function convertToSpeech(QuestionTranslation $translation, Language $language, array &$progress)

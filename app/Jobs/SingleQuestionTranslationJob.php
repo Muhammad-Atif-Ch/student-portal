@@ -241,7 +241,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
         $audioField = "{$field}_audio";
 
         // Convert text to speech
-        $audioContent = $tts->convertToSpeech($text, $language->code);
+        $audioContent = $tts->convertToSpeech($text, $language);
         if ($audioContent === false) {
           Log::error("TTS conversion failed for translation ID: {$translation->id}, field: {$field}");
           continue;

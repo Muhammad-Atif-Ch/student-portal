@@ -91,6 +91,10 @@ class AzureTTSService
 
   private function getVoiceForLanguage($language): array
   {
+    Log::info("Fetching voice for language", [
+      'language_code' => $language->code,
+      'language_name' => $language->name
+    ]);
     // Default to female voice if language not found
     $defaultVoice = ['locale' => 'en-US', 'gender' => 'Female', 'name' => 'en-US-JennyNeural'];
 

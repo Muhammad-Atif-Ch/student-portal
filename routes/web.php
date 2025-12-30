@@ -61,8 +61,11 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     });
 
     // Contact Us
-    Route::get('contact-us', [AdminContactUsController::class, 'index'])->name('contact-us.index');
-    Route::post('contact-us/update/{id}', [AdminContactUsController::class, 'updateStatus'])->name('contact-us.update');
+    Route::group(['prefix' => 'contact-us', 'as' => 'contact-us.'], function () {
+        Route::get('/', [AdminContactUsController::class, 'index'])->name('index');
+        Route::post('update/{id}', [AdminContactUsController::class, 'updateStatus'])->name('update');
+        Route::get('show/{contact_us}', [AdminContactUsController::class, 'show'])->name('show');
+    });
 
     // Settings
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {

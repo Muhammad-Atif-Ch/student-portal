@@ -10,7 +10,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Contact Us List</h4>
-                                {{-- <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add User</a> --}}
+                                {{-- <a href="{{ route('admin.contact-us.create') }}" class="btn btn-primary">Add User</a> --}}
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -22,7 +22,7 @@
                                                 <th>Email</th>
                                                 <th>Subject</th>
                                                 <th>Status</th>
-                                                {{-- <th>Action</th> --}}
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -38,16 +38,9 @@
                                                             {{ $data->status !== 'pending' ? 'Solved' : 'Pending' }}
                                                         </span>
                                                     </td>
-                                                    {{-- <td> --}}
-                                                    {{-- <div class="pretty p-switch pr-2">
-                                                            <input type="checkbox" name="status" class="language-status-toggle" data-language-id="{{ $language->id }}"
-                                                                {{ $language->status ? 'checked' : '' }}>
-                                                            <div class="state p-primary">
-                                                                <label></label>
-                                                            </div>
-                                                        </div> --}}
-                                                    {{-- <a href="{{ route('admin.language.update', $language->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
-                                                    {{-- </td> --}}
+                                                    <td>
+                                                        <a href="{{ route('admin.contact-us.show', $data->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                                    </td>
                                                 </tr>
                                             @empty
                                                 <tr>

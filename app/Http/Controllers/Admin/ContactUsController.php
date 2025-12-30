@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\ContactUs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Google\Service\AuthorizedBuyersMarketplace\Contact;
 
 class ContactUsController extends Controller
 {
@@ -22,5 +23,10 @@ class ContactUsController extends Controller
         $contactUs->save();
 
         return response()->json(['success' => true, 'message' => 'Status Update successfully', 'status' => $contactUs->status]);
+    }
+
+    public function show(ContactUs $contact_us)
+    {
+        return view('backend.contact_us.show', compact('contact_us'));
     }
 }

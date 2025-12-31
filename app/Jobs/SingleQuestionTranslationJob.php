@@ -33,7 +33,7 @@ class SingleQuestionTranslationJob implements ShouldQueue
   public function handle()
   {
     try {
-      Log::info('Job started', ['job' => static::class]);
+      // Log::info('Job started', ['job' => static::class]);
       $languages = Language::where('status', '1')->get();
 
       $progress = [
@@ -74,11 +74,11 @@ class SingleQuestionTranslationJob implements ShouldQueue
 
   private function shouldStop(): bool
   {
-    Log::info("Job stop check", [
-      'immediate_stop' => Cache::get('translation_immediate_stop'),
-      'stop_flag' => Cache::get('translation_stop_flag'),
-      'force_stop' => Cache::get('translation_force_stop')
-    ]);
+    // Log::info("Job stop check", [
+    //   'immediate_stop' => Cache::get('translation_immediate_stop'),
+    //   'stop_flag' => Cache::get('translation_stop_flag'),
+    //   'force_stop' => Cache::get('translation_force_stop')
+    // ]);
     return Cache::get('translation_immediate_stop') ||
       Cache::get('translation_stop_flag') ||
       Cache::get('translation_force_stop');
@@ -193,11 +193,11 @@ class SingleQuestionTranslationJob implements ShouldQueue
       ];
 
       // Log translation data
-      Log::info('Saving translation', [
-        'question_id' => $question->id,
-        'language_id' => $language->id,
-        'translations' => $translations
-      ]);
+      // Log::info('Saving translation', [
+      //   'question_id' => $question->id,
+      //   'language_id' => $language->id,
+      //   'translations' => $translations
+      // ]);
 
       return QuestionTranslation::updateOrCreate(
         [
@@ -279,6 +279,6 @@ class SingleQuestionTranslationJob implements ShouldQueue
     // Store progress in cache with unique key for this question
     Cache::put("translation_progress_question_{$this->question->id}", $progress, 3600);
 
-    Log::info('Progress updated', ['progress' => $progress]);
+    // Log::info('Progress updated', ['progress' => $progress]);
   }
 }

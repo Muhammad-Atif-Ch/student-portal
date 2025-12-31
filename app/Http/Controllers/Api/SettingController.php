@@ -38,11 +38,24 @@ class SettingController extends Controller
     {
         $deviceId = $request->header('Device-Id');
         $user = User::where('device_id', $deviceId)->first();
-        $user->update([
-            'app_type' => $request->app_type,
-            'language_id' => $request->language_id,
-            'fcm_token' => $request->fcm_token,
-        ]);
+
+        $updateData = [];
+
+        if ($request->filled('app_type')) {
+            $updateData['app_type'] = $request->app_type;
+        }
+
+        if ($request->filled('language_id')) {
+            $updateData['language_id'] = $request->language_id;
+        }
+
+        if ($request->filled('fcm_token')) {
+            $updateData['fcm_token'] = $request->fcm_token;
+        }
+
+        if (!empty($updateData)) {
+            $user->update($updateData);
+        }
 
         $user->refresh();
 

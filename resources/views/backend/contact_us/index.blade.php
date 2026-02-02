@@ -32,7 +32,7 @@
                                             @forelse ($contactUs as $data)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $data->user->device_id }}</td>
+                                                    <td>{{ $data->user->device_id ?? 'N/A' }}</td>
                                                     <td>{{ $data->name }}</td>
                                                     <td>{{ $data->email }}</td>
                                                     <td>{{ $data->subject ?? 'N/A' }}</td>

@@ -238,7 +238,9 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button class="btn btn-primary mr-1" type="submit">Submit</button>
+                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="translation">Translation Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="audio">Audio File Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="all">All Update</button>
                                 </div>
                             </form>
                         </div>

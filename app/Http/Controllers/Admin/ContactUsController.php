@@ -11,7 +11,7 @@ class ContactUsController extends Controller
 {
     public function index()
     {
-        $contactUs = ContactUs::all(); // Assuming you want to fetch all contact us messages
+        $contactUs = ContactUs::with('user')->get(); // Assuming you want to fetch all contact us messages
 
         return view('backend.contact_us.index', compact('contactUs')); // Adjust the view path as necessary
     }
@@ -27,6 +27,7 @@ class ContactUsController extends Controller
 
     public function show(ContactUs $contact_us)
     {
+        $contact_us->load('user');
         return view('backend.contact_us.show', compact('contact_us'));
     }
 }

@@ -25,6 +25,7 @@ class ContactUsRequest extends FormRequest
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'subject' => 'nullable|string|max:255',
+            'platform' => 'required|string|max:255',
             'message' => 'nullable|string|max:1000',
         ];
     }

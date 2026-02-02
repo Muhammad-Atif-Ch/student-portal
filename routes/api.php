@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
     Route::post('user/device-register', [UserController::class, 'register']);
-    Route::post('contact-us', [ContactUsController::class, 'index']);
     Route::get('app-image', [SettingController::class, 'appImage']);
     Route::get('user-status', [UserController::class, 'userStatus']);
     Route::get('languages', [SettingController::class, 'languages']);
@@ -69,6 +68,7 @@ Route::middleware('membership:free')->group(function () {
         Route::get('search-question', [QuizController::class, 'searchQuestion']);
         Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
     });
+    Route::post('contact-us', [ContactUsController::class, 'index']);
 
     // setting routes
     Route::group(['prefix' => 'setting'], function () {

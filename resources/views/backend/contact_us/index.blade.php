@@ -18,9 +18,12 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">#</th>
+                                                <th>Device Id</th>
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Subject</th>
+                                                <th>Platform</th>
+                                                <th>Created At</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -29,9 +32,13 @@
                                             @forelse ($contactUs as $data)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->user->device_id }}</td>
                                                     <td>{{ $data->name }}</td>
                                                     <td>{{ $data->email }}</td>
                                                     <td>{{ $data->subject ?? 'N/A' }}</td>
+                                                    <td>{{ $data->platform ?? 'N/A' }}</td>
+                                                    <td>{{ $data->created_at ?? 'N/A' }}</td>
+                                                    {{-- <td>{{ $data->user->device_id ?? 'N/A' }}</td> --}}
                                                     <td>
                                                         <span class="badge status-toggle badge-{{ $data->status !== 'pending' ? 'success' : 'danger' }}" data-id="{{ $data->id }}"
                                                             data-status="{{ $data->status }}" style="cursor:pointer; user-select:none;">

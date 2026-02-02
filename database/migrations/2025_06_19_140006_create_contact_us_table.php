@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('contact_us', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('subject')->nullable();
+            $table->string('platform')->nullable();
             $table->text('message')->nullable();
             $table->enum('status', ['pending', 'resolved'])->default('pending');
             $table->timestamps();

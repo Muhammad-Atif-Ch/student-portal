@@ -68,6 +68,7 @@ class DashboardController extends Controller
             ->whereNotNull('language_id')
             ->whereBetween('updated_at', [$request->start_date, $request->end_date])
             ->groupBy('language_id')
+            ->orderBy('total', 'desc')
             ->get();
 
         return response()->json(['data' => $languageUsage, 'success' => true]);

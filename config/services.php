@@ -35,11 +35,15 @@ return [
         ],
     ],
     'google' => [
-    'service_account_path' => env('GOOGLE_SERVICE_ACCOUNT_PATH', storage_path('app/credentials/service-account.json')),
-    'scopes' => [
-        'https://www.googleapis.com/auth/cloud-platform',
-        // Add other scopes as needed
+        'service_account_path' => env('GOOGLE_SERVICE_ACCOUNT_PATH', storage_path('app/credentials/service-account.json')),
+        'scopes' => [
+            'https://www.googleapis.com/auth/cloud-platform',
+            // Add other scopes as needed
+        ],
     ],
-],
+
+    'apilayer' => [
+        'key' => env('APILAYER_KEY'),
+    ],
 
 ];

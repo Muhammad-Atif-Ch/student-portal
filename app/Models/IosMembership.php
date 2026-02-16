@@ -26,4 +26,9 @@ class IosMembership extends Model
         'raw_response',
         'status',
     ];
+
+    public function currencyRate()
+    {
+        return $this->belongsTo(CurrencyRate::class, 'currency', 'currency');
+    }
 }

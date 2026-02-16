@@ -65,44 +65,48 @@ class QuestionService extends AbstractService
         $data = $request->validated();
         $question = Question::findOrFail($id);
 
-        if ($request->hasFile('visual_explanation')) {
-            if ($question->visual_explanation) {
-                $filePath = public_path("images/$question->visual_explanation");
-                if (file_exists($filePath)) {
-                    unlink($filePath);
+        if ($data['update_type'] === 'form_data_update') {
+            if ($request->hasFile('visual_explanation')) {
+                if ($question->visual_explanation) {
+                    $filePath = public_path("images/$question->visual_explanation");
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
                 }
+
+                $uploadFile = new UploadFile();
+                $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
+                $data['visual_explanation'] = $imageName;
             }
 
-            $uploadFile = new UploadFile();
-            $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
-            $data['visual_explanation'] = $imageName;
-        }
-
-        if ($request->hasFile('image')) {
-            if ($question->image) {
-                $filePath = public_path("images/$question->image");
-                if (file_exists($filePath)) {
-                    unlink($filePath);
+            if ($request->hasFile('image')) {
+                if ($question->image) {
+                    $filePath = public_path("images/$question->image");
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
                 }
+
+                $uploadFile = new UploadFile();
+                $imageName = $uploadFile->upload('images', $request->file('image'));
+                $data['image'] = $imageName;
             }
 
-            $uploadFile = new UploadFile();
-            $imageName = $uploadFile->upload('images', $request->file('image'));
-            $data['image'] = $imageName;
+            $this->update($data, $id);
         }
 
-        $this->update($data, $id);
+        if ($data['update_type'] === 'translation' || $data['update_type'] === 'audio' || $data['update_type'] === 'all_data_update') {
+            Cache::forget('translation_stop_flag');
+            Cache::forget('translation_force_stop');
+            Cache::forget('translation_stopped_at');
+            Cache::forget('translation_immediate_stop');
+            Cache::forget('translation_progress');
+            // After updating the question, dispatch the background job
+            $question->refresh(); // Refresh the model to get updated data
 
-        Cache::forget('translation_stop_flag');
-        Cache::forget('translation_force_stop');
-        Cache::forget('translation_stopped_at');
-        Cache::forget('translation_immediate_stop');
-        Cache::forget('translation_progress');
-        // After updating the question, dispatch the background job
-        $question->refresh(); // Refresh the model to get updated data
-
-        Log::info('Job call here', ['question_id' => $question->id]);
-        dispatch(new SingleQuestionTranslationJob($question));
+            // Log::info('Job call here', ['question_id' => $question->id]);
+            dispatch(new SingleQuestionTranslationJob($question, $data['update_type']));
+        }
 
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
         $this->response->setData(['question_id' => $question->id]); // Add question ID to response

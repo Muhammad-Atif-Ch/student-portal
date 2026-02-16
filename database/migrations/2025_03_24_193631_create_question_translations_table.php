@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('question_translations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quiz_id')->constrained("quizzes");
-            $table->foreignId('question_id')->constrained("questions");
-            $table->foreignId('language_id')->constrained("languages");
+            $table->foreignId('quiz_id')->constrained("quizzes")->onDelete('cascade');
+            $table->foreignId('question_id')->constrained("questions")->onDelete('cascade');
+            $table->foreignId('language_id')->constrained("languages")->onDelete('cascade');
             $table->text('question_translation')->nullable();
             $table->text('a_translation')->nullable();
             $table->text('b_translation')->nullable();

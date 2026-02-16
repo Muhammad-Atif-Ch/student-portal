@@ -22,27 +22,31 @@ class SingleQuestionTranslationJob implements ShouldQueue
   protected string $apiKey;
   protected string $sourceLanguage;
   protected Question $question;
+  protected $updateType;
 
-  public function __construct(Question $question)
+  public function __construct(Question $question, string $updateType)
   {
     $this->apiKey = env('GOOGLE_TRANSLATE_API_KEY');
     $this->sourceLanguage = 'en';
     $this->question = $question;
+    $this->updateType = $updateType;
   }
 
   public function handle()
   {
+    $progress = [
+      'total' => 0,
+      'completed' => 0,
+      'status' => 'running',
+      'message' => 'Starting translation and voice conversion...',
+      'question_id' => $this->question->id
+    ];
+
     try {
-      // Log::info('Job started', ['job' => static::class]);
+      // Log::info('Job started', ['job' => static::class, 'update_type' => $this->updateType]);
       $languages = Language::where('status', '1')->get();
 
-      $progress = [
-        'total' => $languages->count() * 7, // 6 fields + 1 for initial setup
-        'completed' => 0,
-        'status' => 'running',
-        'message' => 'Starting translation and voice conversion...',
-        'question_id' => $this->question->id
-      ];
+      $progress['total'] = $languages->count() * 7;
       $this->updateProgress($progress);
 
       foreach ($languages as $language) {
@@ -52,23 +56,146 @@ class SingleQuestionTranslationJob implements ShouldQueue
           return;
         }
 
-        // Translate all fields
-        $translations = $this->translateFields($this->question, $language, $progress);
-        if ($translations === false) {
+        $result = $this->processLanguage($language, $progress);
+
+        if ($result === false) {
+          Log::warning("Failed to process language: {$language->name} for question: {$this->question->id}");
           continue;
         }
-
-        // Save translation
-        $translation = $this->saveTranslation($this->question, $language, $translations);
-
-        // Convert to speech
-        $this->convertToSpeech($translation, $language, $progress);
       }
 
-      $this->updateProgress($progress, 'completed', 'Translation and voice conversion completed successfully');
+      $this->updateProgress($progress, 'completed', 'Translation completed successfully');
     } catch (\Exception $e) {
       Log::error('Single question translation job failed: ' . $e->getMessage());
       $this->updateProgress($progress, 'error', 'Process failed: ' . $e->getMessage());
+    }
+  }
+
+  private function processLanguage(Language $language, array &$progress): bool
+  {
+    try {
+      switch ($this->updateType) {
+        case 'all_data_update':
+          return $this->translationAudioUpdate($language, $progress);
+        case 'translation':
+          return $this->translation($language, $progress);
+        case 'audio':
+          return $this->audio($language, $progress);
+        default:
+          Log::warning("Unknown update type: {$this->updateType}");
+          return false;
+      }
+    } catch (\Exception $e) {
+      Log::error("Failed to process language {$language->name}", [
+        'error' => $e->getMessage(),
+        'question_id' => $this->question->id,
+        'language_id' => $language->id
+      ]);
+      return false;
+    }
+  }
+
+  //  private function copycodeonly()
+  // {
+  //   try {
+  //     // Log::info('Job started', ['job' => static::class, 'update_type' => $this->updateType]);
+  //     $languages = Language::where('status', '1')->get();
+
+  //     $progress = [
+  //       'total' => $languages->count() * 7, // 6 fields + 1 for initial setup
+  //       'completed' => 0,
+  //       'status' => 'running',
+  //       'message' => 'Starting translation and voice conversion...',
+  //       'question_id' => $this->question->id
+  //     ];
+  //     $this->updateProgress($progress);
+
+  //     foreach ($languages as $language) {
+  //       // Log::info('Translating foreach start', ['stop or not' => $this->shouldStop()]);
+  //       if ($this->shouldStop()) {
+  //         $this->updateProgress($progress, 'stopped', 'Process stopped by user');
+  //         return;
+  //       }
+
+  //       // Translate all fields
+  //       $translations = $this->translateFields($this->question, $language, $progress);
+  //       if ($translations === false) {
+  //         continue;
+  //       }
+
+  //       // Save translation
+  //       $translation = $this->saveTranslation($this->question, $language, $translations);
+
+  //       // Convert to speech
+  //       $this->convertToSpeech($translation, $language, $progress);
+  //     }
+
+  //     $this->updateProgress($progress, 'completed', 'Translation completed successfully');
+  //   } catch (\Exception $e) {
+  //     Log::error('Single question translation job failed: ' . $e->getMessage());
+  //     $this->updateProgress($progress, 'error', 'Process failed: ' . $e->getMessage());
+  //   }
+  // }
+
+  private function translationAudioUpdate($language, array &$progress)
+  {
+    // Translate all fields
+    $translations = $this->translateFields($this->question, $language, $progress);
+    if ($translations === false) {
+      return false;
+    }
+
+    // Save translation
+    $translation = $this->saveTranslation($this->question, $language, $translations);
+
+    // Convert to speech
+    $this->convertToSpeech($translation, $language, $progress);
+    return true;
+  }
+
+  private function translation($language, array &$progress)
+  {
+    // Translate all fields
+    $translations = $this->translateFields($this->question, $language, $progress);
+    if ($translations === false) {
+      return false;
+    }
+
+    // Save translation
+    $this->saveTranslation($this->question, $language, $translations);
+    return true;
+  }
+
+  private function audio(Language $language, array &$progress)
+  {
+    try {
+      $translation = QuestionTranslation::where('question_id', $this->question->id)
+        ->where('language_id', $language->id)
+        ->first();
+
+      if (!$translation) {
+        Log::warning("No translation found for audio conversion", [
+          'question_id' => $this->question->id,
+          'language_id' => $language->id,
+          'language_name' => $language->name
+        ]);
+        return false;
+      }
+
+      Log::info('Starting audio conversion', [
+        'translation_id' => $translation->id,
+        'language' => $language->name
+      ]);
+
+      // Convert to speech
+      $this->convertToSpeech($translation, $language, $progress);
+      return true;
+    } catch (\Exception $e) {
+      Log::error("Audio conversion failed for {$language->name}", [
+        'error' => $e->getMessage(),
+        'question_id' => $this->question->id
+      ]);
+      return false;
     }
   }
 

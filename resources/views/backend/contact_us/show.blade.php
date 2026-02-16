@@ -15,14 +15,34 @@
                                 <div class="row">
                                     <div class="col-12 col-md-4 col-lg-4">
                                         <div class="form-group">
-                                            <label>Name <small style="color: red">*</small></label>
+                                            <label>Name</label>
                                             <input type="text" class="form-control" readonly value="{{ $contact_us->name }}">
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4 col-lg-4">
                                         <div class="form-group">
-                                            <label>Email <small style="color: red">*</small></label>
+                                            <label>Email</label>
                                             <input type="email" class="form-control" readonly value="{{ $contact_us->email }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label>Created At </label>
+                                            <input type="text" class="form-control" readonly value="{{ $contact_us->created_at }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label>Platform </label>
+                                            <input type="text" class="form-control" readonly value="{{ !empty($contact_us->platform) ? $contact_us->platform : 'N/A' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 col-lg-4">
+                                        <div class="form-group">
+                                            <label>Device Id</label>
+                                            <input type="text" class="form-control" readonly value="{{ $contact_us->user->device_id ?? 'N/A' }}">
                                         </div>
                                     </div>
                                 </div>
@@ -38,7 +58,7 @@
                                     <div class="col-12 col-md-12 col-lg-12">
                                         <div class="form-group">
                                             <label>Message</label>
-                                            <textarea name="" id="" readonly class="form-control" rows="50">{{ $contact_us->message }}</textarea>
+                                            <textarea readonly class="form-control" rows="50">{{ $contact_us->message }}</textarea>
                                         </div>
                                     </div>
                                 </div>

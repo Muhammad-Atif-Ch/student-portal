@@ -55,7 +55,7 @@ class UserService extends AbstractService
 
     public function listUser(): Collection
     {
-        $users = $this->repository->getListWithoutPagination(with: ['roles']);
+        $users = $this->repository->getListWithoutPagination(with: ['roles', 'membership', 'iosMembership'], orderBy: 'DESC');
         return $users;
     }
 

@@ -17,8 +17,8 @@ class Membership extends Model
         'end_date',
         'order_id',
         'auto_renewing',
-        'price_currency_code',
-        'price_amount_micros',
+        'currency',
+        'price',
         'country_code',
         'cancel_reason',
         'purchase_type',
@@ -48,6 +48,11 @@ class Membership extends Model
     public function getRawResponseAttribute($value)
     {
         return json_decode($value, true);
+    }
+
+    public function currencyRate()
+    {
+        return $this->belongsTo(CurrencyRate::class, 'currency', 'currency');
     }
 
 

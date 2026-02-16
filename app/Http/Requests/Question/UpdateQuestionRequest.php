@@ -42,6 +42,7 @@ class UpdateQuestionRequest extends FormRequest
             'c_translation' => 'nullable',
             'd_translation' => 'nullable',
             'answer_explanation_translation' => 'nullable',
+            'update_type' => 'required|in:translation,audio,form_data_update,all_data_update',
         ];
     }
 

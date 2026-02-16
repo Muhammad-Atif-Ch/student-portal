@@ -21,19 +21,45 @@
                                                 <th>Name</th>
                                                 <th>Device Id</th>
                                                 <th>Roles</th>
+                                                <th>Platform</th>
+                                                <th>Membership</th>
+                                                <th>Price</th>
+                                                <th>Currency</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($users as $user)
+                                                @php
+                                                    $activeMembership = $user->iosMembership !== null ? $user->iosMembership : ($user->membership !== null ? $user->membership : null);
+                                                    // dd($activeMembership, $user, $user->iosMembership !== null);
+                                                @endphp
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $user->name }}</td>
+                                                    <td class="text-center">{{ $user->id }}</td>
+                                                    <td>{{ $user->name ?? 'N/A' }}</td>
                                                     <td>{{ $user->device_id ?? 'N/A' }}</td>
-                                                    <td>{{ $user->roles->map(fn($role) => $role->name)->join(', ') }}</td>
+                                                    <td>
+                                                        <span class="badge badge-primary">{{ ucfirst($user->roles->map(fn($role) => $role->name)->join(', ')) }}</span>
+                                                    </td>
+                                                    <td><span class="badge {{ $user->platform ? 'badge-primary' : 'badge-danger' }}">{{ ucfirst($user->platform) }}</span></td>
+                                                    <td>
+                                                        <span class="badge {{ $activeMembership && $activeMembership->membership_type !== null ? 'badge-primary' : 'badge-danger' }}">
+                                                            {{ ucfirst(string: $activeMembership->membership_type ?? 'N/A') }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {{ $activeMembership && $activeMembership->price ? 'badge-primary' : 'badge-danger' }}">
+                                                            {{ ucfirst(string: $activeMembership->price ?? 'N/A') }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {{ $activeMembership && $activeMembership->currency ? 'badge-primary' : 'badge-danger' }}">
+                                                            {{ ucfirst(string: $activeMembership->currency ?? 'N/A') }}
+                                                        </span>
+                                                    </td>
                                                     <td>
                                                         {{-- <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a> --}}
-                                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline delete-form">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

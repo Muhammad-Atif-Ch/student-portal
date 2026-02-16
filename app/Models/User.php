@@ -6,11 +6,14 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
+
+    protected $appends = ['active_membership'];
 
     /**
      * The attributes that are mass assignable.
@@ -60,12 +63,17 @@ class User extends Authenticatable
      */
     public function membership(): HasOne
     {
-        return $this->hasOne(Membership::class);
+        return $this->hasOne(Membership::class, 'user_id');
     }
 
     public function iosMembership(): HasOne
     {
-        return $this->hasOne(IosMembership::class);
+        return $this->hasOne(IosMembership::class, 'user_id');
+    }
+
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class);
     }
 
     public function getActiveMembershipAttribute()

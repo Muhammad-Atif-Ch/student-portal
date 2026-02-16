@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Quiz;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use App\Imports\QuestionImport;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Response;
 use App\Services\Question\QuestionService;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
-use App\Imports\QuestionImport;
-use App\Models\Quiz;
 
 class QuestionController extends Controller
 {
@@ -92,8 +93,15 @@ class QuestionController extends Controller
      */
     public function destroy($quiz_id, Question $question)
     {
-        $response = $this->service->destroy($question);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
+        $response = null;
+
+        DB::transaction(function () use ($question, &$response) {
+            $question->translations()->delete(); // delete child records first
+
+            $response = $this->service->destroy($question);
+        });
+
+        return Response::sendResponse($response?->getResponeType(), $response?->code(), $response?->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 
     public function importQuestion(Request $request, $quiz_id)

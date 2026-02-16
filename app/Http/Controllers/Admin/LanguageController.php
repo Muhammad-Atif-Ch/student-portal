@@ -73,7 +73,7 @@ class LanguageController extends Controller
     public function destroy(Language $language)
     {
         // $translation = QuestionTranslation::where('language_id', $language->id)
-
+        // dd($language->id);
         try {
             DB::beginTransaction();
 
@@ -91,8 +91,6 @@ class LanguageController extends Controller
 
             return Response::sendResponse("ERROR", $e->getCode(), $e->getMessage(), redirect: 'admin.language.index');
         }
-
-        // return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.language.index');
     }
 
 }

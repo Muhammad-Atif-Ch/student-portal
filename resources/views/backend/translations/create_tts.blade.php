@@ -91,7 +91,3 @@
         </section>
     </div>
 @endsection
-
-@push('scripts')
-    <script src="{{ asset('assets/js/broadcast.js') }}"></script>
-@endpush

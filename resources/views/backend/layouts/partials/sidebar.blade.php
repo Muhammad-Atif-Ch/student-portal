@@ -7,7 +7,7 @@
         <ul class="sidebar-menu">
             <li class="menu-header">Main</li>
             <li class="dropdown {{ Request::is('dashboard') ? 'active' : '' }}">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link"><i data-feather="monitor"></i><span>Dashboard</span></a>
+                <a href="{{ route('admin.dashboard.index') }}" class="nav-link"><i data-feather="monitor"></i><span>Dashboard</span></a>
             </li>
             <li class="dropdown {{ Request::is('language*') ? 'active' : '' }}">
                 <a href="{{ route('admin.language.index') }}" class="nav-link"><i data-feather="globe"></i><span>Language</span></a>
@@ -33,7 +33,7 @@
                     <span>{{ __('Text to Speech') }}</span>
                 </a>
             </li> --}}
-            <li class="{{ Request::is('admin/translations*') ? 'active' : '' }}">
+            <li class="{{ Request::is('translations*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('admin.translations.index') }}">
                     <i data-feather="list"></i>
                     <span>{{ __('Translations') }}</span>

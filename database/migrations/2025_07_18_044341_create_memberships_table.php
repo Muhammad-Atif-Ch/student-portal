@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->timestamp('end_date')->nullable();
             $table->string('order_id')->nullable();
             $table->boolean('auto_renewing')->default(false);
-            $table->string('price_currency_code', 10)->nullable();
-            $table->bigInteger('price_amount_micros')->nullable();
+            $table->bigInteger('price')->nullable();
+            $table->string('currency', 10)->nullable();
             $table->string('country_code', 10)->nullable();
             $table->integer('cancel_reason')->nullable();
             $table->integer('purchase_type')->nullable();

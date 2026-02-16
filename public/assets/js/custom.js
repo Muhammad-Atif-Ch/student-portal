@@ -18,6 +18,11 @@ $(function () {
     let updateTimer = null; // Timer for debounced updates
 
     $(document).ready(function () {
+        initializeDeleteConfirm(); // Initialize delete confirmation dialogs
+        initializeFetchThemeSettings(); // Fetch and apply theme settings
+    });
+
+    function initializeFetchThemeSettings() {
         // Only fetch settings if we have the routes
         if (routes && routes.setting && routes.setting.index) {
             fetchThemeSettings(); // Fetch settings on page load
@@ -25,7 +30,7 @@ $(function () {
 
         // Event listeners for settings changes
         $(
-            ".select-layout, .select-sidebar, #mini_sidebar_setting, #sticky_header_setting"
+            ".select-layout, .select-sidebar, #mini_sidebar_setting, #sticky_header_setting",
         ).on("change", function () {
             triggerSettingsUpdate();
         });
@@ -59,8 +64,7 @@ $(function () {
         setTimeout(() => {
             $(".loader").fadeOut("slow");
         }, 5000);
-    });
-
+    }
     // Function to trigger settings update with debounce
     function triggerSettingsUpdate() {
         if (updateTimer) {
@@ -86,13 +90,13 @@ $(function () {
                         $(
                             ".select-layout[value='" +
                                 settings.theme_layout +
-                                "']"
+                                "']",
                         ).length
                     ) {
                         $(
                             ".select-layout[value='" +
                                 settings.theme_layout +
-                                "']"
+                                "']",
                         ).prop("checked", true);
                     }
 
@@ -100,13 +104,13 @@ $(function () {
                         $(
                             ".select-sidebar[value='" +
                                 settings.sidebar_color +
-                                "']"
+                                "']",
                         ).length
                     ) {
                         $(
                             ".select-sidebar[value='" +
                                 settings.sidebar_color +
-                                "']"
+                                "']",
                         ).prop("checked", true);
                     }
 
@@ -114,28 +118,28 @@ $(function () {
                         $(
                             ".choose-theme li[title='" +
                                 settings.color_theme +
-                                "']"
+                                "']",
                         ).length
                     ) {
                         $(".choose-theme li").removeClass("active");
                         $(
                             ".choose-theme li[title='" +
                                 settings.color_theme +
-                                "']"
+                                "']",
                         ).addClass("active");
                     }
 
                     if ($("#mini_sidebar_setting").length) {
                         $("#mini_sidebar_setting").prop(
                             "checked",
-                            Boolean(Number(settings.mini_sidebar))
+                            Boolean(Number(settings.mini_sidebar)),
                         );
                     }
 
                     if ($("#sticky_header_setting").length) {
                         $("#sticky_header_setting").prop(
                             "checked",
-                            Boolean(Number(settings.stiky_header))
+                            Boolean(Number(settings.stiky_header)),
                         );
                     }
 
@@ -376,7 +380,7 @@ function initTranslationProgress() {
             // Show error message
             addLog(
                 "Failed to fetch translation progress: " + error.message,
-                "error"
+                "error",
             );
             Swal.fire({
                 title: "Error",
@@ -426,7 +430,7 @@ function initTranslationProgress() {
                         message,
                         status,
                     },
-                })
+                }),
             );
 
             // Update button states
@@ -448,7 +452,7 @@ function initTranslationProgress() {
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <small class="text-muted">${completed} / ${total}</small>
                         <small class="text-primary font-weight-bold">${Math.round(
-                            percent
+                            percent,
                         )}%</small>
                     </div>
                     <div class="text-muted" style="font-size: 13px;">${message}</div>
@@ -575,8 +579,8 @@ function initTranslationProgress() {
                         status === "completed"
                             ? "Success!"
                             : status === "stopped"
-                            ? "Stopped"
-                            : "Error",
+                              ? "Stopped"
+                              : "Error",
                     text: completionMessage,
                     icon: alertType,
                     position: "bottom-end",
@@ -714,7 +718,7 @@ function initTranslationProgress() {
                     body: new FormData(form),
                     headers: {
                         "X-CSRF-TOKEN": document.querySelector(
-                            'input[name="_token"]'
+                            'input[name="_token"]',
                         ).value,
                     },
                 });
@@ -730,7 +734,7 @@ function initTranslationProgress() {
                         `Error: ${
                             data.message || "Failed to start translation"
                         }`,
-                        "error"
+                        "error",
                     );
                     resetButtonStates();
                     if (progressAlert) {
@@ -766,7 +770,7 @@ function initTranslationProgress() {
                     method: "POST",
                     headers: {
                         "X-CSRF-TOKEN": document.querySelector(
-                            'input[name="_token"]'
+                            'input[name="_token"]',
                         ).value,
                     },
                 });
@@ -1002,7 +1006,7 @@ function initTTSProgress() {
                 if (document.getElementById("logs")) {
                     addLog(
                         "Error in conversion process: " + data.error,
-                        "error"
+                        "error",
                     );
                 }
                 Swal.fire({
@@ -1017,7 +1021,6 @@ function initTTSProgress() {
                     timerProgressBar: true,
                 });
             } else {
-                
                 updateProgressUI(data);
             }
         } catch (error) {
@@ -1027,7 +1030,7 @@ function initTTSProgress() {
             if (document.getElementById("logs")) {
                 addLog(
                     "Failed to fetch conversion progress: " + error.message,
-                    "error"
+                    "error",
                 );
             }
             Swal.fire({
@@ -1052,7 +1055,7 @@ function initTTSProgress() {
         const status = progress.status || "running";
         const completed = parseInt(progress.completed || 0);
         const total = parseInt(progress.total || 0);
-        
+
         // Validate progress data
         if (isNaN(percent) || isNaN(completed) || isNaN(total)) {
             console.warn("Invalid progress data values:", {
@@ -1077,7 +1080,7 @@ function initTTSProgress() {
                         message,
                         status,
                     },
-                })
+                }),
             );
             localStorage.setItem("ttsInProgress", "true");
 
@@ -1100,7 +1103,7 @@ function initTTSProgress() {
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <small class="text-muted">${completed} / ${total}</small>
                         <small class="text-primary font-weight-bold">${Math.round(
-                            percent
+                            percent,
                         )}%</small>
                     </div>
                     <div class="text-muted" style="font-size: 13px;">${message}</div>
@@ -1224,8 +1227,8 @@ function initTTSProgress() {
                         status === "completed"
                             ? "Success!"
                             : status === "stopped"
-                            ? "Stopped"
-                            : "Error",
+                              ? "Stopped"
+                              : "Error",
                     text: completionMessage,
                     icon: alertType,
                     position: "bottom-end",
@@ -1286,7 +1289,7 @@ function initTTSProgress() {
                     body: new FormData(form),
                     headers: {
                         "X-CSRF-TOKEN": document.querySelector(
-                            'input[name="_token"]'
+                            'input[name="_token"]',
                         ).value,
                     },
                 });
@@ -1302,7 +1305,7 @@ function initTTSProgress() {
                         `Error: ${
                             data.message || "Failed to start conversion"
                         }`,
-                        "error"
+                        "error",
                     );
                     resetButtonStates();
                     if (progressAlert) {
@@ -1338,7 +1341,7 @@ function initTTSProgress() {
                     method: "POST",
                     headers: {
                         "X-CSRF-TOKEN": document.querySelector(
-                            'input[name="_token"]'
+                            'input[name="_token"]',
                         ).value,
                     },
                 });
@@ -1412,4 +1415,31 @@ function initTTSProgress() {
 // Initialize TTS progress handler - with check for multiple initializations
 if (!window._ttsProgressInitialized) {
     document.addEventListener("DOMContentLoaded", initTTSProgress);
+}
+
+function initializeDeleteConfirm() {
+    $(document).on("submit", ".delete-form", function (e) {
+        e.preventDefault();
+
+        let form = this;
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success",
+                });
+                form.submit();
+            }
+        });
+    });
 }

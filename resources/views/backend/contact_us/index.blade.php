@@ -18,7 +18,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">#</th>
-                                                <th>Device Id</th>
+                                                {{-- <th>Device Id</th>   --}}
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Subject</th>
@@ -32,13 +32,12 @@
                                             @forelse ($contactUs as $data)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $data->user->device_id ?? 'N/A' }}</td>
+                                                    {{-- <td>{{ $data->user->device_id ?? 'N/A' }}</td> --}}
                                                     <td>{{ $data->name }}</td>
                                                     <td>{{ $data->email }}</td>
                                                     <td>{{ $data->subject ?? 'N/A' }}</td>
-                                                    <td>{{ $data->platform ?? 'N/A' }}</td>
+                                                    <td>{{ !empty($data->platform) ? $data->platform : 'N/A' }}</td>
                                                     <td>{{ $data->created_at ?? 'N/A' }}</td>
-                                                    {{-- <td>{{ $data->user->device_id ?? 'N/A' }}</td> --}}
                                                     <td>
                                                         <span class="badge status-toggle badge-{{ $data->status !== 'pending' ? 'success' : 'danger' }}" data-id="{{ $data->id }}"
                                                             data-status="{{ $data->status }}" style="cursor:pointer; user-select:none;">
@@ -69,14 +68,25 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.status-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    console.log("Clicked badge with ID:", this.dataset.id); // ✅ test log
-                    const contactId = this.dataset.id;
-                    const currentStatus = this.dataset.status;
-                    const newStatus = currentStatus === 'pending' ? 'resolved' : 'pending';
-                    let url = "{{ route('admin.contact-us.update', ':id') }}".replace(':id', contactId);
+            document.addEventListener('click', async function(e) {
+                const toggle = e.target.closest('.status-toggle');
+                if (!toggle) return;
 
+                const contactId = toggle.dataset.id;
+                const currentStatus = toggle.dataset.status;
+
+                if (!contactId) {
+                    console.error("No data-id found on element", toggle);
+                    return;
+                }
+
+                const newStatus = currentStatus === 'pending' ? 'resolved' : 'pending';
+
+                console.log("Clicked badge ID:", contactId);
+
+                const url = "{{ route('admin.contact-us.update', ':id') }}".replace(':id', contactId);
+
+                try {
                     fetch(url, {
                             method: 'POST',
                             headers: {
@@ -90,14 +100,20 @@
                         .then(data => {
                             if (data.success) {
                                 // update badge instantly
-                                this.dataset.status = newStatus;
-                                this.textContent = newStatus === 'pending' ? 'Pending' : 'Solved';
-                                this.classList.toggle('badge-success', newStatus !== 'pending');
-                                this.classList.toggle('badge-danger', newStatus === 'pending');
+                                console.log("newStatus:", newStatus);
+                                toggle.dataset.status = newStatus;
+
+                                toggle.textContent = newStatus === 'pending' ? 'Pending' : 'Solved';
+
+                                toggle.classList.toggle('badge-success', newStatus !== 'pending');
+                                toggle.classList.toggle('badge-danger', newStatus === 'pending');
                             }
                         })
                         .catch(err => console.error(err));
-                });
+                } catch (error) {
+                    console.error("Update failed:", error);
+                    alert(error.message);
+                }
             });
         });
     </script>

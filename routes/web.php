@@ -22,7 +22,10 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::get('/language-usage/filter', [DashboardController::class, 'filterLanguageUsage'])->name('filter.languageUsage');
+    });
 
     // Quiz and Question Management
     Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy');

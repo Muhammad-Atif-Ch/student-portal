@@ -71,7 +71,8 @@
                         <div class="card">
                             <form id="questionForm" action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                @method('PUT')
+                                @method('PATCH')
+                                <input type="hidden" name="update_type" id="update_type">
                                 <div class="card-header">
                                     <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
                                 </div>
@@ -238,9 +239,10 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="translation">Translation Update</button>
-                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="audio">Audio File Update</button>
-                                    <button class="btn btn-primary mr-1" type="submit" name="update_type" value="all">All Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('translation')">Translation Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('audio')">Audio File Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('all_data_update')">All Data Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('form_data_update')">Form Data Update</button>
                                 </div>
                             </form>
                         </div>
@@ -380,7 +382,7 @@
                 const form = $(this);
                 const formData = new FormData(this);
                 const submitButton = form.find('button[type="submit"]');
-
+                console.log('Submitting form with update_type:', formData);
                 // Disable submit button
                 submitButton.prop('disabled', true);
 
@@ -498,5 +500,9 @@
 
             });
         });
+
+        function submitForm(type) {
+            document.getElementById('update_type').value = type;
+        }
     </script>
 @endpush

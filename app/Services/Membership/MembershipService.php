@@ -22,8 +22,8 @@ class MembershipService
         // Add other fields as needed, set to null or default for free
         'auto_renewing' => false,
         'order_id' => null,
-        'price_currency_code' => null,
-        'price_amount_micros' => null,
+        'currency' => null,
+        'price' => null,
         'country_code' => null,
         'cancel_reason' => null,
         'purchase_type' => null,

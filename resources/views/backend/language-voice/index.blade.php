@@ -38,7 +38,7 @@
                                                         <a href="{{ route('admin.language.voice.edit', ['language' => $data->language_id, 'id' => $data->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.language.voice.destroy', ['language' => $data->language_id, 'languageVoice' => $data->id]) }}" method="POST" class="d-inline">
+                                                        <form action="{{ route('admin.language.voice.destroy', ['language' => $data->language_id, 'languageVoice' => $data->id]) }}" method="POST" class="d-inline delete-form">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

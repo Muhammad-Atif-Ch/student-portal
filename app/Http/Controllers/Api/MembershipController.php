@@ -60,6 +60,8 @@ class MembershipController extends Controller
                 $purchaseDate = Carbon::createFromTimestampMs($data['transaction']['purchaseDate'])->toDateTimeString();
                 $expiresDate = Carbon::createFromTimestampMs($data['transaction']['expiresDate'])->toDateTimeString();
 
+                log::info('Subscription verification successful', ['data' => $data['transaction']['price'], , 'user_id' => $user->id]);
+
                 $subscription = [
                     'user_id' => $user->id,
                     'membership_type' => 'premium',

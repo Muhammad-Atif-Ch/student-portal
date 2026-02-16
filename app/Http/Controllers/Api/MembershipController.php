@@ -60,7 +60,7 @@ class MembershipController extends Controller
                 $purchaseDate = Carbon::createFromTimestampMs($data['transaction']['purchaseDate'])->toDateTimeString();
                 $expiresDate = Carbon::createFromTimestampMs($data['transaction']['expiresDate'])->toDateTimeString();
 
-                log::info('Subscription verification successful', ['data' => $data, 'user_id' => $user->id]);
+                log::info('Subscription verification successful', ['data' => $data, 'price' => round($data['transaction']['price'] / 1000)]);
 
                 $subscription = [
                     'user_id' => $user->id,
@@ -71,7 +71,7 @@ class MembershipController extends Controller
                     'environment' => $data['transaction']['environment'],
                     'purchase_date' => $purchaseDate,
                     'expires_date' => $expiresDate,
-                    'price' => $data['transaction']['price'] / 1000,
+                    'price' => round($data['transaction']['price'] / 1000),
                     'currency' => $data['transaction']['currency'],
                     'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
                     'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,

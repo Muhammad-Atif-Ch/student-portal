@@ -71,7 +71,7 @@ class MembershipController extends Controller
                     'environment' => $data['transaction']['environment'],
                     'purchase_date' => $purchaseDate,
                     'expires_date' => $expiresDate,
-                    'price' => $data['transaction']['price'],
+                    'price' => $data['transaction']['price'] / 1000,
                     'currency' => $data['transaction']['currency'],
                     'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
                     'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,

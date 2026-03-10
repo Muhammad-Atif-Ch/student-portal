@@ -25,6 +25,7 @@
                                                 <th>Membership</th>
                                                 <th>Price</th>
                                                 <th>Currency</th>
+                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -55,6 +56,11 @@
                                                     <td>
                                                         <span class="badge {{ $activeMembership && $activeMembership->currency ? 'badge-primary' : 'badge-danger' }}">
                                                             {{ ucfirst(string: $activeMembership->currency ?? 'N/A') }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {{ $activeMembership && $activeMembership->status !== 0 ? 'badge-primary' : 'badge-danger' }}">
+                                                            {{ ucfirst(string: $activeMembership->status ?? 'N/A') }}
                                                         </span>
                                                     </td>
                                                     <td>

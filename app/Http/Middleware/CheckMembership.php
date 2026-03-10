@@ -38,14 +38,10 @@ class CheckMembership
                 'message' => 'Invalid user provided'
             ], 404);
         }
+
         $accessInfo = $user->active_membership;
         // dd($accessInfo, $type, $user->toArray());
         if ($accessInfo->status == 0) {
-            // ✅ Only FREE routes allowed
-            if ($type === 'free') {
-                return $next($request);
-            }
-
             // ❌ Everything else blocked
             return response()->json([
                 'error' => 'Access denied',
@@ -59,17 +55,16 @@ class CheckMembership
         // Handle different access types
         switch ($type) {
             case 'premium':
-                if ($accessInfo->membership_type !== 'premium') {
+                if ($accessInfo->membership_type == 'free') {
                     return response()->json(['message' => 'Upgrade to premium to access this feature.'], Response::HTTP_FORBIDDEN);
                 }
                 break;
 
-            case 'free':
-                // Allow both free and premium users
-                if (!in_array($accessInfo->membership_type, ['free', 'premium'])) {
-                    return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
-                }
-                break;
+            // case 'free':
+            //     if ($accessInfo->membership_type == 'premium' && $accessInfo->membership_type !== 'premium') {
+            //         return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
+            //     }
+            //     break;
         }
 
         return $next($request);

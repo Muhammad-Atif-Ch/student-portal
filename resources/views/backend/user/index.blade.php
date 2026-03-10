@@ -60,7 +60,7 @@
                                                     </td>
                                                     <td>
                                                         <span class="badge {{ $activeMembership && $activeMembership->status !== 0 ? 'badge-primary' : 'badge-danger' }}">
-                                                            {{ ucfirst(string: $activeMembership->status ?? 'N/A') }}
+                                                            {{ ucfirst(string: $activeMembership->status == 1 ? 'Active' : 'Inactive') }}
                                                         </span>
                                                     </td>
                                                     <td>

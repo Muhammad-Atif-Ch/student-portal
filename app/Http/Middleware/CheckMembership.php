@@ -45,7 +45,7 @@ class CheckMembership
             // ❌ Everything else blocked
             return response()->json([
                 'error' => 'Access denied',
-                'message' => 'Your membership has expired. Only free features are available.',
+                'message' => 'Your membership has expired. Upgrade to premium to access this features.',
                 'membership_required' => true,
                 'membership_type' => $accessInfo->membership_type,
                 'end_date' => $accessInfo->end_date,
@@ -55,16 +55,17 @@ class CheckMembership
         // Handle different access types
         switch ($type) {
             case 'premium':
-                if ($accessInfo->membership_type == 'free') {
+                if ($accessInfo->membership_type !== 'premium') {
                     return response()->json(['message' => 'Upgrade to premium to access this feature.'], Response::HTTP_FORBIDDEN);
                 }
                 break;
 
-            // case 'free':
-            //     if ($accessInfo->membership_type == 'premium' && $accessInfo->membership_type !== 'premium') {
-            //         return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
-            //     }
-            //     break;
+            case 'free':
+                // Allow both free and premium users
+                if (!in_array($accessInfo->membership_type, ['free', 'premium'])) {
+                    return response()->json(['message' => 'Access denied.'], Response::HTTP_FORBIDDEN);
+                }
+                break;
         }
 
         return $next($request);

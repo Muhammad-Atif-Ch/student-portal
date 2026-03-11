@@ -39,6 +39,21 @@ class CheckMembership
             ], 404);
         }
 
+        // Routes that should be allowed even if membership expired
+        $allowedRoutes = [
+            'api/languages',
+            'api/membership',
+            'api/contact-us',
+            'api/setting/*',
+        ];
+
+        // Check if current request URL matches allowed routes
+        foreach ($allowedRoutes as $route) {
+            if ($request->is($route)) {
+                return $next($request);
+            }
+        }
+
         $accessInfo = $user->active_membership;
         // dd($accessInfo, $type, $user->toArray());
         if ($accessInfo->status == 0) {

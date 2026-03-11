@@ -13,15 +13,15 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 
 Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
-    Route::post('user/device-register', [UserController::class, 'register']);
-    Route::get('app-image', [SettingController::class, 'appImage']);
-    Route::get('user-status', [UserController::class, 'userStatus']);
-    Route::get('languages', [SettingController::class, 'languages']);
+    Route::post('user/device-register', [UserController::class, 'register'])->name('device.register');
+    Route::get('app-image', [SettingController::class, 'appImage'])->name('app-image');
+    Route::get('user-status', [UserController::class, 'userStatus'])->name('user-status');
+    Route::get('languages', [SettingController::class, 'languages'])->name('languages');
 
     // Membership management routes
-    Route::prefix('membership')->group(function () {
-        Route::get('/', [MembershipController::class, 'index']);
-        Route::post('/store', [MembershipController::class, 'store']);
+    Route::prefix('membership')->as('membership.')->group(function () {
+        Route::get('/', [MembershipController::class, 'index'])->name('index');
+        Route::post('/store', [MembershipController::class, 'store'])->name('store');
     });
 });
 
@@ -69,10 +69,10 @@ Route::middleware('membership:free')->group(function () {
     Route::post('contact-us', [ContactUsController::class, 'index']);
 
     // setting routes
-    Route::group(['prefix' => 'setting'], function () {
+    Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
         // Result related routes
-        Route::get('/', [SettingController::class, 'index']);
-        Route::post('update', [SettingController::class, 'update']);
+        Route::get('/', [SettingController::class, 'index'])->name('index');
+        Route::post('update', [SettingController::class, 'update'])->name('update');
     });
 });
 

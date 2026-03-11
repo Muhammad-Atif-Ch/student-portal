@@ -41,7 +41,7 @@ class CheckMembership
         }
 
         // Routes that should be allowed even if membership expired
-        $allowedRoutes = $request->routeIs(['languages', 'membership', 'contact-us', 'setting.*']);
+        $allowedRoutes = $request->routeIs(['languages', 'membership.*', 'contact-us', 'setting.*']);
 
         Log::info('Membership Check', [
             'user_id' => $user->id,

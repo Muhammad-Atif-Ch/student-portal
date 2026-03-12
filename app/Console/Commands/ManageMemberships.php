@@ -50,7 +50,8 @@ class ManageMemberships extends Command
             $premiumUsers = $users->filter(fn($u) => $u->current_membership && $u->current_membership->membership_type === 'premium');
 
             // dd("free user", $freeUsers->toArray(), "premium user ", $premiumUsers[0]->platform);
-
+            $this->info("Found {$freeUsers->count()} users with expired free memberships");
+            
             foreach ($freeUsers as $user) {
                 $user->current_membership->update(['status' => 0]);
                 $this->info("Free membership for user {$user->id} deactivated (expired + grace period).");

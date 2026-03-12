@@ -51,7 +51,7 @@ class ManageMemberships extends Command
 
             // dd("free user", $freeUsers->toArray(), "premium user ", $premiumUsers[0]->platform);
             $this->info("Found {$freeUsers->count()} users with expired free memberships");
-            
+
             foreach ($freeUsers as $user) {
                 $user->current_membership->update(['status' => 0]);
                 $this->info("Free membership for user {$user->id} deactivated (expired + grace period).");
@@ -92,6 +92,9 @@ class ManageMemberships extends Command
                 } else if ($user->platform === 'ios' && $purchaseToken) {
                     $data = (new IAPMembershipService)->verifySubscription($purchaseToken);
 
+                    $purchaseDate = Carbon::createFromTimestampMs($data['transaction']['purchaseDate'])->toDateTimeString();
+                    $expiresDate = Carbon::createFromTimestampMs($data['transaction']['expiresDate'])->toDateTimeString();
+
                     $subscription = [
                         'user_id' => $user->id,
                         'membership_type' => 'premium',
@@ -99,9 +102,9 @@ class ManageMemberships extends Command
                         'transaction_id' => $data['transaction']['transactionId'],
                         'original_transaction_id' => $data['transaction']['originalTransactionId'],
                         'environment' => $data['transaction']['environment'],
-                        'purchase_date' => $data['transaction']['purchaseDate'],
-                        'expires_date' => $data['transaction']['expiresDate'],
-                        'price' => $data['transaction']['price'],
+                        'purchase_date' => $purchaseDate,
+                        'expires_date' => $expiresDate,
+                        'price' => round($data['transaction']['price'] / 1000),
                         'currency' => $data['transaction']['currency'],
                         'subscription_group_identifier' => $data['transaction']['subscriptionGroupIdentifier'] ?? null,
                         'auto_renew_status' => $data['renewal']['autoRenewStatus'] ?? null,

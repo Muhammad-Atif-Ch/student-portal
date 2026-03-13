@@ -52,7 +52,7 @@ class ManageMemberships extends Command
 
             // dd("free user", $freeUsers->toArray(), "premium user ", $premiumUsers[0]->platform);
             $this->info("Found {$freeUsers->count()} users with expired free memberships");
-            Log::info("Found {$freeUsers->count()} users with expired free memberships");
+            Log::info("Found {$freeUsers->count()} users with expired free memberships logs");
 
             foreach ($freeUsers as $user) {
                 $user->current_membership->update(['status' => 0]);
@@ -60,7 +60,7 @@ class ManageMemberships extends Command
             }
 
             $this->info("Found {$premiumUsers->count()} users with expired premium memberships");
-            Log::info("Found {$premiumUsers->count()} users with expired premium memberships");
+            Log::info("Found {$premiumUsers->count()} users with expired premium memberships logs");
 
             foreach ($premiumUsers as $user) {
                 $packageName = config('google-play.package_name'); // Store in config/google-play.php

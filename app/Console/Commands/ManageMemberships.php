@@ -35,6 +35,7 @@ class ManageMemberships extends Command
                         ->where('expires_date', '<', $now);
                 });
             })
+                ->where('id', '!=', 1)
                 ->with(['membership', 'iosMembership'])
                 ->get();
 

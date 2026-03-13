@@ -51,7 +51,7 @@ class ManageMemberships extends Command
             $premiumUsers = $users->filter(fn($u) => $u->current_membership && $u->current_membership->membership_type === 'premium');
 
             // dd("free user", $freeUsers->toArray(), "premium user ", $premiumUsers[0]->platform);
-            $this->info("Found {$freeUsers->count()} users with expired free memberships");
+            $this->info("Found {$freeUsers->count()} users with expired free memberships info");
             Log::info("Found {$freeUsers->count()} users with expired free memberships logs");
 
             foreach ($freeUsers as $user) {
@@ -59,7 +59,7 @@ class ManageMemberships extends Command
                 $this->info("Free membership for user {$user->id} deactivated (expired + grace period).");
             }
 
-            $this->info("Found {$premiumUsers->count()} users with expired premium memberships");
+            $this->info("Found {$premiumUsers->count()} users with expired premium memberships info");
             Log::info("Found {$premiumUsers->count()} users with expired premium memberships logs");
 
             foreach ($premiumUsers as $user) {

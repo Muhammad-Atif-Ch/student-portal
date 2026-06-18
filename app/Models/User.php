@@ -88,17 +88,17 @@ class User extends Authenticatable
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function activeMembership(): HasOne
-    {
-        return $this->hasOne(Membership::class)
-            ->ofMany(['start_date' => 'max'], function ($query) {
-                $query->where('is_active', true)
-                    ->where(function ($q) {
-                        $q->whereNull('end_date')
-                            ->orWhere('end_date', '>', now());
-                    });
-            });
-    }
+    // public function activeMembership(): HasOne
+    // {
+    //     return $this->hasOne(Membership::class)
+    //         ->ofMany(['start_date' => 'max'], function ($query) {
+    //             $query->where('is_active', true)
+    //                 ->where(function ($q) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhere('end_date', '>', now());
+    //                 });
+    //         });
+    // }
 
     /**
      * Get the current valid membership.

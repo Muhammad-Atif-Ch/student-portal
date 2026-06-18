@@ -45,9 +45,6 @@ Route::middleware('membership:premium')->group(function () {
         Route::get('previous-test-result-details', [ResultController::class, 'previousTestResultDetails']);
         Route::get('result-summary', [ResultController::class, 'resultSummary']);
         Route::get('result-category', [ResultController::class, 'resultCategory']);
-
-        // Contact Us related route
-        // Route::get('contact-us', [ContactUsController::class, 'index']);
     });
 
     Route::group(['prefix' => 'notification'], function () {
@@ -66,7 +63,7 @@ Route::middleware('membership:free')->group(function () {
         Route::get('search-question', [QuizController::class, 'searchQuestion']);
         Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
     });
-    Route::post('contact-us', [ContactUsController::class, 'index']);
+    Route::post('contact-us', [ContactUsController::class, 'index'])->name('contact-us');
 
     // setting routes
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {

@@ -21,7 +21,6 @@ class ContactUsController extends Controller
 
             ContactUs::create($data);
 
-            Log::info('contact us data create successfully');
             // Return the messages as a JSON response
             return response()->json(['data' => $data, 'success' => 'Data submit successfully'], 200);
         } catch (\Exception $e) {

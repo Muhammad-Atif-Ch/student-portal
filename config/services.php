@@ -41,7 +41,11 @@ return [
             // Add other scopes as needed
         ],
     ],
-
+    'azure_translator' => [
+        'key' => env('AZURE_TRANSLATOR_KEY'),
+        'region' => env('AZURE_TRANSLATOR_REGION', null),
+        'endpoint' => env('AZURE_TRANSLATOR_ENDPOINT', 'https://api.cognitive.microsofttranslator.com'),
+    ],
     'apilayer' => [
         'key' => env('APILAYER_KEY'),
     ],

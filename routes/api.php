@@ -36,7 +36,7 @@ Route::middleware('membership:premium')->group(function () {
         Route::get('least-seen', [QuizController::class, 'leastSeen']);
 
         // Question related routes
-        Route::get('get-flag', [QuestionController::class, 'getFlag']);
+        Route::get('get-flag', [QuestionController::class, 'getFlag']); 
         Route::post('store-flag', [QuestionController::class, 'storeFlag']);
 
         // Result related routes

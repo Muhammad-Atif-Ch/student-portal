@@ -1,19 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\QuizController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\LanguageController;
-use App\Http\Controllers\Admin\QuestionController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\TranslationController;
-use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\TextToSpeechController;
-use App\Http\Controllers\Frontend\ContactUsController as FrontendContactUsController;
-use App\Http\Controllers\Admin\LanguageVoiceController;
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\LanguageVoiceController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\QuizController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\TextToSpeechController;
+use App\Http\Controllers\Admin\TranslationController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Frontend\ContactUsController as FrontendContactUsController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Profile Management
@@ -35,7 +35,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::delete('question/{question}/remove-image', [QuestionController::class, 'removeImage'])->name('question.removeImage');
     Route::resource('users', UserController::class);
 
-    //Language
+    // Language
     Route::group(['prefix' => 'language', 'as' => 'language.'], function () {
         Route::get('/', [LanguageController::class, 'index'])->name('index');
         Route::get('/create', [LanguageController::class, 'create'])->name('create');
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         });
     });
 
-    //Custom Notification
+    // Custom Notification
     Route::group(['prefix' => 'notification', 'as' => 'notification.'], function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::get('/create', [NotificationController::class, 'create'])->name('create');
@@ -81,22 +81,25 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     // Translation
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
-        Route::get('/', [TranslationController::class, 'index'])->name('index');
         // Translation Api
+        Route::get('/', [TranslationController::class, 'index'])->name('index');
         Route::get('create-translation', [TranslationController::class, 'createTranslation'])->name('createTranslation');
-        Route::post('translation/start', [TranslationController::class, 'translateAll'])->name('start');
-        Route::get('translation/progress', [TranslationController::class, 'getProgress'])->name('progress');
-        Route::get('translation/progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
-        Route::post('translation/stop', [TranslationController::class, 'stopTranslation'])->name('stop');
+        Route::post('start', [TranslationController::class, 'translateAll'])->name('start');
+        Route::get('progress', [TranslationController::class, 'getProgress'])->name('progress');
+        Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
+        Route::post('stop', [TranslationController::class, 'stopTranslation'])->name('stop');
+        Route::post('{translation}/retranslate', [TranslationController::class, 'retranslateField'])->name('retranslate-field');
+        Route::get('report', [TranslationController::class, 'getReport'])->name('report');
 
         // Text to Speech routes
         Route::get('create-tts', [TextToSpeechController::class, 'index'])->name('createTts');
+        Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
         Route::post('text-to-speech/start', [TextToSpeechController::class, 'convertAll'])->name('tts.start');
         Route::get('text-to-speech/progress', [TextToSpeechController::class, 'getProgress'])->name('tts.progress');
         Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
+        Route::get('text-to-speech/report', [TextToSpeechController::class, 'getReport'])->name('tts.report');
     });
 });
-
 
 /* Frontend */
 
@@ -108,4 +111,4 @@ Route::group(['as' => 'frontend.'], function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

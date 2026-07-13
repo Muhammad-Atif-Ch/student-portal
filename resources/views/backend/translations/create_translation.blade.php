@@ -3,36 +3,63 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            {{-- <div class="section-header">
-                <h1>Bulk Question Translation</h1>
-            </div> --}}
             <div class="section-body">
                 <div class="card">
                     <div class="card-header">
                         <h4>{{ __('Question Translation') }}</h4>
                     </div>
                     <div class="card-body">
-                        <form id="translationForm" method="POST" action="{{ route('admin.translations.start') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="api_key">Google Translate API Key</label>
-                                <input type="text" class="form-control" id="api_key" name="api_key" value="{{ env('GOOGLE_TRANSLATE_API_KEY') }}" required>
-                                <small class="form-text text-muted">
-                                    Use a Google Cloud API Key (not OAuth token).
-                                    <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Get API Key here</a>
-                                </small>
+                        <button type="button" id="startBtnTranslation" class="btn btn-primary">Start Translation</button>
+                        <button type="button" id="stopBtnTranslation" class="btn btn-danger ml-2" disabled>Stop Translation</button>
+                        <button type="button" id="viewReportBtnTranslation" class="btn btn-outline-secondary ml-2">View Full Report</button>
+
+                        {{-- Live outcome counts, filled in by fetchProgress() while a run is active --}}
+                        <div id="translationBreakdown" class="mt-3"></div>
+
+                        {{-- Per-language completed/partial/errored/skipped breakdown.
+                             Populated live during a run, or from the DB-backed report
+                             when "View Full Report" is clicked. --}}
+                        <div id="translationReportPanel" class="mt-4">
+                            <h5>{{ __('Progress by Language') }}</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Language') }}</th>
+                                            <th>{{ __('Completed') }}</th>
+                                            <th>{{ __('Partial') }}</th>
+                                            <th>{{ __('Errored') }}</th>
+                                            <th>{{ __('Skipped') }}</th>
+                                            <th>{{ __('Not Started') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="languageBreakdownBody">
+                                        <tr>
+                                            <td colspan="6" class="text-muted">{{ __('No data yet - start a translation run or view the full report.') }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="form-group">
-                                <label for="source_language">Source Language Code</label>
-                                <input type="text" class="form-control" id="source_language" name="source_language" value="en" required>
+
+                            <h5 class="mt-4">{{ __('Recent Errors / Needs Attention') }}</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('When / Status') }}</th>
+                                            <th>{{ __('Question') }}</th>
+                                            <th>{{ __('Language') }}</th>
+                                            <th>{{ __('Details') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentErrorsBody">
+                                        <tr>
+                                            <td colspan="4" class="text-muted">{{ __('No errors so far.') }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="form-group">
-                                <label for="batch_size">Batch Size</label>
-                                <input type="number" class="form-control" id="batch_size" name="batch_size" value="10" min="1" max="50">
-                            </div>
-                            <button type="submit" class="btn btn-primary" id="startBtn">Start Translation</button>
-                            <button type="button" id="stopBtn" class="btn btn-danger ml-2" disabled>Stop Translation</button>
-                        </form>
+                        </div>
 
                         <div class="mt-4">
                             <h5>Translation Logs</h5>

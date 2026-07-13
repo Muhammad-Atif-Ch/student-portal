@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -24,6 +25,12 @@ return new class extends Migration {
             $table->text('visual_explanation')->nullable();
             $table->text('audio_file')->nullable();
             $table->text('image')->nullable();
+            $table->string('question_translation')->nullable();
+            $table->string('a_translation')->nullable();
+            $table->string('b_translation')->nullable();
+            $table->string('c_translation')->nullable();
+            $table->string('d_translation')->nullable();
+            $table->text('answer_explanation_translation')->nullable();
             $table->timestamps();
 
             // Foreign key

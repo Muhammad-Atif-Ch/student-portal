@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -12,9 +13,9 @@ return new class extends Migration {
     {
         Schema::create('question_translations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quiz_id')->constrained("quizzes")->onDelete('cascade');
-            $table->foreignId('question_id')->constrained("questions")->onDelete('cascade');
-            $table->foreignId('language_id')->constrained("languages")->onDelete('cascade');
+            $table->foreignId('quiz_id')->constrained('quizzes')->onDelete('cascade');
+            $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
+            $table->foreignId('language_id')->constrained('languages')->onDelete('cascade');
             $table->text('question_translation')->nullable();
             $table->text('a_translation')->nullable();
             $table->text('b_translation')->nullable();
@@ -27,7 +28,10 @@ return new class extends Migration {
             $table->string('c_audio')->nullable();
             $table->string('d_audio')->nullable();
             $table->string('answer_explanation_audio')->nullable();
+            $table->string('status')->default('pending');
+            $table->text('error')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             // Add unique constraint to prevent duplicate translations
             $table->unique(['question_id', 'language_id']);

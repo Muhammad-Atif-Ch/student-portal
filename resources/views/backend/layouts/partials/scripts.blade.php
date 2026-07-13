@@ -3,7 +3,9 @@
         translation: {
             progress: "{{ route('admin.translations.progress') }}",
             start: "{{ route('admin.translations.start') }}",
-            stop: "{{ route('admin.translations.stop') }}"
+            stop: "{{ route('admin.translations.stop') }}",
+            retranslate: "{{ route('admin.translations.retranslate-field', ['translation' => 'ID_PLACEHOLDER']) }}",
+            report: "{{ route('admin.translations.report') }}",
         },
         setting: {
             index: "{{ route('admin.setting.index') }}",
@@ -13,7 +15,9 @@
         tts: {
             start: "{{ route('admin.translations.tts.start') }}",
             progress: "{{ route('admin.translations.tts.progress') }}",
-            stop: "{{ route('admin.translations.tts.stop') }}"
+            stop: "{{ route('admin.translations.tts.stop') }}",
+            report: "{{ route('admin.translations.tts.report') }}",
+            reconvert: "{{ route('admin.translations.tts.reconvert-field', ['translation' => 'ID_PLACEHOLDER']) }}"
         },
         dashboard: {
             languageUsage: "{{ route('admin.dashboard.filter.languageUsage') }}"
@@ -27,14 +31,18 @@
 <script src="{{ asset('assets/bundles/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('assets/bundles/datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/bundles/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="{{ asset('assets/bundles/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ asset('assets/bundles/select2/dist/js/select2.full.min.js') }}"></script>
+<script src="{{ asset('assets/bundles/jquery-ui/jquery-ui.min.js') }}"></script>
 
 <!-- Page Specific JS File -->
+<script src="{{ asset('assets/js/page/forms-advanced-forms.js') }}"></script>
 <script src="{{ asset('assets/js/page/index.js') }}"></script>
 <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
 <script src="{{ asset('assets/js/custom/language-usage-filter.js') }}"></script>
-{{-- <script src="{{ asset('assets/js/page/forms-advanced-forms.js') }}"></script> --}}
+<script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
+<script src="{{ asset('assets/js/custom/translation/translation.js') }}"></script>
+<script src="{{ asset('assets/js/custom/translation/text-to-speech.js') }}"></script>
 
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>

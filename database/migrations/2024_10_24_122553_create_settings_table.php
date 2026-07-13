@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -21,6 +22,7 @@ return new class extends Migration {
             $table->boolean('mini_sidebar')->default(false)->nullable();
             $table->boolean('stiky_header')->default(true)->nullable();
             $table->text('image')->nullable();
+            $table->boolean('translation_stopped')->default(false)->nullable();
             $table->timestamps();
         });
     }

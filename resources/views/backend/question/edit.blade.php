@@ -69,10 +69,9 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form id="questionForm" action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.quiz.question.update', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PATCH')
-                                <input type="hidden" name="update_type" id="update_type">
                                 <div class="card-header">
                                     <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
                                 </div>
@@ -239,10 +238,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('translation')">Translation Update</button>
-                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('audio')">Audio File Update</button>
-                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('all_data_update')">All Data Update</button>
-                                    <button class="btn btn-primary mr-1" type="submit" onclick="submitForm('form_data_update')">Form Data Update</button>
+                                    <button class="btn btn-primary mr-1" type="submit">All Data Update</button>
                                 </div>
                             </form>
                         </div>
@@ -255,7 +251,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         let progressAlert = null;
         let isTranslationActive = false;
 
@@ -504,5 +500,5 @@
         function submitForm(type) {
             document.getElementById('update_type').value = type;
         }
-    </script>
+    </script> --}}
 @endpush

@@ -2,18 +2,18 @@
 
 namespace App\Services\User;
 
-use App\Helpers\ResponseCode;
-use App\Responses\UserResponse;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use App\Repositories\RoleRepository;
-use App\Repositories\UserRepository;
+use App\Core\Contracts\Responses\AbstractResponseInterface;
 use App\Core\Services\AbstractService;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
+use App\Helpers\ResponseCode;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Core\Contracts\Responses\AbstractResponseInterface;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
+use App\Responses\UserResponse;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 class UserService extends AbstractService
 {
@@ -53,10 +53,10 @@ class UserService extends AbstractService
         }
     }
 
-    public function listUser(): Collection
+    public function listUser(): LengthAwarePaginator
     {
-        $users = $this->repository->getListWithoutPagination(with: ['roles', 'membership', 'iosMembership'], orderBy: 'DESC');
-        return $users;
+        $this->setLimit(1);
+        return $this->repository->getByCondition([], ['roles', 'membership', 'iosMembership']);
     }
 
     public function showUser($id): Model

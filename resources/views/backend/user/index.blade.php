@@ -14,7 +14,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table table-striped" id="table-users">
                                         <thead>
                                             <tr>
                                                 <th class="text-center">#</th>
@@ -60,7 +60,7 @@
                                                     </td>
                                                     <td>
                                                         <span class="badge {{ $activeMembership && $activeMembership->status !== 0 ? 'badge-primary' : 'badge-danger' }}">
-                                                            {{ ucfirst(string: $activeMembership->status == 1 ? 'Active' : 'Inactive') }}
+                                                            {{ ucfirst($activeMembership && $activeMembership->status == 1 ? 'Active' : 'Inactive') }}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -78,6 +78,7 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                    {{ $users->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -88,5 +89,17 @@
         @include('backend.layouts.partials.setting_sidebar')
     </div>
 @endsection
-@section('scripts')
-@endsection
+@push('scripts')
+    <script>
+        $(function() {
+            if ($.fn.DataTable.isDataTable('#table-users')) {
+                $('#table-users').DataTable().destroy();
+            }
+            $('#table-users').DataTable({
+                paging: false,
+                ordering: true,
+                searching: true
+            });
+        });
+    </script>
+@endpush

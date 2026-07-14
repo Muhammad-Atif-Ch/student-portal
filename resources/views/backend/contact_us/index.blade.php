@@ -14,7 +14,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table table-striped" id="table-contacts">
                                         <thead>
                                             <tr>
                                                 <th class="text-center">#</th>
@@ -55,6 +55,7 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                    {{ $contactUs->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -66,6 +67,18 @@
     </div>
 @endsection
 @push('scripts')
+    <script>
+        $(function() {
+            if ($.fn.DataTable.isDataTable('#table-contacts')) {
+                $('#table-contacts').DataTable().destroy();
+            }
+            $('#table-contacts').DataTable({
+                paging: false,
+                ordering: true,
+                searching: true
+            });
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('click', async function(e) {

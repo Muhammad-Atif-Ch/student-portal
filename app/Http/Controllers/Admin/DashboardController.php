@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\IosMembership;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Builder;
-use App\Services\CurrencyRateService\CurrencyRateService;
 
 class DashboardController extends Controller
 {
@@ -51,7 +49,6 @@ class DashboardController extends Controller
 
         // $priceUsd = $this->service->convertToUSD($price, $currency);
 
-        $user = User::get();
         return view("backend.dashboard.index", compact('membership', 'revenue'));
     }
 

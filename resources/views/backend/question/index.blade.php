@@ -26,7 +26,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table table-striped" id="table-questions">
                                         <thead>
                                             <tr>
                                                 <th class="text-center col-1">#</th>
@@ -51,7 +51,8 @@
                                                         <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST" class="d-inline delete-form">
+                                                        <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST"
+                                                            class="d-inline delete-form">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>
@@ -64,6 +65,7 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                    {{ $questions->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -106,4 +108,17 @@
         </div>
     </div>
 @endsection
-
+@push('scripts')
+    <script>
+        $(function() {
+            if ($.fn.DataTable.isDataTable('#table-questions')) {
+                $('#table-questions').DataTable().destroy();
+            }
+            $('#table-questions').DataTable({
+                paging: false,
+                ordering: true,
+                searching: true
+            });
+        });
+    </script>
+@endpush

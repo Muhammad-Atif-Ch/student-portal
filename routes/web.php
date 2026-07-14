@@ -83,8 +83,8 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
         // Translation Api
         Route::get('/', [TranslationController::class, 'index'])->name('index');
-        Route::get('create-translation', [TranslationController::class, 'createTranslation'])->name('createTranslation');
-        Route::post('start', [TranslationController::class, 'translateAll'])->name('start');
+        Route::get('create', [TranslationController::class, 'create'])->name('create');
+        Route::post('store', [TranslationController::class, 'store'])->name('store');
         Route::get('progress', [TranslationController::class, 'getProgress'])->name('progress');
         Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
         Route::post('stop', [TranslationController::class, 'stopTranslation'])->name('stop');

@@ -27,7 +27,7 @@ class QuestionController extends Controller
      */
     public function index($quiz_id)
     {
-        $quiz = Quiz::find($quiz_id);
+        $quiz = Quiz::findOrFail($quiz_id);
         $questions = $this->service->listQuestion($quiz_id);
         return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));
     }
@@ -62,7 +62,7 @@ class QuestionController extends Controller
      */
     public function edit(string $quiz_id, string $id)
     {
-        $quiz = Quiz::find($quiz_id);
+        $quiz = Quiz::findOrFail($quiz_id);
         $question = $this->service->showQuestion($quiz_id, $id);
         return view('backend.question.edit', compact('quiz_id', 'question', 'quiz'));
     }
@@ -73,15 +73,6 @@ class QuestionController extends Controller
     public function update(UpdateQuestionRequest $request, $quiz_id, $id)
     {
         $response = $this->service->updateQuestion($request, $id);
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'message' => $response->message(),
-                'data' => $response->getData(),
-                'code' => $response->code(),
-                'type' => $response->getResponeType()
-            ]);
-        }
 
         return redirect()
             ->route('admin.quiz.question.index', ['quiz' => $quiz_id])

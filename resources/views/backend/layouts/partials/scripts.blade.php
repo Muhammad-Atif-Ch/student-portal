@@ -2,7 +2,7 @@
     var routes = {
         translation: {
             progress: "{{ route('admin.translations.progress') }}",
-            start: "{{ route('admin.translations.start') }}",
+            start: "{{ route('admin.translations.store') }}",
             stop: "{{ route('admin.translations.stop') }}",
             retranslate: "{{ route('admin.translations.retranslate-field', ['translation' => 'ID_PLACEHOLDER']) }}",
             report: "{{ route('admin.translations.report') }}",

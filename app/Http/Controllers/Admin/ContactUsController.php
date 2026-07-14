@@ -11,9 +11,8 @@ class ContactUsController extends Controller
 {
     public function index()
     {
-        $contactUs = ContactUs::with('user')->get(); // Assuming you want to fetch all contact us messages
-
-        return view('backend.contact_us.index', compact('contactUs')); // Adjust the view path as necessary
+        $contactUs = ContactUs::with('user')->latest()->paginate(50);
+        return view('backend.contact_us.index', compact('contactUs'));
     }
 
     public function updateStatus(Request $request, $id)

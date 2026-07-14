@@ -69,7 +69,8 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     public function getByCondition(array $conditions, array $with = []): LengthAwarePaginator
     {
         try {
-            $query = $this->model->where($conditions)->with($with)->limit($this->limit);
+            $query = $this->model->where($conditions)->with($with)
+            ->orderBy('id', $this->order);
             if ($this->pagination) {
                 $data = $query->paginate($this->limit);
             } else {

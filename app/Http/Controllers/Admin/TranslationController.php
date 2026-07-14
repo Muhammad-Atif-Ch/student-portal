@@ -9,6 +9,10 @@ use App\Models\Question;
 use App\Models\QuestionTranslation;
 use App\Models\Setting;
 use App\Services\AzureTranslation\AzureTranslatorService;
+use App\Services\Translation\TranslationActionService;
+use App\Services\Translation\TranslationProgressService;
+use App\Services\Translation\TranslationReportService;
+use App\Services\Translation\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -18,31 +22,27 @@ class TranslationController extends Controller
 {
     private const FIELDS = ['question', 'a', 'b', 'c', 'd', 'answer_explanation'];
 
+    public function __construct(
+        private TranslationService $service,
+        private TranslationActionService $action,
+        private TranslationProgressService $progress,
+        private TranslationReportService $report
+    ) {}
+
     public function index(Request $request)
     {
-        $where = collect($request->only(['quiz_id', 'question_id', 'language_id', 'type']))
-            ->filter(fn ($value) => ! is_null($value))
-            ->toArray();
-
-        $translations = QuestionTranslation::with('quiz:id', 'question:id', 'language:id,name')
-            ->where($where)
-            ->paginate(100);
-
         $languages = Language::get();
+        $translations = $this->service->listTranslations($request);
 
         return view('backend.translations.index', compact('translations', 'languages'));
     }
 
-    public function createTranslation()
+    public function create()
     {
-        $languages = Language::where('status', 'active')->get();
-        $totalQuestions = Question::whereNotNull('question')->where('question', '!=', '')->count();
-        $translatedQuestions = QuestionTranslation::select('question_id')->distinct()->count();
-
-        return view('backend.translations.create_translation', compact('languages', 'totalQuestions', 'translatedQuestions'));
+        return view('backend.translations.create_translation');
     }
 
-    public function translateAll(Request $request)
+    public function store(Request $request)
     {
 
         if (empty(config('services.azure_translator.key'))) {
@@ -66,6 +66,40 @@ class TranslationController extends Controller
             return response()->json(['error' => 'Failed to start translation'], 500);
         }
     }
+
+    public function store(Request $request)
+    {
+        return $this->action->translateAll($request);
+    }
+
+    public function update(Request $request, QuestionTranslation $translation)
+    {
+        return $this->action->retranslateField($request, $translation);
+    }
+
+    public function destroy()
+    {
+        return $this->action->stop();
+    }
+
+    public function progress()
+    {
+        return response()->json($this->progress->progress());
+    }
+
+    public function report()
+    {
+        return response()->json($this->report->report());
+    }
+
+    // public function createTranslation()
+    // {
+    //     $languages = Language::where('status', 'active')->get();
+    //     $totalQuestions = Question::whereNotNull('question')->where('question', '!=', '')->count();
+    //     $translatedQuestions = QuestionTranslation::select('question_id')->distinct()->count();
+
+    //     return view('backend.translations.create_translation', compact('languages', 'totalQuestions', 'translatedQuestions'));
+    // }
 
     public function retranslateField(Request $request, QuestionTranslation $translation, AzureTranslatorService $translator)
     {

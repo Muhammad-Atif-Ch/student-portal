@@ -6,28 +6,33 @@ use App\Core\Responses\AbstractResponse;
 
 class TranslationResponse extends AbstractResponse
 {
-    public function getCreateResponseMessage() : String
+    public function getCreateResponseMessage(): string
     {
-        return "Translation created successfully";
+        return 'Translation process started successfully';
     }
 
-    public function getListResponseMessage() : String
+    public function getListResponseMessage(): string
     {
-        return "List of Translations get successfully";
+        return 'List of Translations get successfully';
     }
 
-    public function getUpdateResponseMessage() : String
+    public function getUpdateResponseMessage(): string
     {
-        return "Translation updated successfully";
+        return 'Translation updated successfully';
     }
 
-    public function getDeleteResponseMessage(): String
+    public function getDeleteResponseMessage(): string
     {
-        return "Translation deleted successfully";
-    }
-    public function getRecordResponseMessage(): String
-    {
-        return "Translation get successfully";
+        return 'Translation deleted successfully';
     }
 
+    public function getStopResponseMessage(): string
+    {
+        return 'Translation process stopped successfully';
+    }
+
+    public function getRetranslateResponseMessage(): string
+    {
+        return 'Field translated successfully';
+    }
 }

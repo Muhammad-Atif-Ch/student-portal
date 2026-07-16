@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\QueryException;
 use App\Core\Repositories\AbstractRepository;
 use App\Models\Quiz;
+use Illuminate\Database\QueryException;
 
 class QuizRepository extends AbstractRepository
 {
@@ -13,10 +13,18 @@ class QuizRepository extends AbstractRepository
         $this->model = $model;
     }
 
+    public function listWithQuestionCount()
+    {
+        return $this->model
+            ->withCount('questions')
+            ->orderBy('id', "ASC")
+            ->get();
+    }
+
     public function search(array $request, array $with = [], $limit = null)
     {
         try {
-            if (!$limit) {
+            if (! $limit) {
                 $limit = $this->limit;
             }
 
@@ -25,9 +33,9 @@ class QuizRepository extends AbstractRepository
 
             $query = $this->model->with($with)
                 ->when(isset($request['name']) && $request['name'] != '', function ($query) use ($request) {
-                    $query->where('name', 'ilike', '%' . $request['name'] . '%');
+                    $query->where('name', 'ilike', '%'.$request['name'].'%');
                 })->when(isset($request['description']) && $request['description'] != '', function ($query) use ($request) {
-                    $query->where('description', 'ilike', '%' . $request['description'] . '%');
+                    $query->where('description', 'ilike', '%'.$request['description'].'%');
                 })->when(isset($request['sort_by']) && $request['sort_by'] != '', function ($query) use ($sortBy, $sortDirection) {
                     $query->orderBy($sortBy, $sortDirection);
                 }, function ($query) {

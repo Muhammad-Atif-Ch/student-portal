@@ -11,4 +11,24 @@ class TranslationRepository extends AbstractRepository
     {
         $this->model = $model;
     }
+
+    public function languageCount()
+    {
+        return $this->model
+            ->newQuery()
+            ->selectRaw('language_id, status, count(*) as count')
+            ->groupBy('language_id', 'status')
+            ->get()
+            ->groupBy('language_id');
+    }
+
+    public function needsAttention()
+    {
+        return $this->model
+            ->newQuery()
+            ->with('question:id', 'language:id,name')
+            ->whereIn('status', ['partial', 'error'])
+            ->orderByDesc('updated_at')
+            ->paginate(50);
+    }
 }

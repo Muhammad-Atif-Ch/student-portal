@@ -68,7 +68,10 @@ function initTranslationsIndex() {
             return;
         }
 
-        jQuery("#table-translations").DataTable({
+        if ($.fn.DataTable.isDataTable("#table-translation")) {
+            $("#table-translation").DataTable().destroy();
+        }
+        $("#table-translation").DataTable({
             paging: false,
             ordering: true,
             searching: true,
@@ -241,7 +244,11 @@ function initTranslationsIndex() {
         const audioCell = row?.querySelector(".audio-cell");
 
         if (!reconvertUrlTemplate) {
-            notify("error", "Error", "Voice regenerate route is not configured.");
+            notify(
+                "error",
+                "Error",
+                "Voice regenerate route is not configured.",
+            );
             return;
         }
 
@@ -271,8 +278,7 @@ function initTranslationsIndex() {
                 );
             }
 
-            const audioUrl =
-                data.audio_url || `${audioBaseUrl}/${data.audio}`;
+            const audioUrl = data.audio_url || `${audioBaseUrl}/${data.audio}`;
 
             if (audioCell) {
                 audioCell.innerHTML = `<audio controls src="${audioUrl}" class="audio-player"></audio>`;
@@ -281,7 +287,11 @@ function initTranslationsIndex() {
             btn.title = "Regenerate voice for this field";
 
             syncSummaryRowAudio(translationId, field, data.audio);
-            notify("success", "Updated", `"${field}" voice regenerated successfully.`);
+            notify(
+                "success",
+                "Updated",
+                `"${field}" voice regenerated successfully.`,
+            );
         } catch (error) {
             notify(
                 "error",

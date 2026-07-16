@@ -31,8 +31,7 @@ class QuizService extends AbstractService
 
     public function listTest(): Collection
     {
-        $tests = $this->repository->getListWithoutPagination();
-        return $tests;
+        return $this->repository->listWithQuestionCount();
     }
 
     public function showTest($id): Model

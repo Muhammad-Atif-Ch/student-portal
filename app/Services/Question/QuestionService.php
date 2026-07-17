@@ -14,14 +14,15 @@ use App\Responses\QuestionResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class QuestionService extends AbstractService
 {
     public function __construct(
         QuestionRepository $repository,
         QuestionResponse $response,
-        Request $request
+        Request $request,
+        private UploadFile $uploadFile
     ) {
         $this->repository = $repository;
         $this->response = $response;
@@ -30,26 +31,34 @@ class QuestionService extends AbstractService
 
     public function createQuestion(CreateQuestionRequest $request): AbstractResponseInterface
     {
+        $start = microtime(true);
         $data = $request->validated();
-        if ($request->hasFile('visual_explanation')) {
-            $uploadFile = new UploadFile();
-            $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
-            $data['visual_explanation'] = $imageName;
+        Log::info('[CreateQuestion] Validation passed', [
+        'elapsed_ms' => round((microtime(true) - $start) * 1000, 2),
+    ]);
+        try {
+            if ($request->hasFile('visual_explanation')) {
+                $data['visual_explanation'] = $this->uploadFile->upload('images', $request->file('visual_explanation'));
+            }
+
+            if ($request->hasFile('image')) {
+                $data['image'] = $this->uploadFile->upload('images', $request->file('image'));
+            }
+
+            $this->create($data);
+
+            $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
+        } catch (\Exception $e) {
+            $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
         }
 
-        if ($request->hasFile('image')) {
-            $uploadFile = new UploadFile();
-            $imageName = $uploadFile->upload('images', $request->file('image'));
-            $data['image'] = $imageName;
-        }
-        $this->create($data);
-        $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
         return $this->response;
     }
 
     public function listQuestion($quiz_id): LengthAwarePaginator
     {
         $this->setLimit(50);
+
         return $this->repository->getByCondition(['quiz_id' => $quiz_id]);
     }
 
@@ -63,6 +72,27 @@ class QuestionService extends AbstractService
         $data = $request->validated();
         $question = Question::findOrFail($id);
 
+        try {
+            if ($request->hasFile('visual_explanation')) {
+                $newFile = $this->uploadFile->upload('images', $request->file('visual_explanation'));
+                $this->deleteImageFile($question->visual_explanation);
+                $data['visual_explanation'] = $newFile;
+            }
+
+            if ($request->hasFile('image')) {
+                $newFile = $this->uploadFile->upload('images', $request->file('image'));
+                $this->deleteImageFile($question->image);
+                $data['image'] = $newFile;
+            }
+
+            $this->update($data, $id);
+
+            $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
+            $this->response->setData(['question_id' => $question->id]);
+        } catch (\Exception $e) {
+            $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
+        }
+
         if ($request->hasFile('visual_explanation')) {
             if ($question->visual_explanation) {
                 $filePath = public_path("images/$question->visual_explanation");
@@ -71,7 +101,7 @@ class QuestionService extends AbstractService
                 }
             }
 
-            $uploadFile = new UploadFile();
+            $uploadFile = new UploadFile;
             $imageName = $uploadFile->upload('images', $request->file('visual_explanation'));
             $data['visual_explanation'] = $imageName;
         }
@@ -84,7 +114,7 @@ class QuestionService extends AbstractService
                 }
             }
 
-            $uploadFile = new UploadFile();
+            $uploadFile = new UploadFile;
             $imageName = $uploadFile->upload('images', $request->file('image'));
             $data['image'] = $imageName;
         }
@@ -93,7 +123,21 @@ class QuestionService extends AbstractService
 
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
         $this->response->setData(['question_id' => $question->id]); // Add question ID to response
+
         return $this->response;
+    }
+
+    private function deleteImageFile(?string $fileName): void
+    {
+        if (! $fileName) {
+            return;
+        }
+
+        $filePath = public_path("images/{$fileName}");
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
     }
 
     public function destroyAll($quiz_id)
@@ -104,6 +148,7 @@ class QuestionService extends AbstractService
         }
 
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getDeleteResponseMessage());
+
         return $this->response;
     }
 }

@@ -2,26 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Quiz;
-use App\Models\Question;
-use Illuminate\Http\Request;
-use App\Imports\QuestionImport;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Response;
-use App\Services\Question\QuestionService;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
+use App\Imports\QuestionImport;
+use App\Models\Question;
+use App\Models\Quiz;
+use App\Services\Question\QuestionService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class QuestionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function __construct(private QuestionService $service)
-    {
-    }
+    public function __construct(private QuestionService $service) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -29,6 +29,7 @@ class QuestionController extends Controller
     {
         $quiz = Quiz::findOrFail($quiz_id);
         $questions = $this->service->listQuestion($quiz_id);
+
         return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));
     }
 
@@ -45,8 +46,21 @@ class QuestionController extends Controller
      */
     public function store(CreateQuestionRequest $request, $quiz_id)
     {
+        $start = microtime(true);
+        Log::info('[CreateQuestion] Request received', [
+            'quiz_id' => $quiz_id,
+            'has_image' => $request->hasFile('image'),
+            'has_visual_explanation' => $request->hasFile('visual_explanation'),
+        ]);
+        
         $response = $this->service->createQuestion($request);
-        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: "admin.quiz.question.index", route_params: ['quiz' => $quiz_id]);
+
+        Log::info('[CreateQuestion] Controller finished', [
+            'quiz_id' => $quiz_id,
+            'total_ms' => round((microtime(true) - $start) * 1000, 2),
+        ]);
+
+        return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 
     /**
@@ -64,6 +78,7 @@ class QuestionController extends Controller
     {
         $quiz = Quiz::findOrFail($quiz_id);
         $question = $this->service->showQuestion($quiz_id, $id);
+
         return view('backend.question.edit', compact('quiz_id', 'question', 'quiz'));
     }
 
@@ -98,7 +113,7 @@ class QuestionController extends Controller
     public function importQuestion(Request $request, $quiz_id)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,csv|max:2048'
+            'file' => 'required|mimes:xlsx,csv|max:2048',
         ]);
 
         Excel::import(new QuestionImport($quiz_id), $request->file('file'));
@@ -109,6 +124,7 @@ class QuestionController extends Controller
     public function destroyAll($quiz_id)
     {
         $response = $this->service->destroyAll($quiz_id);
+
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 
@@ -123,12 +139,13 @@ class QuestionController extends Controller
             return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
         }
 
-        $filePath = public_path('images/' . $question->$fileField);
+        $filePath = public_path('images/'.$question->$fileField);
         if ($question->$fileField && file_exists($filePath)) {
             unlink($filePath);
             $question->$fileField = null;
             $question->save();
         }
-        return response()->json(['success' => true, 'message' => "Image remove successfully"]);
+
+        return response()->json(['success' => true, 'message' => 'Image remove successfully']);
     }
 }

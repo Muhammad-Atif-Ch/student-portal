@@ -32,6 +32,13 @@ class Question extends Model
 
     protected $appends = ['image_url', 'visual_explanation_url'];
 
+    protected function casts(): array
+    {
+        return [
+            'type' => 'array',
+        ];
+    }
+
     public function quiz()
     {
         return $this->belongsTo(Quiz::class);
@@ -46,6 +53,7 @@ class Question extends Model
     {
         return $this->hasMany(QuestionTranslation::class, 'question_id')->forLanguage();
     }
+
     public function studentQuizHistories()
     {
         return $this->hasOne(StudentQuizHistory::class, 'question_id');
@@ -60,6 +68,7 @@ class Question extends Model
     {
         if ($this->previousTestQuiz && $this->previousTestQuiz->question_ids) {
             $questionIds = json_decode($this->previousTestQuiz->question_ids, true);
+
             return Question::whereIn('id', $questionIds)->get();
         }
 
@@ -78,7 +87,7 @@ class Question extends Model
     public function getVisualExplanationUrlAttribute()
     {
         if ($this->visual_explanation) {
-            return asset('images/' . $this->visual_explanation); // or use Storage::url($this->image)
+            return asset('images/'.$this->visual_explanation); // or use Storage::url($this->image)
         }
 
         return null;

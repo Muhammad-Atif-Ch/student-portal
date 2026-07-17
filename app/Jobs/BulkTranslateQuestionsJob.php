@@ -19,7 +19,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /** Field keys we translate, in a fixed order. */
-    private const FIELDS = ['question', 'a', 'b', 'c', 'd', 'answer_explanation'];
+    public const FIELDS = ['question', 'a', 'b', 'c', 'd', 'answer_explanation'];
 
     /** How many recent per-item errors to keep in the progress cache for the frontend. */
     private const MAX_RECENT_ERRORS = 200;
@@ -46,7 +46,7 @@ class BulkTranslateQuestionsJob implements ShouldQueue
         //     return;
         // }
         $key = config('services.azure_translator.key');
-        
+
         Log::info('Azure Translator config check', [
             'has_key' => ! empty($key),
             'key_preview' => $key ? (substr($key, 0, 4).'...'.substr($key, -4)) : null,

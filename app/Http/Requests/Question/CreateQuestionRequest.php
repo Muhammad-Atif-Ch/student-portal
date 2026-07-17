@@ -17,7 +17,7 @@ class CreateQuestionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -29,7 +29,8 @@ class CreateQuestionRequest extends FormRequest
             'b' => 'required',
             'c' => 'nullable',
             'd' => 'nullable',
-            'type' => 'required|required|in:car,bike,both',
+            'type' => ['required', 'array', 'min:1'],
+            'type.*' => ['required', 'in:car,bike,bus,truck'],
             // 'audio_file' => 'nullable|mimes:mp3,wav,ogg|max:10240',
             'image' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,avi,mkv|max:10240|sometimes',
             'answer_explanation' => 'nullable',

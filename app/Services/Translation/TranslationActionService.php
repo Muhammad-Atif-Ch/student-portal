@@ -48,7 +48,8 @@ class TranslationActionService
             return $this->response;
         }
 
-        $sourceText = $translator->resolveSourceFields($question, $language)[$field] ?? null;
+        $sourceFields = $translator->resolveSourceFields($question, $language);
+        $sourceText = $sourceFields[$field] ?? null;
 
         if (empty($sourceText)) {
             $this->response->setResponse(ResponseCode::ERROR, 422, 'Source text for this field is empty, nothing to translate.');
@@ -65,6 +66,11 @@ class TranslationActionService
         }
 
         $translation->update(["{$field}_translation" => $translated]);
+        $status = $this->resolveStatus($sourceFields, $translation);
+        $translation->status = $status;
+        $translation->error = $status === 'completed' ? null : $translation->error;
+        $translation->save();
+
         $this->response->setResponse(ResponseCode::SUCCESS, 200, 'Field translated successfully', ['field' => $field, 'translation' => $translated]);
 
         return $this->response;
@@ -87,6 +93,26 @@ class TranslationActionService
         }
 
         return $this->response;
+    }
+
+    /**
+     * A field only counts toward status if the question actually has source
+     * content for it (empty c/d never block "completed") — mirrors the bulk
+     * job's $expected logic so both code paths agree on what "done" means.
+     */
+    private function resolveStatus(array $sourceFields, QuestionTranslation $translation): string
+    {
+        foreach (BulkTranslateQuestionsJob::FIELDS as $key) {
+            if (empty($sourceFields[$key] ?? null)) {
+                continue;
+            }
+
+            if (empty($translation->{"{$key}_translation"})) {
+                return 'partial';
+            }
+        }
+
+        return 'completed';
     }
 
     private function resetFlags(string $prefix): void

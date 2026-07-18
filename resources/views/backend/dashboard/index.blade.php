@@ -678,3 +678,6 @@
         @include('backend.layouts.partials.setting_sidebar')
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/js/custom/dashboard/language-usage-filter.js') }}"></script>
+@endpush

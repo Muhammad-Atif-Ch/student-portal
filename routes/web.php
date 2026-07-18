@@ -72,7 +72,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     // Settings
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
-        Route::get('index', [SettingController::class, 'index'])->name('index');
+        // Route::get('index', [SettingController::class, 'index'])->name('index');
         Route::post('update', [SettingController::class, 'update'])->name('update');
         Route::post('reset-default', [SettingController::class, 'resetDefault'])->name('resetDefault');
         Route::get('app-image', [SettingController::class, 'appImage'])->name('appImage');

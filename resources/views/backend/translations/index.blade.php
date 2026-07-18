@@ -186,8 +186,7 @@
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>{{ __('Question Translations') }}</h4>
                                 <div>
-                                    <a href="{{ route('admin.translations.create') }}"
-                                        class="btn btn-danger text-white">Create Translation</a>
+                                    <a href="{{ route('admin.translations.create') }}" class="btn btn-danger text-white">Create Translation</a>
                                     <a href="{{ route('admin.translations.createTts') }}" class="btn btn-primary">Create
                                         Text To Speach</a>
                                 </div>
@@ -201,15 +200,13 @@
                                             <div class="col-12 col-md-2 col-lg-2">
                                                 <div class="form-group">
                                                     <label>Quiz ID</label>
-                                                    <input type="text" name="quiz_id" class="form-control"
-                                                        placeholder="Quiz ID" value="{{ old('quiz_id') }}">
+                                                    <input type="text" name="quiz_id" class="form-control" placeholder="Quiz ID" value="{{ old('quiz_id') }}">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-2 col-lg-2">
                                                 <div class="form-group">
                                                     <label>Question ID</label>
-                                                    <input type="text" name="question_id" class="form-control"
-                                                        placeholder="Question ID" value="{{ old('question_id') }}">
+                                                    <input type="text" name="question_id" class="form-control" placeholder="Question ID" value="{{ old('question_id') }}">
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-3 col-lg-3">
@@ -218,8 +215,7 @@
                                                     <select class="form-control" name="language_id">
                                                         <option value="" selected>Select Option</option>
                                                         @foreach ($languages as $language)
-                                                            <option value="{{ $language->id }}"
-                                                                {{ old('language_id') == $language->id ? 'selected' : '' }}>
+                                                            <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>
                                                                 {{ $language->name }}, {{ $language->code }}
                                                             </option>
                                                         @endforeach
@@ -231,17 +227,13 @@
                                                     <label>Status </label>
                                                     <select class="form-control" name="status">
                                                         <option value="" selected>Select Option</option>
-                                                        <option value="completed"
-                                                            {{ old('status') == 'completed' ? 'selected' : '' }}>Completed
+                                                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed
                                                         </option>
-                                                        <option value="partial"
-                                                            {{ old('status') == 'partial' ? 'selected' : '' }}>Partial
+                                                        <option value="partial" {{ old('status') == 'partial' ? 'selected' : '' }}>Partial
                                                         </option>
-                                                        <option value="error"
-                                                            {{ old('status') == 'error' ? 'selected' : '' }}>Errored
+                                                        <option value="error" {{ old('status') == 'error' ? 'selected' : '' }}>Errored
                                                         </option>
-                                                        <option value="pending"
-                                                            {{ old('status') == 'pending' ? 'selected' : '' }}>Pending
+                                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending
                                                         </option>
                                                     </select>
                                                 </div>
@@ -249,8 +241,7 @@
                                             <div class="col-12 col-md-2 col-lg-2">
                                                 <div class="form-group">
                                                     <label> </label>
-                                                    <button class="form-control btn btn-primary mt-2"
-                                                        type="submit">Search</button>
+                                                    <button class="form-control btn btn-primary mt-2" type="submit">Search</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -291,12 +282,8 @@
                                                         'd' => $data->d_audio,
                                                         'answer_explanation' => $data->answer_explanation_audio,
                                                     ];
-                                                    $fieldsTranslatedCount = collect($fields)
-                                                        ->filter(fn($v) => !empty($v))
-                                                        ->count();
-                                                    $audioCount = collect($audios)
-                                                        ->filter(fn($v) => !empty($v))
-                                                        ->count();
+                                                    $fieldsTranslatedCount = collect($fields)->filter(fn($v) => !empty($v))->count();
+                                                    $audioCount = collect($audios)->filter(fn($v) => !empty($v))->count();
                                                     $status = $data->status ?? 'pending';
                                                     $statusColors = [
                                                         'completed' => 'success',
@@ -309,21 +296,16 @@
                                                     <td>{{ $data->id }}</td>
                                                     <td>{{ $data->quiz->id }}</td>
                                                     <td>{{ $data->question->id }}</td>
-                                                    <td>{{ $data->language->name }} <span
-                                                            class="text-muted">(id: {{ $data->language_id }})</span></td>
+                                                    <td>{{ $data->language->name }} <span class="text-muted">(id: {{ $data->language_id }})</span></td>
                                                     <td>
-                                                        <span
-                                                            class="badge badge-{{ $statusColors[$status] ?? 'secondary' }} status-badge"
-                                                            title="{{ $data->error }}">
+                                                        <span class="badge badge-{{ $statusColors[$status] ?? 'secondary' }} status-badge" title="{{ $data->error }}">
                                                             {{ ucfirst($status) }}
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <div class="field-dots"
-                                                            title="{{ $fieldsTranslatedCount }} / 6 fields translated">
+                                                        <div class="field-dots" title="{{ $fieldsTranslatedCount }} / 6 fields translated">
                                                             @foreach ($fields as $key => $value)
-                                                                <span class="field-dot {{ $value ? 'is-done' : '' }}"
-                                                                    data-field="{{ $key }}"
+                                                                <span class="field-dot {{ $value ? 'is-done' : '' }}" data-field="{{ $key }}"
                                                                     title="{{ strtoupper($key) }}: {{ $value ? 'translated' : 'not translated' }}">
                                                                     {{ strtoupper(substr($key, 0, 1)) }}
                                                                 </span>
@@ -331,19 +313,12 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $audioCount }} / 6</td>
-                                                    <td><small
-                                                            class="text-muted">{{ $data->updated_at?->diffForHumans() }}</small>
+                                                    <td><small class="text-muted">{{ $data->updated_at?->diffForHumans() }}</small>
                                                     </td>
                                                     <td>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-primary view-translation-btn"
-                                                            data-translation-id="{{ $data->id }}"
-                                                            data-quiz-id="{{ $data->quiz->id }}"
-                                                            data-question-id="{{ $data->question->id }}"
-                                                            data-language="{{ $data->language->name }}"
-                                                            data-status="{{ $status }}"
-                                                            data-error="{{ $data->error }}"
-                                                            data-fields="{{ json_encode($fields) }}"
+                                                        <button type="button" class="btn btn-sm btn-primary view-translation-btn" data-translation-id="{{ $data->id }}"
+                                                            data-quiz-id="{{ $data->quiz->id }}" data-question-id="{{ $data->question->id }}" data-language="{{ $data->language->name }}"
+                                                            data-status="{{ $status }}" data-error="{{ $data->error }}" data-fields="{{ json_encode($fields) }}"
                                                             data-audios="{{ json_encode($audios) }}">
                                                             <i class="fas fa-eye"></i> {{ __('View') }}
                                                         </button>
@@ -407,3 +382,6 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
+@endpush

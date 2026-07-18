@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Response;
+use App\Models\Setting;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Telescope\TelescopeServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        if ($this->app->environment('local')) {
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**
@@ -29,11 +34,15 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
+        View::composer('backend.layouts.partials.scripts', function ($view) {
+            $view->with('appSettings', Cache::remember('app_settings', 3600, fn () => Setting::first()));
+        });
+
         Response::macro('success', function ($code, $message, $data = null) {
             return response()->json([
                 'code' => $code,
                 'message' => $message,
-                'data' => $data
+                'data' => $data,
             ]);
         });
 
@@ -42,23 +51,22 @@ class AppServiceProvider extends ServiceProvider
                 return response()->json([
                     'code' => $code,
                     'message' => $message,
-                    'error' => [$error]
+                    'error' => [$error],
                 ], $status);
             }
         });
-
 
         Response::macro('apiResponse', function ($responseType, $code, $message, $data, $status = HttpResponse::HTTP_BAD_REQUEST) {
             return match ($responseType) {
                 'SUCCESS' => response()->json([
                     'code' => $code,
                     'message' => $message,
-                    'data' => $data
+                    'data' => $data,
                 ]),
                 'ERROR' => response()->json([
                     'code' => $code,
                     'message' => $message,
-                    'error' => [$data]
+                    'error' => [$data],
                 ], $status),
                 default => response()->json([
                     'code' => 0,
@@ -74,12 +82,12 @@ class AppServiceProvider extends ServiceProvider
                     'SUCCESS' => response()->json([
                         'code' => $code,
                         'message' => $message,
-                        'data' => $data
+                        'data' => $data,
                     ]),
                     'ERROR' => response()->json([
                         'code' => $code,
                         'message' => $message,
-                        'error' => [$data]
+                        'error' => [$data],
                     ], $status),
                     default => response()->json([
                         'code' => 0,

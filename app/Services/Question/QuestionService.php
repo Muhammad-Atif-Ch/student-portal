@@ -34,20 +34,35 @@ class QuestionService extends AbstractService
         $start = microtime(true);
         $data = $request->validated();
         Log::info('[CreateQuestion] Validation passed', [
-        'elapsed_ms' => round((microtime(true) - $start) * 1000, 2),
-    ]);
+            'elapsed_ms' => round((microtime(true) - $start) * 1000, 2),
+        ]);
         try {
             if ($request->hasFile('visual_explanation')) {
+                $t = microtime(true);
                 $data['visual_explanation'] = $this->uploadFile->upload('images', $request->file('visual_explanation'));
+                Log::info('[CreateQuestion] visual_explanation upload done', [
+                    'file_ms' => round((microtime(true) - $t) * 1000, 2),
+                ]);
             }
 
             if ($request->hasFile('image')) {
+                $t = microtime(true);
                 $data['image'] = $this->uploadFile->upload('images', $request->file('image'));
+                Log::info('[CreateQuestion] image upload done', [
+                    'file_ms' => round((microtime(true) - $t) * 1000, 2),
+                ]);
             }
 
+            $t = microtime(true);
             $this->create($data);
+            Log::info('[CreateQuestion] DB create done', [
+                'db_ms' => round((microtime(true) - $t) * 1000, 2),
+            ]);
 
             $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
+            Log::info('[CreateQuestion] Service finished', [
+                'service_total_ms' => round((microtime(true) - $start) * 1000, 2),
+            ]);
         } catch (\Exception $e) {
             $this->response->setResponse(ResponseCode::ERROR, $e->getCode(), $e->getMessage());
         }

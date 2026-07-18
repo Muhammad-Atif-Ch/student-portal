@@ -163,3 +163,4 @@
         @include('backend.layouts.partials.setting_sidebar')
     </div>
 @endsection
+

@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\RelationNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 abstract class AbstractRepository implements AbstractRepositoryInterface
 {
-
     use RepositoryTrait;
 
     protected $model;
@@ -26,10 +26,21 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
 
     public function create(array $request): Model
     {
+        $start = microtime(true);
         try {
-            return $this->model->create($request);
+            $model = $this->model->create($request);
+            Log::info('[Repository] create query executed', [
+                'model' => get_class($this->model),
+                'query_ms' => round((microtime(true) - $start) * 1000, 2),
+            ]);
+
+            return $model;
         } catch (QueryException $e) {
-            throw new \Exception($e->getMessage());
+            Log::error('[Repository] create query failed', [
+                'model' => get_class($this->model),
+                'error' => $e->getMessage(),
+            ]);
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -38,17 +49,16 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         try {
             return $this->model->insert($data);
         } catch (QueryException $e) {
-            throw new \Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
-
 
     public function update(int|string $id, array $data): bool
     {
         try {
             return $this->model->findOrFail($id)->update($data);
         } catch (QueryException $e) {
-            throw new \Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -59,7 +69,7 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         } catch (RelationNotFoundException $e) {
             throw new RelationNotFoundException($e->getMessage());
         }
-        if (!$data) {
+        if (! $data) {
             throw new ModelNotFoundException('Record not found');
         }
 
@@ -70,7 +80,7 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     {
         try {
             $query = $this->model->where($conditions)->with($with)
-            ->orderBy('id', $this->order);
+                ->orderBy('id', $this->order);
             if ($this->pagination) {
                 $data = $query->paginate($this->limit);
             } else {
@@ -82,9 +92,10 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
             throw new Exception($e->getMessage());
         }
 
-        if (!$data) {
+        if (! $data) {
             throw new ModelNotFoundException('Record not found');
         }
+
         return $data;
     }
 
@@ -98,9 +109,10 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
             throw new Exception($e->getMessage());
         }
 
-        if (!$data) {
+        if (! $data) {
             throw new ModelNotFoundException('Record not found');
         }
+
         return $data;
     }
 
@@ -132,7 +144,7 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         return $data;
     }
 
-    public function getListWithGroupBy(array $with = [], string $groupBy = null)
+    public function getListWithGroupBy(array $with = [], ?string $groupBy = null)
     {
         try {
             $query = $this->model->with($with)->orderBy('id', $this->order)->limit($this->limit);

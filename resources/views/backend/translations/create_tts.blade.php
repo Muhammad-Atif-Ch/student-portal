@@ -74,3 +74,6 @@
         </section>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/js/custom/translation/text-to-speech.js') }}"></script>
+@endpush

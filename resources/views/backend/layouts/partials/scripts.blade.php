@@ -1,4 +1,6 @@
 <script>
+    window.appSettings = @json($appSettings);
+
     var routes = {
         translation: {
             progress: "{{ route('admin.translations.progress') }}",
@@ -8,7 +10,6 @@
             report: "{{ route('admin.translations.report') }}",
         },
         setting: {
-            index: "{{ route('admin.setting.index') }}",
             update: "{{ route('admin.setting.update') }}",
             resetDefault: "{{ route('admin.setting.resetDefault') }}"
         },
@@ -39,10 +40,6 @@
 <script src="{{ asset('assets/js/page/forms-advanced-forms.js') }}"></script>
 <script src="{{ asset('assets/js/page/index.js') }}"></script>
 <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
-<script src="{{ asset('assets/js/custom/language-usage-filter.js') }}"></script>
-<script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
-<script src="{{ asset('assets/js/custom/translation/translation.js') }}"></script>
-<script src="{{ asset('assets/js/custom/translation/text-to-speech.js') }}"></script>
 
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>

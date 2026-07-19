@@ -46,19 +46,7 @@ class QuestionController extends Controller
      */
     public function store(CreateQuestionRequest $request, $quiz_id)
     {
-        $start = microtime(true);
-        Log::info('[CreateQuestion] Request received', [
-            'quiz_id' => $quiz_id,
-            'has_image' => $request->hasFile('image'),
-            'has_visual_explanation' => $request->hasFile('visual_explanation'),
-        ]);
-        
         $response = $this->service->createQuestion($request);
-
-        Log::info('[CreateQuestion] Controller finished', [
-            'quiz_id' => $quiz_id,
-            'total_ms' => round((microtime(true) - $start) * 1000, 2),
-        ]);
 
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }

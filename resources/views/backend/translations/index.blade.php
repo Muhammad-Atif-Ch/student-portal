@@ -81,8 +81,8 @@
         }
 
         #modalFieldsTable .translation-cell {
-            direction: rtl;
-            text-align: right;
+            direction: ltr;
+            text-align: left;
             width: 50%;
         }
 

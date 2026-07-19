@@ -81,23 +81,30 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     // Translation
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
+        Route::post('combined/start', [TranslationController::class, 'combinedStart'])->name('combined.start');
+        Route::get('combined/progress', [TranslationController::class, 'combinedProgress'])->name('combined.progress');
+        Route::post('combined/stop', [TranslationController::class, 'combinedStop'])->name('combined.stop');
+        Route::get('combined/report', [TranslationController::class, 'getReport'])->name('combined.report');
+        Route::post('{translation}/retranslate', [TranslationController::class, 'retranslateField'])->name('combined.retranslate-field');
+
         // Translation Api
         Route::get('/', [TranslationController::class, 'index'])->name('index');
         Route::get('create', [TranslationController::class, 'create'])->name('create');
-        Route::post('store', [TranslationController::class, 'store'])->name('store');
-        Route::get('progress', [TranslationController::class, 'getProgress'])->name('progress');
-        Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
-        Route::post('stop', [TranslationController::class, 'stopTranslation'])->name('stop');
-        Route::post('{translation}/retranslate', [TranslationController::class, 'retranslateField'])->name('retranslate-field');
-        Route::get('report', [TranslationController::class, 'getReport'])->name('report');
+        // Route::post('store', [TranslationController::class, 'store'])->name('store');
+        // Route::get('progress', [TranslationController::class, 'getProgress'])->name('progress');
+        // Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
+        // Route::post('stop', [TranslationController::class, 'stopTranslation'])->name('stop');
+        
+        
 
         // Text to Speech routes
-        Route::get('create-tts', [TextToSpeechController::class, 'index'])->name('createTts');
         Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
-        Route::post('text-to-speech/start', [TextToSpeechController::class, 'convertAll'])->name('tts.start');
-        Route::get('text-to-speech/progress', [TextToSpeechController::class, 'getProgress'])->name('tts.progress');
-        Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
-        Route::get('text-to-speech/report', [TextToSpeechController::class, 'getReport'])->name('tts.report');
+        // Route::get('create-tts', [TextToSpeechController::class, 'index'])->name('createTts');
+        // Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
+        // Route::post('text-to-speech/start', [TextToSpeechController::class, 'convertAll'])->name('tts.start');
+        // Route::get('text-to-speech/progress', [TextToSpeechController::class, 'getProgress'])->name('tts.progress');
+        // Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
+        // Route::get('text-to-speech/report', [TextToSpeechController::class, 'getReport'])->name('tts.report');
     });
 });
 

@@ -2,23 +2,19 @@
     window.appSettings = @json($appSettings);
 
     var routes = {
-        translation: {
-            progress: "{{ route('admin.translations.progress') }}",
-            start: "{{ route('admin.translations.store') }}",
-            stop: "{{ route('admin.translations.stop') }}",
-            retranslate: "{{ route('admin.translations.retranslate-field', ['translation' => 'ID_PLACEHOLDER']) }}",
-            report: "{{ route('admin.translations.report') }}",
+        combined: {
+            start: "{{ route('admin.translations.combined.start') }}",
+            progress: "{{ route('admin.translations.combined.progress') }}",
+            stop: "{{ route('admin.translations.combined.stop') }}",
+            retranslate: "{{ route('admin.translations.combined.retranslate-field', ['translation' => 'ID_PLACEHOLDER']) }}",
+            report: "{{ route('admin.translations.combined.report') }}",
+        },
+        tts: {
+            reconvert: "{{ route('admin.translations.tts.reconvert-field', ['translation' => 'ID_PLACEHOLDER']) }}"
         },
         setting: {
             update: "{{ route('admin.setting.update') }}",
             resetDefault: "{{ route('admin.setting.resetDefault') }}"
-        },
-        tts: {
-            start: "{{ route('admin.translations.tts.start') }}",
-            progress: "{{ route('admin.translations.tts.progress') }}",
-            stop: "{{ route('admin.translations.tts.stop') }}",
-            report: "{{ route('admin.translations.tts.report') }}",
-            reconvert: "{{ route('admin.translations.tts.reconvert-field', ['translation' => 'ID_PLACEHOLDER']) }}"
         },
         dashboard: {
             languageUsage: "{{ route('admin.dashboard.filter.languageUsage') }}"
@@ -43,9 +39,12 @@
 
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
+
 <!-- Custom JS File -->
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 <script src="{{ asset('assets/js/broadcast.js') }}"></script>
+<script src="{{ asset('assets/js/custom/translation/global-progress-toast.js') }}"></script>
+<script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
 
 <!-- In the head section -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

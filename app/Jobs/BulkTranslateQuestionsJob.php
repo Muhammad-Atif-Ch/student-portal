@@ -39,29 +39,11 @@ class BulkTranslateQuestionsJob implements ShouldQueue
 
     public function handle(AzureTranslatorService $translator)
     {
-        // $key = config('services.azure_translator.key');
-        // if (empty(config('services.azure_translator.key'))) {
-        //     $this->fail('Azure Translate API key is not configured.'.$key);
-
-        //     return;
-        // }
-        $key = config('services.azure_translator.key');
-
-        Log::info('Azure Translator config check', [
-            'has_key' => ! empty($key),
-            'key_preview' => $key ? (substr($key, 0, 4).'...'.substr($key, -4)) : null,
-            'region' => config('services.azure_translator.region'),
-            'endpoint' => config('services.azure_translator.endpoint'),
-        ]);
-
         $languages = Language::where('status', 1)->get();
         $totalQuestions = Question::whereNotNull('question')->where('question', '!=', '')->count();
 
         $progress = [
             'total' => $totalQuestions * $languages->count(),
-            // 'processed' drives the percentage bar - it counts every pair
-            // the loop has looked at, regardless of outcome, so it always
-            // reaches 100% when the run finishes.
             'processed' => 0,
             'completed' => 0,
             'partial' => 0,
@@ -79,9 +61,6 @@ class BulkTranslateQuestionsJob implements ShouldQueue
                     'skipped' => 0,
                 ],
             ])->toArray(),
-            // Bounded so a 10,000-pair run doesn't grow the cache payload
-            // without limit. getReport() on the controller is the
-            // authoritative, DB-backed source of truth beyond this window.
             'recent_errors' => [],
         ];
         $this->updateProgress($progress, null, null, true);
@@ -101,13 +80,9 @@ class BulkTranslateQuestionsJob implements ShouldQueue
                             }
 
                             $this->translateQuestionForLanguage($question, $language, $translator, $progress);
+                            $this->updateProgress($progress, null, null, true);
                         }
                     }
-
-                    // Guarantee the frontend never waits more than one
-                    // chunk (100 questions) behind, even if the per-pair
-                    // throttle below didn't flush.
-                    $this->updateProgress($progress, null, null, true);
                 });
 
             if ($progress['status'] === 'running') {

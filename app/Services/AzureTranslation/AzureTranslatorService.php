@@ -2,8 +2,10 @@
 
 namespace App\Services\AzureTranslation;
 
+use App\Jobs\BulkTranslateQuestionsJob;
 use App\Models\Language;
 use App\Models\Question;
+use App\Models\QuestionTranslation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -75,7 +77,7 @@ class AzureTranslatorService
             'Content-Type' => 'application/json',
         ]);
 
-        try {   
+        try {
             $response = Http::timeout(15)
                 ->withHeaders($headers)
                 ->withQueryParameters([
@@ -126,5 +128,26 @@ class AzureTranslatorService
         $result = $this->translateBatch(['value' => $text], $targetLanguage);
 
         return $result === false ? false : $result['value'];
+    }
+
+    public function resolveStatus(Question $question, Language $language, QuestionTranslation $translation, bool $requireAudio = false): string
+    {
+        $sourceFields = $this->resolveSourceFields($question, $language);
+
+        foreach (BulkTranslateQuestionsJob::FIELDS as $key) {
+            if (empty($sourceFields[$key] ?? null)) {
+                continue; // question has nothing for this field — not expected
+            }
+
+            if (empty($translation->{"{$key}_translation"})) {
+                return 'partial';
+            }
+
+            if ($requireAudio && empty($translation->{"{$key}_audio"})) {
+                return 'partial';
+            }
+        }
+
+        return 'completed';
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Language;
 use App\Models\QuestionTranslation;
 use App\Services\AzureTranslation\AzureTranslatorService;
+use App\Services\Translation\CombinedActionService;
 use App\Services\Translation\TranslationActionService;
 use App\Services\Translation\TranslationProgressService;
 use App\Services\Translation\TranslationReportService;
@@ -22,8 +23,8 @@ class TranslationController extends Controller
         private TranslationActionService $actionService,
         private TranslationProgressService $progressService,
         private TranslationReportService $reportService,
-    ) {
-    }
+        private CombinedActionService $combinedService, // add
+    ) {}
 
     public function index(Request $request)
     {
@@ -39,13 +40,13 @@ class TranslationController extends Controller
         return view('backend.translations.create_translation');
     }
 
-    public function store()
+    public function combinedStart()
     {
-        $response = $this->actionService->translateAll();
+        $r = $this->combinedService->startAll();
 
-        return $response->getResponeType() === ResponseCode::ERROR
-            ? response()->json(['error' => $response->message()], $response->code())
-            : response()->json(['success' => true, 'message' => $response->message()]);
+        return $r->getResponeType() === ResponseCode::ERROR
+            ? response()->json(['error' => $r->message()], $r->code())
+            : response()->json(['success' => true, 'message' => $r->message()]);
     }
 
     public function retranslateField(Request $request, QuestionTranslation $translation, AzureTranslatorService $translator)
@@ -63,27 +64,20 @@ class TranslationController extends Controller
             : response()->json(array_merge(['success' => true], $response->getData()));
     }
 
-    public function getProgress()
+    public function combinedProgress()
     {
-        return response()->json($this->progressService->getProgress());
+        return response()->json($this->combinedService->progress());
+    }
+
+    public function combinedStop()
+    {
+        $r = $this->combinedService->stop();
+
+        return response()->json(['success' => true, 'message' => $r->message()]);
     }
 
     public function getReport()
     {
         return response()->json($this->reportService->getReport());
-    }
-
-    public function getQuestionProgress($question_id)
-    {
-        return response()->json($this->progressService->getQuestionProgress((int) $question_id));
-    }
-
-    public function stopTranslation()
-    {
-        $response = $this->actionService->stopTranslation();
-
-        return $response->getResponeType() === ResponseCode::ERROR
-            ? response()->json(['error' => $response->message()], $response->code())
-            : response()->json(['success' => true, 'message' => $response->message()]);
     }
 }

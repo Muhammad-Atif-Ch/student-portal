@@ -30,7 +30,7 @@ function initTranslationsIndex() {
     window._translationsIndexInitialized = true;
 
     const audioBaseUrl = app.dataset.audioBase;
-    const retranslateUrlTemplate = routes.translation.retranslate;
+    const retranslateUrlTemplate = routes.combined.retranslate;
     const reconvertUrlTemplate = routes.tts?.reconvert;
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')

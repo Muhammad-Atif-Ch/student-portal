@@ -186,9 +186,8 @@
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>{{ __('Question Translations') }}</h4>
                                 <div>
-                                    <a href="{{ route('admin.translations.create') }}" class="btn btn-danger text-white">Create Translation</a>
-                                    <a href="{{ route('admin.translations.createTts') }}" class="btn btn-primary">Create
-                                        Text To Speach</a>
+                                    <a href="{{ route('admin.translations.create') }}" class="btn btn-primary text-white">Translation & TTS Conversion</a>
+                                    {{-- <a href="{{ route('admin.translations.createTts') }}" class="btn btn-primary">Create Text To Speach</a> --}}
                                 </div>
                             </div>
                             <div class="card-body" id="translationsApp" data-audio-base="{{ asset('audios') }}">
@@ -383,5 +382,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
+    
 @endpush

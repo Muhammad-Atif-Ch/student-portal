@@ -27,8 +27,8 @@ function initTranslationProgress() {
         return;
     }
 
-    if (typeof routes === "undefined" || !routes.translation) {
-        console.error("routes.translation is not defined");
+    if (typeof routes === "undefined" || !routes.combined) {
+        console.error("routes.combined is not defined");
         return;
     }
 
@@ -39,6 +39,7 @@ function initTranslationProgress() {
     let isTranslationActive = false;
     let isSubmitting = false;
     let isStopping = false;
+    let lastLogFeedCount = 0;
 
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
@@ -98,6 +99,7 @@ function initTranslationProgress() {
     async function handleStart() {
         if (isSubmitting || isTranslationActive) return;
         isSubmitting = true;
+        lastLogFeedCount = 0;
 
         closeProgressAlert();
 
@@ -115,7 +117,7 @@ function initTranslationProgress() {
         });
 
         try {
-            const response = await fetch(routes.translation.start, {
+            const response = await fetch(routes.combined.start, {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -159,7 +161,7 @@ function initTranslationProgress() {
             '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Stopping...';
 
         try {
-            const response = await fetch(routes.translation.stop, {
+            const response = await fetch(routes.combined.stop, {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -199,7 +201,7 @@ function initTranslationProgress() {
             '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
 
         try {
-            const response = await fetch(routes.translation.report, {
+            const response = await fetch(routes.combined.report, {
                 method: "GET",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -268,7 +270,7 @@ function initTranslationProgress() {
 
     async function fetchProgress(isInitialCheck = false) {
         try {
-            const response = await fetch(routes.translation.progress, {
+            const response = await fetch(routes.combined.progress, {
                 method: "GET",
                 credentials: "same-origin",
                 headers: {
@@ -351,6 +353,7 @@ function initTranslationProgress() {
         renderBreakdown({ completed, partial, errored, skipped, total });
         renderLanguageBreakdown(progress.by_language);
         renderRecentErrors(progress.recent_errors);
+        const latestEventMessage = renderLogFeed(progress.log_feed);
 
         if (status === "running") {
             isTranslationActive = true;
@@ -366,7 +369,12 @@ function initTranslationProgress() {
             startBtn.disabled = true;
             stopBtn.disabled = false;
 
-            showProgressAlert({ percent, processed, total, message });
+            showProgressAlert({
+                percent,
+                processed,
+                total,
+                message: latestEventMessage || message,
+            });
         }
 
         if (["completed", "stopped", "error"].includes(status)) {
@@ -658,6 +666,38 @@ function initTranslationProgress() {
                 }
             });
         }
+    }
+
+    function renderLogFeed(logFeed) {
+        if (!Array.isArray(logFeed)) return;
+
+        const newEntries = logFeed.slice(lastLogFeedCount);
+        if (newEntries.length === 0) return;
+
+        newEntries.forEach((entry) => {
+            const label =
+                {
+                    completed: "success",
+                    partial: "warning",
+                    errored: "error",
+                    skipped: "info",
+                }[entry.outcome] || "info";
+
+            const detail = entry.fields?.length
+                ? ` (${entry.fields.join(", ")})`
+                : "";
+
+            addLog(
+                `Question #${entry.question_id} — ${entry.language}: ${entry.outcome.toUpperCase()}${detail}${entry.reason ? " — " + entry.reason : ""}`,
+                label,
+            );
+        });
+
+        lastLogFeedCount = logFeed.length;
+
+        // Toast shows the latest single event instead of a generic message
+        const latest = newEntries[newEntries.length - 1];
+        return `Question #${latest.question_id} (${latest.language}) ${latest.outcome}`;
     }
 
     function addLog(message, type = "info") {

@@ -90,21 +90,12 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         // Translation Api
         Route::get('/', [TranslationController::class, 'index'])->name('index');
         Route::get('create', [TranslationController::class, 'create'])->name('create');
-        // Route::post('store', [TranslationController::class, 'store'])->name('store');
-        // Route::get('progress', [TranslationController::class, 'getProgress'])->name('progress');
         // Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
-        // Route::post('stop', [TranslationController::class, 'stopTranslation'])->name('stop');
         
         
 
         // Text to Speech routes
         Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
-        // Route::get('create-tts', [TextToSpeechController::class, 'index'])->name('createTts');
-        // Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
-        // Route::post('text-to-speech/start', [TextToSpeechController::class, 'convertAll'])->name('tts.start');
-        // Route::get('text-to-speech/progress', [TextToSpeechController::class, 'getProgress'])->name('tts.progress');
-        // Route::post('text-to-speech/stop', [TextToSpeechController::class, 'stopConversion'])->name('tts.stop');
-        // Route::get('text-to-speech/report', [TextToSpeechController::class, 'getReport'])->name('tts.report');
     });
 });
 

@@ -3,13 +3,9 @@
 namespace App\Services\Tts;
 
 use App\Helpers\ResponseCode;
-use App\Jobs\TextToSpeechConversionJob;
 use App\Models\QuestionTranslation;
-use App\Models\Setting;
 use App\Responses\TtsResponse;
 use App\Services\AzureTextToSpeech\AzureTTSService;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TtsActionService
@@ -17,20 +13,6 @@ class TtsActionService
     public const FIELDS = ['question', 'a', 'b', 'c', 'd', 'answer_explanation'];
 
     public function __construct(private TtsResponse $response) {}
-
-    public function convertAll(): TtsResponse
-    {
-        try {
-            $this->resetFlags('tts');
-            TextToSpeechConversionJob::dispatch();
-            $this->response->setResponse(ResponseCode::SUCCESS, 200, $this->response->getCreateResponseMessage());
-        } catch (\Exception $e) {
-            Log::error('TTS conversion error: '.$e->getMessage());
-            $this->response->setResponse(ResponseCode::ERROR, 500, 'Failed to start audio conversion');
-        }
-
-        return $this->response;
-    }
 
     public function reconvertField(QuestionTranslation $translation, string $field, AzureTTSService $tts): TtsResponse
     {
@@ -80,36 +62,5 @@ class TtsActionService
         ]);
 
         return $this->response;
-    }
-
-    public function stopConversion(): TtsResponse
-    {
-        try {
-            Setting::first()?->update(['tts_stopped' => true]);
-
-            $current = Cache::get('tts_progress', []);
-            Cache::put('tts_progress', array_merge($current, [
-                'status' => 'stopped',
-                'message' => 'Audio conversion process stopped by user',
-            ]), 3600);
-
-            Cache::put('tts_stop_flag', true, 3600);
-
-            $this->response->setResponse(ResponseCode::SUCCESS, 200, $this->response->getStopResponseMessage());
-        } catch (\Exception $e) {
-            Log::error('Stop TTS conversion error: '.$e->getMessage());
-            $this->response->setResponse(ResponseCode::ERROR, 500, 'Failed to stop audio conversion');
-        }
-
-        return $this->response;
-    }
-
-    private function resetFlags(string $prefix): void
-    {
-        DB::transaction(function () use ($prefix) {
-            Setting::first()?->update(["{$prefix}_stopped" => false]);
-            Cache::forget("{$prefix}_stop_flag");
-            Cache::forget("{$prefix}_progress");
-        });
     }
 }

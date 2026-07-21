@@ -19,11 +19,6 @@ class TextToSpeechController extends Controller
         private TtsReportService $reportService,
     ) {}
 
-    public function index()
-    {
-        return view('backend.translations.create_tts');
-    }
-
     public function reconvertField(Request $request, QuestionTranslation $translation, AzureTTSService $tts)
     {
         $request->validate([
@@ -35,33 +30,5 @@ class TextToSpeechController extends Controller
         return $response->getResponeType() === ResponseCode::ERROR
             ? response()->json(['error' => $response->message()], $response->code())
             : response()->json(array_merge(['success' => true], $response->getData()));
-    }
-
-    public function convertAll()
-    {
-        $response = $this->actionService->convertAll();
-
-        return $response->getResponeType() === ResponseCode::ERROR
-            ? response()->json(['error' => $response->message()], $response->code())
-            : response()->json(['success' => true, 'message' => $response->message()]);
-    }
-
-    public function getProgress()
-    {
-        return response()->json($this->progressService->getProgress());
-    }
-
-    public function getReport()
-    {
-        return response()->json($this->reportService->getReport());
-    }
-
-    public function stopConversion()
-    {
-        $response = $this->actionService->stopConversion();
-
-        return $response->getResponeType() === ResponseCode::ERROR
-            ? response()->json(['error' => $response->message()], $response->code())
-            : response()->json(['success' => true, 'message' => $response->message()]);
     }
 }

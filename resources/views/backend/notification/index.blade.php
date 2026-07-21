@@ -1,13 +1,5 @@
 @extends('backend.layouts.app')
 @section('title', __('Notification List'))
-@section('style')
-    <style>
-        div.dataTables_wrapper div.dataTables_length select {
-            width: 80px;
-            display: inline-block;
-        }
-    </style>
-@endsection
 @section('content')
     <!-- Main Content -->
     <div class="main-content">

@@ -117,6 +117,19 @@ class BulkTranslateAndSpeakQuestionsJob implements ShouldQueue
                 return;
             }
 
+            if ($translated === false) {
+                $this->recordFailure(
+                    $question,
+                    $language,
+                    $translation,
+                    array_keys($missingText),
+                    'Azure Translator returned no result (check storage/logs/laravel.log).',
+                    $progress
+                );
+
+                return;
+            }
+
             foreach ($translated as $key => $text) {
                 $translation->{"{$key}_translation"} = $text;
             }

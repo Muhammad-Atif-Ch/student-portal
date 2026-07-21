@@ -382,5 +382,5 @@
     </div>
 @endsection
 @push('scripts')
-    
+    <script src="{{ asset('assets/js/custom/translation/index.js') }}"></script>
 @endpush

@@ -19,6 +19,7 @@ $(function () {
     $(document).ready(function () {
         initializeDeleteConfirm(); // Initialize delete confirmation dialogs
         initializeThemeSettings(); // Apply settings from window.appSettings + wire up controls
+        initSimpleDataTable(selector, (options = {}));
     });
 
     function initializeThemeSettings() {
@@ -148,6 +149,29 @@ $(function () {
                 console.error("Error updating settings:", xhr.responseText);
             },
         });
+    }
+
+    function initSimpleDataTable(selector, options = {}) {
+        const $table = $(selector);
+
+        if ($table.length === 0) {
+            return null; // element doesn't exist on this page — nothing to do
+        }
+
+        try {
+            if ($.fn.DataTable.isDataTable($table[0])) {
+                $table.DataTable().destroy();
+            }
+        } catch (e) {
+            console.warn(`DataTable destroy failed for ${selector}:`, e);
+        }
+
+        try {
+            return $table.DataTable(options);
+        } catch (e) {
+            console.error(`DataTable init failed for ${selector}:`, e);
+            return null;
+        }
     }
 });
 

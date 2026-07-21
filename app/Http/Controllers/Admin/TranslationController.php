@@ -9,7 +9,6 @@ use App\Models\QuestionTranslation;
 use App\Services\AzureTranslation\AzureTranslatorService;
 use App\Services\Translation\CombinedActionService;
 use App\Services\Translation\TranslationActionService;
-use App\Services\Translation\TranslationProgressService;
 use App\Services\Translation\TranslationReportService;
 use App\Services\Translation\TranslationService;
 use Illuminate\Http\Request;
@@ -20,8 +19,7 @@ class TranslationController extends Controller
 
     public function __construct(
         private TranslationService $translationService,
-        private TranslationActionService $actionService,
-        private TranslationProgressService $progressService,
+        private TranslationActionService $actionService,    
         private TranslationReportService $reportService,
         private CombinedActionService $combinedService, // add
     ) {}

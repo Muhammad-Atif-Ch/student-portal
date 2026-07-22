@@ -56,19 +56,6 @@
     });
 
     $(document).ready(function() {
-        // if ($.fn.DataTable.isDataTable('#table-1')) {
-        //     $('#table-1').DataTable().destroy(); // Destroy existing instance
-        // }
-
-        // $('#table-1').DataTable({
-        //     "pageLength": 100, // Show 100 rows by default
-        //     "lengthMenu": [10, 25, 50, 100, 200] // Allow users to change row count
-        // });
-        initSimpleDataTable('#table-1', {
-            pageLength: 100,
-            lengthMenu: [10, 25, 50, 100, 200]
-        });
-
         function showToast(icon, title) {
             const Toast = Swal.mixin({
                 toast: true,

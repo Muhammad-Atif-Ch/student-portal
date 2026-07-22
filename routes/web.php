@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TextToSpeechController;
 use App\Http\Controllers\Admin\TranslationController;
+use App\Http\Controllers\Admin\TranslationGlossaryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Frontend\ContactUsController as FrontendContactUsController;
 use App\Http\Controllers\ProfileController;
@@ -81,21 +82,23 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     // Translation
     Route::group(['prefix' => 'translations', 'as' => 'translations.'], function () {
+        // Translation
+        Route::get('/', [TranslationController::class, 'index'])->name('index');
+        Route::get('create', [TranslationController::class, 'create'])->name('create');
         Route::post('combined/start', [TranslationController::class, 'combinedStart'])->name('combined.start');
         Route::get('combined/progress', [TranslationController::class, 'combinedProgress'])->name('combined.progress');
         Route::post('combined/stop', [TranslationController::class, 'combinedStop'])->name('combined.stop');
         Route::get('combined/report', [TranslationController::class, 'getReport'])->name('combined.report');
         Route::post('{translation}/retranslate', [TranslationController::class, 'retranslateField'])->name('combined.retranslate-field');
-
-        // Translation Api
-        Route::get('/', [TranslationController::class, 'index'])->name('index');
-        Route::get('create', [TranslationController::class, 'create'])->name('create');
-        // Route::get('progress/{question_id}', [TranslationController::class, 'getQuestionProgress'])->name('question.progress');
-        
-        
-
-        // Text to Speech routes
+        // Text to Speech
         Route::post('{translation}/reconvert', [TextToSpeechController::class, 'reconvertField'])->name('tts.reconvert-field');
+        // Glossary
+
+        Route::resource('glossary', TranslationGlossaryController::class)->except('show');
+        Route::group(['prefix' => 'glossary', 'as' => 'glossary.'], function () {
+            Route::get('glossary/destroy-all', [TranslationGlossaryController::class, 'destroyAll'])->name('destroy.all');
+            Route::post('glossary/import', [TranslationGlossaryController::class, 'importTranslationGlossary'])->name('import.file');
+        });
     });
 });
 

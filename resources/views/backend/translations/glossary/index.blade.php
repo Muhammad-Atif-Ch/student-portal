@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
-@section('title', __('Questions List'))
+@section('title', __('Glossary'))
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
@@ -9,42 +9,50 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
+                                <h4>Glossary</h4>
                                 <div>
                                     <a href="#" class="btn btn-primary me-2" type="button" data-toggle="modal" data-target="#importFile">Import Excel</a>
-                                    <a href="{{ route('admin.quiz.question.destroy.all', $quiz_id) }}" class="btn btn-danger text-white">Delete All</a>
-                                    <a href="{{ route('admin.quiz.question.create', $quiz_id) }}" class="btn btn-primary">Add Question</a>
+                                    <a href="{{ route('admin.translations.glossary.destroy.all') }}" class="btn btn-danger text-white">Delete All</a>
+                                    <a href="{{ route('admin.translations.glossary.create') }}" class="btn btn-primary">Add Glossary Term</a>
                                 </div>
                             </div>
                             <div class="card-body">
+                                @if (session('import_failures'))
+                                    <div class="alert alert-warning">
+                                        <strong>Import completed with errors:</strong>
+                                        <ul class="mb-0">
+                                            @foreach (session('import_failures') as $failure)
+                                                <li>
+                                                    Row {{ $failure['row'] }} ({{ $failure['attribute'] }}):
+                                                    {{ implode(', ', $failure['errors']) }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-questions">
                                         <thead>
                                             <tr>
                                                 <th class="text-center col-1">#</th>
-                                                <th class="col-2">Question</th>
-                                                <th class="col-2">A - Option</th>
-                                                <th class="col-2">B - Option</th>
-                                                <th class="col-2">C - Option</th>
-                                                <th class="col-1">Correct Answer</th>
-                                                <th class="col-2">Action</th>
+                                                <th>Source Term</th>
+                                                <th>Language</th>
+                                                <th>Target Term</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($questions as $question)
+                                            @foreach ($translationGlossary as $data)
                                                 <tr>
-                                                    <td>{{ $question->id }}</td>
-                                                    <td>{{ $question->question }}</td>
-                                                    <td>{{ $question->a }}</td>
-                                                    <td>{{ $question->b }}</td>
-                                                    <td>{{ $question->c }}</td>
-                                                    <td>{{ $question->correct_answer }}</td>
+                                                    <td class="text-center">{{ $data->id }}</td>
+                                                    <td>{{ $data->source_term }}</td>
+                                                    <td>{{ $data->language->name }}</td>
+                                                    <td>{{ $data->target_term }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
+                                                        <a href="{{ route('admin.translations.glossary.edit', $data->id) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST"
-                                                            class="d-inline delete-form">
+                                                        <form action="{{ route('admin.translations.glossary.destroy', $data->id) }}" method="POST" class="d-inline delete-form">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>
@@ -53,7 +61,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    {{ $questions->links('pagination::bootstrap-5') }}
+                                    {{ $translationGlossary->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -68,27 +76,37 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="importFileLabel">Modal title</h5>
+                        <h5 class="modal-title" id="importFileLabel">{{ __('Import File') }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('admin.question.import.file', $quiz_id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.translations.glossary.import.file') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-12 col-md-12 col-lg-12">
+                                <div class="col-12 col-md-4 col-lg-4">
                                     <div class="form-group">
-                                        <label>Import File</label>
-                                        <input type="file" name="file" class="form-control"
-                                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                        <label>Language <small style="color: red">*</small></label>
+                                        <select class="form-control" name="language_id" required>
+                                            <option value="" selected>Select Option</option>
+                                            @foreach ($languages as $language)
+                                                <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>{{ $language->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label>{{ __('Import File') }}</label>
+                                        <input type="file" name="file" class="form-control" accept=".csv,.xlsx,.xls" required>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('Import File') }}</button>
                         </div>
                     </form>
                 </div>

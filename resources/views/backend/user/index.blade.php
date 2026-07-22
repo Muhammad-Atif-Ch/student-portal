@@ -30,7 +30,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($users as $user)
+                                            @foreach ($users as $user)
                                                 @php
                                                     $activeMembership = $user->iosMembership !== null ? $user->iosMembership : ($user->membership !== null ? $user->membership : null);
                                                     // dd($activeMembership, $user, $user->iosMembership !== null);
@@ -71,11 +71,7 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="4"> No data found</td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     {{ $users->links('pagination::bootstrap-5') }}
@@ -90,16 +86,4 @@
     </div>
 @endsection
 @push('scripts')
-    <script>
-        $(function() {
-            if ($.fn.DataTable.isDataTable('#table-users')) {
-                $('#table-users').DataTable().destroy();
-            }
-            $('#table-users').DataTable({
-                paging: false,
-                ordering: true,
-                searching: true
-            });
-        });
-    </script>
 @endpush

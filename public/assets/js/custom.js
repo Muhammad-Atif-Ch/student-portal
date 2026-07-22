@@ -19,7 +19,6 @@ $(function () {
     $(document).ready(function () {
         initializeDeleteConfirm(); // Initialize delete confirmation dialogs
         initializeThemeSettings(); // Apply settings from window.appSettings + wire up controls
-        initSimpleDataTable(selector, (options = {}));
     });
 
     function initializeThemeSettings() {
@@ -151,12 +150,17 @@ $(function () {
         });
     }
 
-    function initSimpleDataTable(selector, options = {}) {
+    window.initSimpleDataTable = function initSimpleDataTable(
+        selector,
+        options = {},
+    ) {
         const $table = $(selector);
+        if ($table.length === 0) return null;
 
-        if ($table.length === 0) {
-            return null; // element doesn't exist on this page — nothing to do
-        }
+        const defaults = {
+            language: { emptyTable: "No data found" },
+        };
+        options = $.extend(true, {}, defaults, options);
 
         try {
             if ($.fn.DataTable.isDataTable($table[0])) {
@@ -172,7 +176,7 @@ $(function () {
             console.error(`DataTable init failed for ${selector}:`, e);
             return null;
         }
-    }
+    };
 });
 
 function initializeDeleteConfirm() {

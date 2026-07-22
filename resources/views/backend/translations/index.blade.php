@@ -263,7 +263,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($translations as $data)
+                                            @foreach ($translations as $data)
                                                 @php
                                                     $fields = [
                                                         'question' => $data->question_translation,
@@ -323,11 +323,7 @@
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="9"> No data found</td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     <!-- Pagination Links -->

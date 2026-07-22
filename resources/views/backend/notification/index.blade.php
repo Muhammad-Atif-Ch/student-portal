@@ -26,11 +26,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($notifications as $notification)
-                                            @php
-                                                $data = json_decode($notification->data)
+                                            @foreach ($notifications as $notification)
+                                                @php
+                                                    $data = json_decode($notification->data);
 
-                                            @endphp
+                                                @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $notification->subject }}</td>
@@ -45,11 +45,7 @@
                                                         </form>
                                                     </td> --}}
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="10"> No data found</td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

@@ -6,6 +6,8 @@ use App\Jobs\BulkTranslateQuestionsJob;
 use App\Models\Language;
 use App\Models\Question;
 use App\Models\QuestionTranslation;
+use App\Models\TranslationGlossary;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -58,61 +60,70 @@ class AzureTranslatorService
         $apiKey = config('services.azure_translator.key');
 
         if (empty($apiKey)) {
-            Log::info('Azure Translate API key is not configured.', ['api_key' => $apiKey]);
-
             return false;
         }
 
         $keys = array_keys($fields);
-        $texts = array_values($fields);
+        $originalTexts = array_values($fields);
+
+        $language = Language::where('code', $targetLanguage)->first();
+        $glossary = $language ? $this->getGlossaryTerms($language->id) : collect();
+
+        $useDictionary = $glossary->isNotEmpty();
+        $requestTexts = $useDictionary
+            ? array_map(fn ($text) => $this->applyDynamicDictionary($text, $glossary), $originalTexts)
+            : $originalTexts;
 
         $endpoint = rtrim(config('services.azure_translator.endpoint'), '/');
         $region = config('services.azure_translator.region');
 
-        // Ocp-Apim-Subscription-Region is only required for regional /
-        // multi-service resources - omitted entirely for a global resource.
         $headers = array_filter([
             'Ocp-Apim-Subscription-Key' => $apiKey,
             'Ocp-Apim-Subscription-Region' => $region ?: null,
             'Content-Type' => 'application/json',
         ]);
 
+        $query = [
+            'api-version' => '3.0',
+            'to' => $targetLanguage,
+            'textType' => $useDictionary ? 'html' : 'plain',
+        ];
+
+        if ($useDictionary) {
+            $query['from'] = 'en'; // required — dynamic dictionary doesn't support auto-detect
+        }
+
         try {
             $response = Http::timeout(15)
                 ->withHeaders($headers)
-                ->withQueryParameters([
-                    'api-version' => '3.0',
-                    'to' => $targetLanguage,
-                ])
+                ->withQueryParameters($query)
                 ->post("{$endpoint}/translate", array_map(
                     fn ($text) => ['Text' => $text],
-                    $texts
+                    $requestTexts
                 ));
 
             if (! $response->successful()) {
-                Log::error('Azure Translate API error: '.$response->body(), ['api_key' => $apiKey]);
+                Log::error('Azure Translate API error: '.$response->body());
 
                 return false;
             }
 
             $results = $response->json();
 
-            if (! is_array($results) || count($results) !== count($texts)) {
-                Log::error('Azure Translate API returned an unexpected number of translations.', ['api_key' => $apiKey]);
+            if (! is_array($results) || count($results) !== count($requestTexts)) {
+                Log::error('Azure Translate API returned an unexpected number of translations.');
 
                 return false;
             }
 
             $translated = [];
             foreach ($keys as $index => $key) {
-                $translated[$key] = $results[$index]['translations'][0]['text'] ?? $texts[$index];
+                $translated[$key] = $results[$index]['translations'][0]['text'] ?? $originalTexts[$index];
             }
-
-            Log::info('Azure Translate API returned translations.', ['result' => json_encode($results)]);
 
             return $translated;
         } catch (\Throwable $e) {
-            Log::error('Translation API request failed: '.$e->getMessage(), ['api_key' => $apiKey]);
+            Log::error('Translation API request failed: '.$e->getMessage());
 
             return false;
         }
@@ -149,5 +160,29 @@ class AzureTranslatorService
         }
 
         return 'completed';
+    }
+
+    private function getGlossaryTerms(int $languageId)
+    {
+        return Cache::remember("glossary_lang_{$languageId}", 3600, function () use ($languageId) {
+            return TranslationGlossary::where('language_id', $languageId)->get(['source_term', 'target_term']);
+        });
+    }
+
+    private function applyDynamicDictionary(string $text, $glossary): string
+    {
+        // Escape the raw text first so real content is safe as HTML...
+        $text = htmlspecialchars($text, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+        foreach ($glossary as $entry) {
+            $escapedTerm = htmlspecialchars($entry->source_term, ENT_QUOTES | ENT_XML1, 'UTF-8');
+            $pattern = '/\b'.preg_quote($escapedTerm, '/').'\b/i';
+            $replacement = '<mstrans:dictionary translation="'
+                .htmlspecialchars($entry->target_term, ENT_QUOTES | ENT_XML1, 'UTF-8')
+                .'">'.$escapedTerm.'</mstrans:dictionary>';
+            $text = preg_replace($pattern, $replacement, $text);
+        }
+
+        return $text;
     }
 }

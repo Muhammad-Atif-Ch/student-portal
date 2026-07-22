@@ -29,7 +29,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($contactUs as $data)
+                                            @foreach ($contactUs as $data)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     {{-- <td>{{ $data->user->device_id ?? 'N/A' }}</td> --}}
@@ -48,11 +48,7 @@
                                                         <a href="{{ route('admin.contact-us.show', $data->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="4"> No data found</td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     {{ $contactUs->links('pagination::bootstrap-5') }}
@@ -67,18 +63,6 @@
     </div>
 @endsection
 @push('scripts')
-    <script>
-        $(function() {
-            if ($.fn.DataTable.isDataTable('#table-contacts')) {
-                $('#table-contacts').DataTable().destroy();
-            }
-            $('#table-contacts').DataTable({
-                paging: false,
-                ordering: true,
-                searching: true
-            });
-        });
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('click', async function(e) {

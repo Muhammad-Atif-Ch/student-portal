@@ -17,9 +17,7 @@
                                     <table class="table table-striped" id="table-1">
                                         <thead>
                                             <tr>
-                                                <th class="text-center">
-                                                    #
-                                                </th>
+                                                <th class="text-center">#</th>
                                                 <th>Title</th>
                                                 <th>Total Question</th>
                                                 <th>Official Test Question</th>
@@ -27,7 +25,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($tests as $test)
+                                            @foreach ($tests as $test)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $test->title }}</td>
@@ -42,11 +40,7 @@
                                                         </form> --}}
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="4"> No data found</td>
-                                                </tr>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

@@ -36,15 +36,6 @@
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Type <small style="color: red">*</small></label>
-                                                {{-- <select class="form-control" name="type" required>
-                                                    <option value="" selected>Select Option</option>
-                                                    <option value="car" {{ old('type') == 'car' ? 'selected' : '' }}>Car
-                                                    </option>
-                                                    <option value="bike" {{ old('type') == 'bike' ? 'selected' : '' }}>
-                                                        Bike</option>
-                                                    <option value="both" {{ old('type') == 'both' ? 'selected' : '' }}>
-                                                        Both</option>
-                                                </select> --}}
                                                 <select class="form-control select2" name="type[]" multiple>
                                                     <option value="car" {{ in_array('car', old('type', [])) ? 'selected' : '' }}>Car</option>
                                                     <option value="bike" {{ in_array('bike', old('type', [])) ? 'selected' : '' }}>Bike</option>

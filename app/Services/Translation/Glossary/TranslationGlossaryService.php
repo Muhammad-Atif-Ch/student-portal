@@ -14,6 +14,7 @@ use App\Responses\TranslationGlossaryResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -82,15 +83,9 @@ class TranslationGlossaryService extends AbstractService
 
             $failures = $import->failures();
 
-            // foreach ($import->getTouchedLanguageIds() as $languageId) {
-            //     Cache::forget("glossary_lang_{$languageId}");
-            // }
-
-            Log::info('Glossary import completed', [
-                'imported_count' => $import->getImportedCount(),
-                'failed_count' => $failures->count(),
-                'languages_affected' => $import->getTouchedLanguageIds(),
-            ]);
+            foreach ($import->getTouchedLanguageIds() as $languageId) {
+                Cache::forget("glossary_lang_{$languageId}");
+            }
 
             if ($failures->isNotEmpty()) {
                 DB::commit(); // keep the successfully imported rows, don't roll them back

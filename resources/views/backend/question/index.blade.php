@@ -11,7 +11,9 @@
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>{{ $quiz->id }} - {{ $quiz->title }}</h4>
                                 <div>
-                                    <a href="#" class="btn btn-primary me-2" type="button" data-toggle="modal" data-target="#importFile">Import Excel</a>
+                                    {{-- <a href="{{ route('admin.quiz.question.sample.download') }}" class="btn btn-success me-2"><i class="fas fa-file-excel"></i> Download Sample</a> --}}
+                                    <a href="#" class="btn btn-primary me-2" type="button" data-toggle="modal" data-target="#importFile"><i class="fas fa-file-excel"></i> Import</a>
+                                    {{-- <a href="{{ route('admin.quiz.question.export', $quiz_id) }}" class="btn btn-primary"><i class="fas fa-file-excel"></i> Export</a> --}}
                                     <a href="{{ route('admin.quiz.question.destroy.all', $quiz_id) }}" class="btn btn-danger text-white">Delete All</a>
                                     <a href="{{ route('admin.quiz.question.create', $quiz_id) }}" class="btn btn-primary">Add Question</a>
                                 </div>
@@ -21,13 +23,13 @@
                                     <table class="table table-striped" id="table-questions">
                                         <thead>
                                             <tr>
-                                                <th class="text-center col-1">#</th>
+                                                <th class="col-1">#</th>
                                                 <th class="col-2">Question</th>
                                                 <th class="col-2">A - Option</th>
                                                 <th class="col-2">B - Option</th>
                                                 <th class="col-2">C - Option</th>
-                                                <th class="col-1">Correct Answer</th>
-                                                <th class="col-2">Action</th>
+                                                <th class="col-2">Correct Answer</th>
+                                                <th class="col-1">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -73,7 +75,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('admin.question.import.file', $quiz_id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.quiz.question.import.file', $quiz_id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <div class="row">

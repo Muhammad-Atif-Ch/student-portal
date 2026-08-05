@@ -35,8 +35,8 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center col-1">#</th>
-                                                <th>Source Term</th>
                                                 <th>Language</th>
+                                                <th>Source Term</th>
                                                 <th>Target Term</th>
                                                 <th>Action</th>
                                             </tr>
@@ -45,8 +45,8 @@
                                             @foreach ($translationGlossary as $data)
                                                 <tr>
                                                     <td class="text-center">{{ $data->id }}</td>
+                                                    <td>{{ $data->language->name }} [{{ strtoupper($data->language->code) }}]</td>
                                                     <td>{{ $data->source_term }}</td>
-                                                    <td>{{ $data->language->name }}</td>
                                                     <td>{{ $data->target_term }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.translations.glossary.edit', $data->id) }}" class="btn btn-primary btn-sm">
@@ -85,13 +85,15 @@
                         @csrf
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-12 col-md-4 col-lg-4">
+                                <div class="col-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label>Language <small style="color: red">*</small></label>
                                         <select class="form-control" name="language_id" required>
                                             <option value="" selected>Select Option</option>
                                             @foreach ($languages as $language)
-                                                <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>{{ $language->name }}</option>
+                                                <option value="{{ $language->id }}" {{ old('language_id') == $language->id ? 'selected' : '' }}>
+                                                    {{ $language->name }} [{{ strtoupper($language->code) }}]
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>

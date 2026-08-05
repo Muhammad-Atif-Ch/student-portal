@@ -23,7 +23,6 @@ class TranslationGlossaryImport implements SkipsOnFailure, ToModel, WithHeadingR
 
     public function model(array $row)
     {
-        // $languageId = (int) trim($row['language_id']);
         $sourceTerm = trim($row['source_term']);
         $targetTerm = trim($row['target_term']);
 
@@ -33,15 +32,15 @@ class TranslationGlossaryImport implements SkipsOnFailure, ToModel, WithHeadingR
         );
 
         $this->importedCount++;
-        // $this->touchedLanguageIds[$languageId] = true;
+        $this->touchedLanguageIds[$this->languageId] = true;
 
-        Log::info('Glossary term imported', [
-            'id' => $glossary->id,
-            // 'language_id' => $languageId,
-            'source_term' => $sourceTerm,
-            'target_term' => $targetTerm,
-            'was_recently_created' => $glossary->wasRecentlyCreated,
-        ]);
+        // Log::info('Glossary term imported', [
+        //     'id' => $glossary->id,
+        //     // 'language_id' => $languageId,
+        //     'source_term' => $sourceTerm,
+        //     'target_term' => $targetTerm,
+        //     'was_recently_created' => $glossary->wasRecentlyCreated,
+        // ]);
 
         return $glossary;
     }
@@ -50,7 +49,6 @@ class TranslationGlossaryImport implements SkipsOnFailure, ToModel, WithHeadingR
     {
         return [
             'source_term' => 'required|string|max:255',
-            // 'language_id' => 'required|integer|exists:languages,id',
             'target_term' => 'required|string|max:255',
         ];
     }

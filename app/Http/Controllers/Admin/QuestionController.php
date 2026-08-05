@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\QuestionExport;
+use App\Exports\SampleQuestionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Question\CreateQuestionRequest;
 use App\Http\Requests\Question\UpdateQuestionRequest;
@@ -30,7 +32,7 @@ class QuestionController extends Controller
         $quiz = Quiz::findOrFail($quiz_id);
         $questions = $this->service->listQuestion($quiz_id);
 
-        return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));
+        return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));     
     }
 
     /**
@@ -56,7 +58,7 @@ class QuestionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        dd("here show", $id);
     }
 
     /**
@@ -98,17 +100,6 @@ class QuestionController extends Controller
         return Response::sendResponse($response?->getResponeType(), $response?->code(), $response?->message(), redirect: 'admin.quiz.question.index', route_params: ['quiz' => $quiz_id]);
     }
 
-    public function importQuestion(Request $request, $quiz_id)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,csv|max:2048',
-        ]);
-
-        Excel::import(new QuestionImport($quiz_id), $request->file('file'));
-
-        return back()->with('success', 'Users imported successfully!');
-    }
-
     public function destroyAll($quiz_id)
     {
         $response = $this->service->destroyAll($quiz_id);
@@ -135,5 +126,34 @@ class QuestionController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Image remove successfully']);
+    }
+
+    public function downloadSample()
+    {
+        return Excel::download(
+            new SampleQuestionExport,
+            'question_import_sample.xlsx'
+        );
+    }
+
+    public function importQuestion(Request $request, $quiz_id)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:2048',
+        ]);
+
+        Excel::import(new QuestionImport($quiz_id), $request->file('file'));
+
+        return back()->with('success', 'Users imported successfully!');
+    }
+
+    public function exportQuestion($quiz_id)
+    {
+        Log::error('export start');
+        try {
+            return Excel::download(new QuestionExport($quiz_id), "question_{$quiz_id}.xlsx");
+        } catch (\Exception $e) {
+            Log::error('export error'.$e->getmessage());
+        }
     }
 }

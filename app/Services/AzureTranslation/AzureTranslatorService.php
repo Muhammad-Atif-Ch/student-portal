@@ -68,8 +68,9 @@ class AzureTranslatorService
 
         $language = Language::where('code', $targetLanguage)->first();
         $glossary = $language ? $this->getGlossaryTerms($language->id) : collect();
-
         $useDictionary = $glossary->isNotEmpty();
+        // Log::info('request data 1 '.$this->getGlossaryTerms($language->id));
+        // Log::info('request data 2 '.$glossary.' second '.$useDictionary);
         $requestTexts = $useDictionary
             ? array_map(fn ($text) => $this->applyDynamicDictionary($text, $glossary), $originalTexts)
             : $originalTexts;
@@ -92,7 +93,6 @@ class AzureTranslatorService
         if ($useDictionary) {
             $query['from'] = 'en'; // required — dynamic dictionary doesn't support auto-detect
         }
-
         try {
             $response = Http::timeout(15)
                 ->withHeaders($headers)

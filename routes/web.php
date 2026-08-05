@@ -30,10 +30,16 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
 
     // Quiz and Question Management
     Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy');
+    Route::group(['prefix' => 'quiz', 'as' => 'quiz.question.'], function () {
+        Route::get('{quiz}/question/destroy', [QuestionController::class, 'destroyAll'])->name('destroy.all');
+        Route::delete('question/{question}/remove-image', [QuestionController::class, 'removeImage'])->name('removeImage');
+        Route::get('/question/sample/download', [QuestionController::class, 'downloadSample'])->name('sample.download');
+        Route::post('{quiz}/question/import', [QuestionController::class, 'importQuestion'])->name('import.file');
+        Route::get('{quiz}/question/export', [QuestionController::class, 'exportQuestion'])->name('export');
+    });
     Route::resource('quiz.question', QuestionController::class);
-    Route::post('import-question/{quiz}', [QuestionController::class, 'importQuestion'])->name('question.import.file');
-    Route::get('destroy-question/{quiz}', [QuestionController::class, 'destroyAll'])->name('quiz.question.destroy.all');
-    Route::delete('question/{question}/remove-image', [QuestionController::class, 'removeImage'])->name('question.removeImage');
+
+    // Users
     Route::resource('users', UserController::class);
 
     // Language

@@ -2,11 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,8 +16,9 @@ class DatabaseSeeder extends Seeder
             QuizSeeder::class,
             SettingSeeder::class,
             LanguageSeeder::class,
-            LanguageVoiceSeeder::class, 
+            LanguageVoiceSeeder::class,
             QuestionSeeder::class,
+            ExamFormulaSeeder::class,
             // StudentQuizHistorySeeder::class,
         ]);
     }

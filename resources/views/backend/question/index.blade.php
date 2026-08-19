@@ -19,16 +19,30 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                @if (session('import_failures'))
+                                    <div class="alert alert-warning">
+                                        <strong>Import completed with errors:</strong>
+                                        <ul class="mb-0">
+                                            @foreach (session('import_failures') as $failure)
+                                                <li>
+                                                    Row {{ $failure['row'] }} ({{ $failure['attribute'] }}):
+                                                    {{ implode(', ', $failure['errors']) }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-questions">
                                         <thead>
                                             <tr>
-                                                <th class="col-1">#</th>
-                                                <th class="col-2">Question</th>
-                                                <th class="col-2">A - Option</th>
-                                                <th class="col-2">B - Option</th>
-                                                <th class="col-2">C - Option</th>
-                                                <th class="col-2">Correct Answer</th>
+                                                <th>#</th>
+                                                <th>Question</th>
+                                                <th>A - Option</th>
+                                                <th>B - Option</th>
+                                                <th>C - Option</th>
+                                                {{-- <th>Answer</th> --}}
+                                                <th>Type</th>
                                                 <th class="col-1">Action</th>
                                             </tr>
                                         </thead>
@@ -36,17 +50,25 @@
                                             @foreach ($questions as $question)
                                                 <tr>
                                                     <td>{{ $question->id }}</td>
-                                                    <td>{{ $question->question }}</td>
-                                                    <td>{{ $question->a }}</td>
-                                                    <td>{{ $question->b }}</td>
-                                                    <td>{{ $question->c }}</td>
-                                                    <td>{{ $question->correct_answer }}</td>
+                                                    {{-- <td>{{ $question->question }}</td> --}}
+                                                    <td title="{{ $question->question }}">{{ Str::limit($question->question, 60) }}</td>
+                                                    <td>{{ Str::limit($question->a, 30) }}</td>
+                                                    <td>{{ Str::limit($question->b, 30) }}</td>
+                                                    <td>{{ Str::limit($question->c, 30) }}</td>
+                                                    {{-- <td>{{ $question->correct_answer }}</td> --}}
+                                                    {{-- @dd($question->type, $question->type->pluck('type')->toArray()) --}}
+                                                    {{-- <td>{{ $question->type->pluck('type')->implode(', ') }}</td> --}}
+                                                    <td>
+                                                        @foreach ($question->type as $type)
+                                                            <span class="badge badge-primary mt-1">{{ $type->type }}</span>
+                                                        @endforeach
+                                                    </td>
                                                     <td>
                                                         <a href="{{ route('admin.quiz.question.edit', ['quiz' => $quiz_id, 'question' => $question->id]) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         <form action="{{ route('admin.quiz.question.destroy', ['quiz' => $quiz_id, 'question' => $question->id]) }}" method="POST"
-                                                            class="d-inline delete-form">
+                                                            class="d-inline delete-form ml-2">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                                         </form>

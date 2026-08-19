@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\QuestionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,17 +28,9 @@ class Question extends Model
         'answer_explanation_translation',
         'visual_explanation',
         'audio_file',
-        'type',
     ];
 
     protected $appends = ['image_url', 'visual_explanation_url'];
-
-    protected function casts(): array
-    {
-        return [
-            'type' => 'array',
-        ];
-    }
 
     public function quiz()
     {
@@ -64,6 +57,11 @@ class Question extends Model
         return $this->hasOne(PreviousTestQuiz::class, 'question_id');
     }
 
+    public function type()
+    {
+        return $this->hasMany(QuestionType::class);
+    }
+
     public function getPreviousQuestionsAttribute()
     {
         if ($this->previousTestQuiz && $this->previousTestQuiz->question_ids) {
@@ -87,7 +85,7 @@ class Question extends Model
     public function getVisualExplanationUrlAttribute()
     {
         if ($this->visual_explanation) {
-            return asset('images/'.$this->visual_explanation); // or use Storage::url($this->image)
+            return asset('images/' . $this->visual_explanation); // or use Storage::url($this->image)
         }
 
         return null;

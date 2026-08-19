@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('b');
             $table->string('c')->nullable();
             $table->string('d')->nullable();
-            $table->json('type')->nullable();
             $table->text('answer_explanation')->nullable();
             $table->text('visual_explanation')->nullable();
             $table->text('audio_file')->nullable();

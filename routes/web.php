@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExamTypeController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguageVoiceController;
 use App\Http\Controllers\Admin\NotificationController;
@@ -26,6 +27,11 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::get('/language-usage/filter', [DashboardController::class, 'filterLanguageUsage'])->name('filter.languageUsage');
+    });
+
+    // Exam Management
+    Route::group(['prefix' => 'exam', 'as' => 'exam.'], function () {
+        Route::resource('type', ExamTypeController::class);
     });
 
     // Quiz and Question Management

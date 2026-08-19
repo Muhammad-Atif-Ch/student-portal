@@ -31,6 +31,8 @@ class QuestionService extends AbstractService
     public function createQuestion(CreateQuestionRequest $request): AbstractResponseInterface
     {
         $data = $request->validated();
+        $types = $data['type'];
+
         try {
             if ($request->hasFile('visual_explanation')) {
                 $data['visual_explanation'] = $this->uploadFile->upload('images', $request->file('visual_explanation'));
@@ -40,7 +42,8 @@ class QuestionService extends AbstractService
                 $data['image'] = $this->uploadFile->upload('images', $request->file('image'));
             }
 
-            $this->create($data);
+            $question = $this->create($data);
+            $question->type()->createMany(array_map(fn ($type) => ['type' => $type], $types));
 
             $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
         } catch (\Exception $e) {
@@ -54,7 +57,7 @@ class QuestionService extends AbstractService
     {
         $this->setLimit(50);
 
-        return $this->repository->getByCondition(['quiz_id' => $quiz_id]);
+        return $this->repository->getByCondition(['quiz_id' => $quiz_id], with: ['type']);
     }
 
     public function showQuestion($quiz_id, $id): Model
@@ -65,7 +68,14 @@ class QuestionService extends AbstractService
     public function updateQuestion(UpdateQuestionRequest $request, $id): AbstractResponseInterface
     {
         $data = $request->validated();
-        $question = Question::findOrFail($id);
+        $question = $this->repository->findOrFail($id);
+
+        $types = $data['type'];
+
+        if ($types !== null) {
+            $question->type()->delete();
+            $question->type()->createMany(array_map(fn ($type) => ['type' => $type], $types));
+        }
 
         try {
             if ($request->hasFile('visual_explanation')) {
@@ -115,6 +125,11 @@ class QuestionService extends AbstractService
         }
 
         $this->update($data, $id);
+
+        if ($types !== null) {
+            $question->type()->delete();
+            $question->type()->createMany(array_map(fn ($type) => ['type' => $type], $types));
+        }
 
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());
         $this->response->setData(['question_id' => $question->id]); // Add question ID to response

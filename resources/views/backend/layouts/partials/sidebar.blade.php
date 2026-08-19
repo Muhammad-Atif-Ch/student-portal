@@ -18,6 +18,12 @@
             <li class="dropdown {{ Request::is('contact-us*') ? 'active' : '' }}">
                 <a href="{{ route('admin.contact-us.index') }}" class="nav-link"><i data-feather="phone-incoming"></i><span>{{ __('Contact Us') }}</span></a>
             </li>
+            <li class="dropdown {{ Request::is('exam*') ? 'active' : '' }}">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="book"></i><span>{{ __('Exam') }}</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('exam/type*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.exam.type.index') }}">{{ __('Exam Types') }}</a></li>
+                </ul>
+            </li>
             <li class="dropdown {{ Request::is('quiz*') ? 'active' : '' }}">
                 <a href="{{ route('admin.quiz.index') }}" class="nav-link"><i data-feather="clipboard"></i><span>{{ __('Quiz') }}</span></a>
             </li>

@@ -37,11 +37,12 @@
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label>Type <small style="color: red">*</small></label>
+                                                @php $selectedTypes = old('type', $question->type->pluck('type')->toArray()); @endphp
                                                 <select class="form-control select2" name="type[]" multiple>
-                                                    <option value="car" {{ in_array('car', old('type', $question->type)) ? 'selected' : '' }}>Car</option>
-                                                    <option value="bike" {{ in_array('bike', old('type', $question->type)) ? 'selected' : '' }}>Bike</option>
-                                                    <option value="bus" {{ in_array('bus', old('type', $question->type)) ? 'selected' : '' }}>Bus</option>
-                                                    <option value="truck" {{ in_array('truck', old('type', $question->type)) ? 'selected' : '' }}>Truck</option>
+                                                    <option value="car" {{ in_array('car', $selectedTypes) ? 'selected' : '' }}>Car</option>
+                                                    <option value="bike" {{ in_array('bike', $selectedTypes) ? 'selected' : '' }}>Bike</option>
+                                                    <option value="bus" {{ in_array('bus', $selectedTypes) ? 'selected' : '' }}>Bus</option>
+                                                    <option value="truck" {{ in_array('truck', $selectedTypes) ? 'selected' : '' }}>Truck</option>
                                                 </select>
                                             </div>
                                         </div>

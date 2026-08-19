@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Question;
+use App\Models\QuestionType;
 use Illuminate\Database\Seeder;
 
 class QuestionSeeder extends Seeder
@@ -33,6 +34,33 @@ class QuestionSeeder extends Seeder
         //     'answer_explanation_translation' => 'Paris is the capital of France',
         //     'correct_answer' => 'a',
         // ]);
-        Question::factory()->count(500)->create();
+
+
+        $types = ['car', 'bike', 'bus', 'truck'];
+
+        $questions = Question::factory()
+            ->count(10)
+            ->create();
+
+        $questionTypes = [];
+
+        foreach ($questions as $question) {
+            $selectedTypes = fake()->randomElements(
+                $types,
+                fake()->numberBetween(1, 4)
+            );
+
+            foreach ($selectedTypes as $type) {
+                $questionTypes[] = [
+                    'question_id' => $question->id,
+                    'type' => $type,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        QuestionType::insert($questionTypes);
+    
     }
 }

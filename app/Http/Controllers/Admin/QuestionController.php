@@ -22,7 +22,9 @@ class QuestionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function __construct(private QuestionService $service) {}
+    public function __construct(private QuestionService $service)
+    {
+    }
 
     /**
      * Display a listing of the resource.
@@ -32,7 +34,7 @@ class QuestionController extends Controller
         $quiz = Quiz::findOrFail($quiz_id);
         $questions = $this->service->listQuestion($quiz_id);
 
-        return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));     
+        return view('backend.question.index', compact('quiz_id', 'questions', 'quiz'));
     }
 
     /**
@@ -118,7 +120,7 @@ class QuestionController extends Controller
             return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
         }
 
-        $filePath = public_path('images/'.$question->$fileField);
+        $filePath = public_path('images/' . $question->$fileField);
         if ($question->$fileField && file_exists($filePath)) {
             unlink($filePath);
             $question->$fileField = null;
@@ -142,7 +144,20 @@ class QuestionController extends Controller
             'file' => 'required|mimes:xlsx,csv|max:2048',
         ]);
 
-        Excel::import(new QuestionImport($quiz_id), $request->file('file'));
+        $import = new QuestionImport($quiz_id);
+        Excel::import($import, $request->file('file'));
+
+        $failures = $import->failures();
+
+        if ($failures->isNotEmpty()) {
+            return back()
+                ->with('error', sprintf('%d row(s) imported, %d row(s) failed validation.', $failures->count(), $failures->count()))
+                ->with('import_failures', $failures->map(fn($f) => [
+                    'row' => $f->row(),
+                    'attribute' => $f->attribute(),
+                    'errors' => $f->errors(),
+                ])->toArray());
+        }
 
         return back()->with('success', 'Users imported successfully!');
     }
@@ -153,7 +168,7 @@ class QuestionController extends Controller
         try {
             return Excel::download(new QuestionExport($quiz_id), "question_{$quiz_id}.xlsx");
         } catch (\Exception $e) {
-            Log::error('export error'.$e->getmessage());
+            Log::error('export error' . $e->getmessage());
         }
     }
 }

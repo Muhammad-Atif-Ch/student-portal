@@ -20,7 +20,6 @@
                                                 <th class="text-center">#</th>
                                                 <th>Title</th>
                                                 <th>Total Question</th>
-                                                <th>Official Test Question</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -30,7 +29,6 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $test->title }}</td>
                                                     <td>{{ $test->questions_count }}</td>
-                                                    <td>{{ $test->official_test_question }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.quiz.edit', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
                                                         <a href="{{ route('admin.quiz.question.index', $test->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>

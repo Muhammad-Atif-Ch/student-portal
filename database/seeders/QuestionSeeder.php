@@ -39,7 +39,7 @@ class QuestionSeeder extends Seeder
         $types = ['car', 'bike', 'bus', 'truck'];
 
         $questions = Question::factory()
-            ->count(10)
+            ->count(500)
             ->create();
 
         $questionTypes = [];

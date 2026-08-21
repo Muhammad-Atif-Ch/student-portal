@@ -10,4 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class ExamTypeTargetType extends Model
 {
     public $timestamps = false;
+
+    public function examType()
+    {
+        return $this->belongsTo(ExamType::class);
+    }
 }

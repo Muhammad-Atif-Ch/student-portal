@@ -33,12 +33,22 @@ class PermissionSeeder extends Seeder
 
         $user4 = \App\Models\User::create([
             'device_id' => 'test123',
+            'platform' => 'android',
         ]);
         $user4->assignRole($role3);
 
-        $user4 = \App\Models\User::create([
+        $user5 = \App\Models\User::create([
             'device_id' => 'demo123',
+            'platform' => 'ios',
         ]);
-        $user4->assignRole($role3);
+        $user5->assignRole($role3);
+
+        $user4->membership()->create(
+            [
+                'membership_type' => 'premium',
+                'start_date' => now(),
+                'end_date' => now()->addDays(30)
+            ]
+        );
     }
 }

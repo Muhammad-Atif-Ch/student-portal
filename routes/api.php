@@ -1,15 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\QuizController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\ResultController;
-use App\Http\Controllers\Api\SettingController;
-use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
+use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\QuizController;
+use App\Http\Controllers\Api\ResultController;
+use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
     Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
@@ -29,14 +30,12 @@ Route::withoutMiddleware(['device.check', 'membership'])->group(function () {
 Route::middleware('membership:premium')->group(function () {
     Route::group(['prefix' => 'quiz'], function () {
         // Route::get('get-read-question', [QuizController::class, 'getReadQuestion']);
-        Route::get('get-practice-question', [QuizController::class, 'getPracticeQuestion']);
-        Route::get('get-official-question', [QuizController::class, 'getOfficialQuestion']);
-        Route::post('store', [QuizController::class, 'store']);
+
         Route::get('previous-incorrect', [QuizController::class, 'previousIncorrect']);
         Route::get('least-seen', [QuizController::class, 'leastSeen']);
 
         // Question related routes
-        Route::get('get-flag', [QuestionController::class, 'getFlag']); 
+        Route::get('get-flag', [QuestionController::class, 'getFlag']);
         Route::post('store-flag', [QuestionController::class, 'storeFlag']);
 
         // Result related routes
@@ -45,6 +44,12 @@ Route::middleware('membership:premium')->group(function () {
         Route::get('previous-test-result-details', [ResultController::class, 'previousTestResultDetails']);
         Route::get('result-summary', [ResultController::class, 'resultSummary']);
         Route::get('result-category', [ResultController::class, 'resultCategory']);
+    });
+
+    Route::group(['prefix' => 'test'], function () {
+        Route::get('get-practice-question', [TestController::class, 'getPracticeQuestion']);
+        Route::get('get-official-question', [TestController::class, 'getOfficialQuestion']);
+        Route::post('store', [TestController::class, 'store']);
     });
 
     Route::group(['prefix' => 'notification'], function () {

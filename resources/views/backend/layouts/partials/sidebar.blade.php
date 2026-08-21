@@ -22,6 +22,8 @@
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="book"></i><span>{{ __('Exam') }}</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('exam/type*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.exam.type.index') }}">{{ __('Exam Types') }}</a></li>
+                    <li class="{{ Request::is('exam/target-type*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.exam.target-type.index') }}">{{ __('Exam Target Types') }}</a></li>
+                    <li class="{{ Request::is('exam/pool-rule*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.exam.pool-rule.index') }}">{{ __('Exam Pool Rules') }}</a></li>
                 </ul>
             </li>
             <li class="dropdown {{ Request::is('quiz*') ? 'active' : '' }}">

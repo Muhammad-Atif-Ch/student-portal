@@ -18,7 +18,6 @@ class QuizFactory extends Factory
     {
         return [
             'title' => fake()->sentence(),
-            'official_test_question' => random_int(1, 10),
         ];
     }
 }

@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExamTypeController;
+use App\Http\Controllers\Admin\ExamPoolRuleController;
+use App\Http\Controllers\Admin\ExamTypeTargetTypeController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguageVoiceController;
 use App\Http\Controllers\Admin\NotificationController;
@@ -32,6 +34,8 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // Exam Management
     Route::group(['prefix' => 'exam', 'as' => 'exam.'], function () {
         Route::resource('type', ExamTypeController::class);
+        Route::resource('target-type', ExamTypeTargetTypeController::class)->except('show');
+        Route::resource('pool-rule', ExamPoolRuleController::class)->except('show');
     });
 
     // Quiz and Question Management

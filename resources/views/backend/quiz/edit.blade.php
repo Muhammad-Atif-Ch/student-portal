@@ -22,12 +22,6 @@
                                                 <input type="text" name="title" class="form-control" readonly value="{{ $test->title }}">
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-4 col-lg-4">
-                                            <div class="form-group">
-                                                <label>Official Test Question <small style="color: red">*</small></label>
-                                                <input type="number" name="official_test_question" class="form-control" required value="{{ $test->official_test_question }}">
-                                            </div>
-                                        </div>
                                     </div>
                                     {{-- <div class="row">
                                         <div class="col-12 col-md-12 col-lg-12">

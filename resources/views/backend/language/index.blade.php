@@ -19,16 +19,17 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th class="col-2">Family</th>
-                                                <th class="col-2">Name</th>
-                                                <th class="col-2">Native Name</th>
-                                                <th class="col-1">Code</th>
-                                                <th class="col-1">Code 2</th>
-                                                <th class="col-1">Status</th>
-                                                <th class="col-1">App 1 Show</th>
-                                                <th class="col-1">App 2 Show</th>
-                                                <th class="col-1">App 3 Show</th>
-                                                <th class="col-3">Action</th>
+                                                <th>Family</th>
+                                                <th>Name</th>
+                                                <th>Native Name</th>
+                                                <th>Code</th>
+                                                <th>Code 2</th>
+                                                <th>Status</th>
+                                                <th>App 1 Show</th>
+                                                <th>App 2 Show</th>
+                                                <th>App 3 Show</th>
+                                                <th class="col-2
+                                                ">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>

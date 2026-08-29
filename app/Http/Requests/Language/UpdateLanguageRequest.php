@@ -28,7 +28,9 @@ class UpdateLanguageRequest extends FormRequest
             'code' => 'sometimes',
             'code_2' => 'sometimes',
             'status' => 'nullable|sometimes|boolean',
-            'show' => 'nullable|sometimes|boolean',
+            'app_1_show' => 'nullable|sometimes|boolean',
+            'app_2_show' => 'nullable|sometimes|boolean',
+            'app_3_show' => 'nullable|sometimes|boolean',
         ];
     }
 }

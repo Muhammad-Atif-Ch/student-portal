@@ -28,7 +28,9 @@ class StoreLanguageRequest extends FormRequest
             'code' => 'required|string|max:10',
             'code_2' => 'nullable|string|max:10',
             'status' => 'required|boolean',
-            'show' => 'required|boolean',
+            'app_1_show' => 'required|boolean',
+            'app_2_show' => 'required|boolean',
+            'app_3_show' => 'required|boolean',
         ];
     }
 }

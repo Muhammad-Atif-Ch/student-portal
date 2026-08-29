@@ -70,6 +70,32 @@ class LanguageController extends Controller
         }
     }
 
+    public function showStatus(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|exists:languages,id',
+            'app' => 'required|integer|in:1,2,3',
+            'show' => 'required|boolean',
+        ]);
+
+        try {
+            $this->service->updateLanguageStatus([
+                'id' => $data['id'],
+                "app_{$data['app']}_show" => $data['show'],
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Show status updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy(Language $language)
     {
         // $translation = QuestionTranslation::where('language_id', $language->id)

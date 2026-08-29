@@ -25,7 +25,9 @@
                                                 <th class="col-1">Code</th>
                                                 <th class="col-1">Code 2</th>
                                                 <th class="col-1">Status</th>
-                                                <th class="col-1">Show</th>
+                                                <th class="col-1">App 1 Show</th>
+                                                <th class="col-1">App 2 Show</th>
+                                                <th class="col-1">App 3 Show</th>
                                                 <th class="col-3">Action</th>
                                             </tr>
                                         </thead>
@@ -45,11 +47,18 @@
                                                             <label class="custom-control-label" for="status_{{ $language->id }}"></label>
                                                         </div>
                                                     </td>
-                                                    <td>
-                                                        <span class="badge {{ $language->show ? 'bg-primary' : 'bg-warning' }}">
-                                                            {{ $language->show ? 'Yes' : 'No' }}
-                                                        </span>
-                                                    </td>
+                                                    @for ($app = 1; $app <= 3; $app++)
+                                                        <td>
+                                                            <div class="custom-control custom-switch">
+                                                                <input type="checkbox" class="custom-control-input language-show-toggle"
+                                                                    id="app_{{ $app }}_show_{{ $language->id }}"
+                                                                    data-language-id="{{ $language->id }}"
+                                                                    data-app="{{ $app }}"
+                                                                    {{ $language->{"app_{$app}_show"} ? 'checked' : '' }}>
+                                                                <label class="custom-control-label" for="app_{{ $app }}_show_{{ $language->id }}"></label>
+                                                            </div>
+                                                        </td>
+                                                    @endfor
                                                     <td>
                                                         <a href="{{ route('admin.language.voice.index', $language->id) }}" class="btn btn-primary btn-sm">
                                                             <i class="fas fa-eye"></i>
@@ -81,6 +90,7 @@
         $(function() {
             initializeLanguageTable();
             initializeStatusToggle();
+            initializeShowToggle();
         });
 
         function initializeLanguageTable() {
@@ -157,14 +167,54 @@
         }
 
         function storeToggleStates() {
-            $('.language-status-toggle').each(function() {
+            $('.language-status-toggle, .language-show-toggle').each(function() {
                 $(this).data('initial-state', $(this).prop('checked'));
             });
         }
 
         function restoreToggleStates() {
-            $('.language-status-toggle').each(function() {
+            $('.language-status-toggle, .language-show-toggle').each(function() {
                 $(this).prop('checked', $(this).data('initial-state'));
+            });
+        }
+
+        function initializeShowToggle() {
+            $(document).on('change', '.language-show-toggle', handleShowToggle);
+        }
+
+        function handleShowToggle() {
+            const checkbox = $(this);
+
+            if (checkbox.data('processing')) return;
+
+            const languageId = checkbox.data('language-id');
+            const app = checkbox.data('app');
+            const show = checkbox.prop('checked') ? 1 : 0;
+
+            checkbox.data('processing', true);
+
+            updateLanguageShowStatus(checkbox, languageId, app, show);
+        }
+
+        function updateLanguageShowStatus(checkbox, languageId, app, show) {
+            $.ajax({
+                url: "{{ route('admin.language.update.show.status') }}",
+                type: 'POST',
+                data: {
+                    id: languageId,
+                    app: app,
+                    show: show,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    handleStatusUpdateSuccess(checkbox, show, response);
+                },
+                error: function(xhr) {
+                    handleStatusUpdateError(checkbox, xhr);
+                },
+                complete: function() {
+                    checkbox.data('processing', false);
+                }
             });
         }
     </script>

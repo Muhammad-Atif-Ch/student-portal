@@ -51,10 +51,30 @@
                                         </div>
                                         <div class="col-12 col-md-4 col-lg-4">
                                             <div class="form-group">
-                                                <label>Show</label>
-                                               <select name="show" class="form-control">
-                                                   <option value="0" {{ $language->show == 0 ? 'selected' : '' }}>No</option>
-                                                    <option value="1" {{ $language->show == 1 ? 'selected' : '' }}>Yes</option>
+                                                <label>App 1 Show</label>
+                                               <select name="app_1_show" class="form-control">
+                                                   <option value="0" {{ $language->app_1_show == 0 ? 'selected' : '' }}>No</option>
+                                                    <option value="1" {{ $language->app_1_show == 1 ? 'selected' : '' }}>Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>App 2 Show</label>
+                                               <select name="app_2_show" class="form-control">
+                                                   <option value="0" {{ $language->app_2_show == 0 ? 'selected' : '' }}>No</option>
+                                                    <option value="1" {{ $language->app_2_show == 1 ? 'selected' : '' }}>Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4 col-lg-4">
+                                            <div class="form-group">
+                                                <label>App 3 Show</label>
+                                               <select name="app_3_show" class="form-control">
+                                                   <option value="0" {{ $language->app_3_show == 0 ? 'selected' : '' }}>No</option>
+                                                    <option value="1" {{ $language->app_3_show == 1 ? 'selected' : '' }}>Yes</option>
                                                 </select>
                                             </div>
                                         </div>

@@ -113,6 +113,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::get('/edit/{id}', [LanguageController::class, 'edit'])->name('edit');
         Route::patch('/update/{id}', [LanguageController::class, 'update'])->name('update');
         Route::post('/update-status', [LanguageController::class, 'status'])->name('update.status');
+        Route::post('/update-show-status', [LanguageController::class, 'showStatus'])->name('update.show.status');
         Route::delete('/destroy/{language}', [LanguageController::class, 'destroy'])->name('destroy');
 
         // Language Voice

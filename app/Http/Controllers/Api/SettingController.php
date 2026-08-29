@@ -27,9 +27,12 @@ class SettingController extends Controller
         return new SettingResource($image);
     }
 
-    public function languages()
+    public function languages(Request $request)
     {
-        $languages = Language::where('show', '1')->get();
+        $app = (int) $request->query('app', 1);
+        $column = in_array($app, [1, 2, 3]) ? "app_{$app}_show" : 'app_1_show';
+
+        $languages = Language::where($column, '1')->get();
 
         return SettingResource::collection($languages);
     }

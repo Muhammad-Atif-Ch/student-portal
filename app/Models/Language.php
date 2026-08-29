@@ -19,7 +19,9 @@ class Language extends Model
         'code_2',
         'country_code',
         'status',
-        'show'
+        'app_1_show',
+        'app_2_show',
+        'app_3_show',
     ];
 
     protected static function boot()

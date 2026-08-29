@@ -55,29 +55,33 @@
         }
     });
 
+    window.showToast = function(icon, title) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'small-toast',
+                title: 'small-toast-title'
+            },
+            iconHtml: '',
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: icon,
+            title: title,
+            padding: '0.7em',
+            width: 'auto'
+        });
+    };
+
     $(document).ready(function() {
-        function showToast(icon, title) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'small-toast',
-                    title: 'small-toast-title'
-                },
-                iconHtml: ''
-            });
-
-            Toast.fire({
-                icon: icon,
-                title: title,
-                padding: '0.7em',
-                width: 'auto'
-            });
-        }
-
         const Toast = Swal.mixin({
             toast: true,
             position: "top-end",

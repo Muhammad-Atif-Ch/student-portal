@@ -2,6 +2,7 @@
 
 namespace App\Services\AzureTextToSpeech;
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -13,10 +14,10 @@ class AzureTTSService
 
   public function __construct()
   {
-    $this->apiKey = env('AZURE_SPEECH_API_KEY');
-    $this->region = env('AZURE_SPEECH_API_REGION');
+    $settings = Setting::cached();
+    $this->apiKey = (string) $settings?->tts_api_key;
+    $this->region = (string) $settings?->tts_api_region;
     $this->endpoint = "https://{$this->region}.tts.speech.microsoft.com/cognitiveservices/v1";
-    // $this->endpoint = env('AZURE_SPEECH_API_URL');
   }
 
   public function convertToSpeech(string $text, $language): string|array
@@ -80,10 +81,39 @@ class AzureTTSService
     }
     $text = htmlspecialchars($text, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 
+    // Azure's neural voices aggressively trim silence at line-break/sentence
+    // boundaries, which can clip the first word of the next sentence. Turning
+    // both raw newlines AND in-line sentence punctuation (., !, ?, and the
+    // Urdu/Arabic equivalents ۔ ؟) into explicit <s> sentence tags (instead of
+    // leaving them as bare text) stops the engine from mis-detecting the
+    // boundary and swallowing the following word.
+    //
+    // Stacking a manual <break> on top of <mstts:silence type="Sentenceboundary-*">
+    // makes the engine over-compensate and clip real speech instead of silence,
+    // which is why the previous attempt made things worse and even ate the very
+    // first word of the clip. Only the "Leading" silence (the gap before the
+    // first word starts) needs to be pinned explicitly; sentence boundaries are
+    // left to the single mstts:silence directive below, with no extra <break>.
+    $lines = preg_split('/\r\n|\r|\n/', $text);
+    $sentences = [];
+    foreach ($lines as $line) {
+      $parts = preg_split('/(?<=[.!?۔؟])\s+/u', trim($line));
+      foreach ($parts as $part) {
+        $part = trim($part);
+        if ($part !== '') {
+          $sentences[] = $part;
+        }
+      }
+    }
+
+    $body = implode('', array_map(fn($sentence) => "<s>{$sentence}</s>", $sentences));
+
     return <<<SSML
-            <speak version='1.0' xml:lang='{$voice['locale']}'>
+            <speak version='1.0' xml:lang='{$voice['locale']}' xmlns:mstts='https://www.w3.org/2001/mstts'>
                 <voice xml:lang='{$voice['locale']}' xml:gender='{$voice['gender']}' name='{$voice['name']}'>
-                    $text
+                    <mstts:silence type='Leading-exact' value='350ms'/>
+                    <mstts:silence type='Sentenceboundary-exact' value='200ms'/>
+                    $body
                 </voice>
             </speak>
             SSML;

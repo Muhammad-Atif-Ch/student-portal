@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -19,6 +20,10 @@ class Setting extends Model
         'mini_sidebar',
         'stiky_header',
         'image',
+        'translation_api_key',
+        'translation_api_region',
+        'tts_api_key',
+        'tts_api_region',
     ];
 
     protected $appends = ['image_url'];
@@ -30,5 +35,20 @@ class Setting extends Model
         }
 
         return null;
+    }
+
+    public static function cached(): ?self
+    {
+        return Cache::remember('app_settings', 3600, fn () => static::first());
+    }
+
+    public static function translationApiKey(): ?string
+    {
+        return static::cached()?->translation_api_key;
+    }
+
+    public static function ttsApiKey(): ?string
+    {
+        return static::cached()?->tts_api_key;
     }
 }

@@ -6,6 +6,7 @@ use App\Jobs\BulkTranslateQuestionsJob;
 use App\Models\Language;
 use App\Models\Question;
 use App\Models\QuestionTranslation;
+use App\Models\Setting;
 use App\Models\TranslationGlossary;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -49,18 +50,21 @@ class AzureTranslatorService
      * Translate one or more fields in a single Azure Translator API call.
      *
      * @param  array<string,string>  $fields  key => source text (e.g. ['a' => 'Yes', 'b' => 'No'])
-     * @return array<string,string>|false key => translated text, or false on failure
+     * @return array<string,string> key => translated text
+     *
+     * @throws \RuntimeException with Azure's actual error message on failure
      */
-    public function translateBatch(array $fields, string $targetLanguage): array|false
+    public function translateBatch(array $fields, string $targetLanguage): array
     {
         if (empty($fields)) {
             return [];
         }
 
-        $apiKey = config('services.azure_translator.key');
+        $settings = Setting::cached();
+        $apiKey = $settings?->translation_api_key;
 
         if (empty($apiKey)) {
-            return false;
+            throw new \RuntimeException('Azure Translator API key is not configured.');
         }
 
         $keys = array_keys($fields);
@@ -72,11 +76,11 @@ class AzureTranslatorService
         // Log::info('request data 1 '.$this->getGlossaryTerms($language->id));
         // Log::info('request data 2 '.$glossary.' second '.$useDictionary);
         $requestTexts = $useDictionary
-            ? array_map(fn ($text) => $this->applyDynamicDictionary($text, $glossary), $originalTexts)
+            ? array_map(fn($text) => $this->applyDynamicDictionary($text, $glossary), $originalTexts)
             : $originalTexts;
 
         $endpoint = rtrim(config('services.azure_translator.endpoint'), '/');
-        $region = config('services.azure_translator.region');
+        $region = $settings?->translation_api_region;
 
         $headers = array_filter([
             'Ocp-Apim-Subscription-Key' => $apiKey,
@@ -98,22 +102,22 @@ class AzureTranslatorService
                 ->withHeaders($headers)
                 ->withQueryParameters($query)
                 ->post("{$endpoint}/translate", array_map(
-                    fn ($text) => ['Text' => $text],
+                    fn($text) => ['Text' => $text],
                     $requestTexts
                 ));
 
-            if (! $response->successful()) {
-                Log::error('Azure Translate API error: '.$response->body());
-
-                return false;
+            if (!$response->successful()) {
+                Log::error('Azure Translate API error: ' . $response->body());
+                Log::error("hear 1");
+                throw new \RuntimeException($this->extractAzureErrorMessage($response));
             }
 
             $results = $response->json();
 
-            if (! is_array($results) || count($results) !== count($requestTexts)) {
+            if (!is_array($results) || count($results) !== count($requestTexts)) {
                 Log::error('Azure Translate API returned an unexpected number of translations.');
-
-                return false;
+                Log::error("hear 2");
+                throw new \RuntimeException('Azure Translate API returned an unexpected number of translations.');
             }
 
             $translated = [];
@@ -122,23 +126,34 @@ class AzureTranslatorService
             }
 
             return $translated;
+        } catch (\RuntimeException $e) {
+            throw $e;
         } catch (\Throwable $e) {
-            Log::error('Translation API request failed: '.$e->getMessage());
+            Log::error('Translation API request failed: ' . $e->getMessage());
 
-            return false;
+            throw new \RuntimeException('Translation API request failed: ' . $e->getMessage(), previous: $e);
         }
     }
 
     /**
-     * Convenience wrapper for translating a single field.
-     *
-     * @return string|false
+     * Parse Azure's `{"error":{"code":..., "message":"..."}}` error body into a
+     * plain message, falling back to the raw body when it isn't in that shape.
      */
-    public function translateOne(string $text, string $targetLanguage)
+    private function extractAzureErrorMessage(\Illuminate\Http\Client\Response $response): string
+    {
+        $message = $response->json('error.message');
+        Log::error('Azure Translate API error 3: ' . $message);
+        return $message ?: ('Azure Translate API error: ' . $response->body());
+    }
+
+    /**
+     * Convenience wrapper for translating a single field.
+     */
+    public function translateOne(string $text, string $targetLanguage): string
     {
         $result = $this->translateBatch(['value' => $text], $targetLanguage);
 
-        return $result === false ? false : $result['value'];
+        return $result['value'];
     }
 
     public function resolveStatus(Question $question, Language $language, QuestionTranslation $translation, bool $requireAudio = false): string
@@ -176,10 +191,10 @@ class AzureTranslatorService
 
         foreach ($glossary as $entry) {
             $escapedTerm = htmlspecialchars($entry->source_term, ENT_QUOTES | ENT_XML1, 'UTF-8');
-            $pattern = '/\b'.preg_quote($escapedTerm, '/').'\b/i';
+            $pattern = '/\b' . preg_quote($escapedTerm, '/') . '\b/i';
             $replacement = '<mstrans:dictionary translation="'
-                .htmlspecialchars($entry->target_term, ENT_QUOTES | ENT_XML1, 'UTF-8')
-                .'">'.$escapedTerm.'</mstrans:dictionary>';
+                . htmlspecialchars($entry->target_term, ENT_QUOTES | ENT_XML1, 'UTF-8')
+                . '">' . $escapedTerm . '</mstrans:dictionary>';
             $text = preg_replace($pattern, $replacement, $text);
         }
 

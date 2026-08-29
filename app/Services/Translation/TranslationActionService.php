@@ -33,10 +33,10 @@ class TranslationActionService
             return $this->response;
         }
 
-        $translated = $translator->translateOne($sourceText, $language->code);
-
-        if ($translated === false) {
-            $this->response->setResponse(ResponseCode::ERROR, 500, 'Azure Translate request failed. Check logs for details.');
+        try {
+            $translated = $translator->translateOne($sourceText, $language->code);
+        } catch (\Throwable $e) {
+            $this->response->setResponse(ResponseCode::ERROR, 500, $e->getMessage());
 
             return $this->response;
         }

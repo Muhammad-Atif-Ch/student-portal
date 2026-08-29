@@ -1,6 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\ContactUsController as AdminContactUsController;
+use App\Http\Controllers\Admin\CpcCaseStudyController;
+use App\Http\Controllers\Admin\CpcExamController;
+use App\Http\Controllers\Admin\CpcQuestionController;
+use App\Http\Controllers\Admin\CpcTranslation\CpcCaseStudyTranslationController;
+use App\Http\Controllers\Admin\CpcTranslation\CpcQuestionTranslationController;
+use App\Http\Controllers\Admin\CpcTypeController;
+use App\Http\Controllers\Admin\ClientAppController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExamTypeController;
 use App\Http\Controllers\Admin\ExamPoolRuleController;
@@ -11,6 +18,8 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\TechnicalDictionaryController;
+use App\Http\Controllers\Admin\TechnicalDictionaryTranslationController;
 use App\Http\Controllers\Admin\TextToSpeechController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\TranslationGlossaryController;
@@ -48,6 +57,50 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         Route::get('{quiz}/question/export', [QuestionController::class, 'exportQuestion'])->name('export');
     });
     Route::resource('quiz.question', QuestionController::class);
+
+    // CPC Management
+    Route::group(['prefix' => 'cpc', 'as' => 'cpc.'], function () {
+        Route::resource('question', CpcQuestionController::class)->except('show');
+        Route::resource('type', CpcTypeController::class)->except('show');
+        Route::resource('exam', CpcExamController::class)->except('show');
+
+        Route::resource('case-study', CpcCaseStudyController::class)->parameters(['case-study' => 'caseStudy']);
+        Route::group(['prefix' => 'case-study/{caseStudy}', 'as' => 'case-study.'], function () {
+            Route::post('translate-all', [CpcCaseStudyTranslationController::class, 'translateAll'])->name('translate-all');
+            Route::post('title/translate/{language}', [CpcCaseStudyTranslationController::class, 'translateTitle'])->name('title.translate');
+            Route::post('blocks/{block}/translate/{language}', [CpcCaseStudyTranslationController::class, 'translateBlock'])->name('blocks.translate');
+            Route::post('blocks/{block}/generate-audio/{language}', [CpcCaseStudyTranslationController::class, 'generateAudioForBlock'])->name('blocks.audio');
+        });
+
+        Route::group(['prefix' => 'translation', 'as' => 'translation.'], function () {
+            Route::get('/', [CpcCaseStudyTranslationController::class, 'translationIndex'])->name('index');
+            Route::get('{caseStudy}/questions', [CpcCaseStudyTranslationController::class, 'translationQuestions'])->name('questions');
+
+            Route::group(['prefix' => '{caseStudy}/questions', 'as' => 'questions.'], function () {
+                Route::post('translate-all', [CpcQuestionTranslationController::class, 'translateAllForCaseStudy'])->name('translate-all');
+                Route::post('generate-audio-all', [CpcQuestionTranslationController::class, 'generateAudioAllForCaseStudy'])->name('audio-all');
+                Route::post('{question}/translate/{language}', [CpcQuestionTranslationController::class, 'translate'])->name('translate');
+                Route::post('{question}/generate-audio/{language}', [CpcQuestionTranslationController::class, 'generateAudio'])->name('audio');
+                Route::post('{question}/text/translate/{language}', [CpcQuestionTranslationController::class, 'translateQuestionText'])->name('text.translate');
+                Route::post('{question}/text/generate-audio/{language}', [CpcQuestionTranslationController::class, 'generateAudioForQuestionText'])->name('text.audio');
+                Route::post('{question}/explanation/translate/{language}', [CpcQuestionTranslationController::class, 'translateExplanation'])->name('explanation.translate');
+                Route::post('{question}/explanation/generate-audio/{language}', [CpcQuestionTranslationController::class, 'generateAudioForExplanation'])->name('explanation.audio');
+                Route::post('{question}/options/{option}/translate/{language}', [CpcQuestionTranslationController::class, 'translateOption'])->name('options.translate');
+                Route::post('{question}/options/{option}/generate-audio/{language}', [CpcQuestionTranslationController::class, 'generateAudioForOption'])->name('options.audio');
+            });
+        });
+    });
+
+    // Technical Dictionary
+    Route::group(['prefix' => 'technical-dictionary', 'as' => 'technical-dictionary.'], function () {
+        Route::get('/', [TechnicalDictionaryController::class, 'index'])->name('index');
+        Route::get('/create', [TechnicalDictionaryController::class, 'create'])->name('create');
+        Route::post('/store', [TechnicalDictionaryController::class, 'store'])->name('store');
+        Route::get('/{technicalDictionary}/edit', [TechnicalDictionaryController::class, 'edit'])->name('edit');
+        Route::put('/{technicalDictionary}', [TechnicalDictionaryController::class, 'update'])->name('update');
+        Route::delete('/{technicalDictionary}', [TechnicalDictionaryController::class, 'destroy'])->name('destroy');
+        Route::post('/{technicalDictionary}/regenerate/{language}', [TechnicalDictionaryTranslationController::class, 'regenerate'])->name('regenerate');
+    });
 
     // Users
     Route::resource('users', UserController::class);
@@ -92,8 +145,14 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
         // Route::get('index', [SettingController::class, 'index'])->name('index');
         Route::post('update', [SettingController::class, 'update'])->name('update');
         Route::post('reset-default', [SettingController::class, 'resetDefault'])->name('resetDefault');
-        Route::get('app-image', [SettingController::class, 'appImage'])->name('appImage');
-        Route::post('app-image-update', [SettingController::class, 'appImageUpdate'])->name('appImage.update');
+        Route::get('api-settings', [SettingController::class, 'apiSettings'])->name('apiSettings');
+        Route::post('api-settings-update', [SettingController::class, 'apiSettingsUpdate'])->name('apiSettings.update');
+    });
+
+    // Client Apps (image CRUD for the 3 apps consuming the Translation/TTS APIs)
+    Route::group(['prefix' => 'client-apps', 'as' => 'client-apps.'], function () {
+        Route::get('/', [ClientAppController::class, 'index'])->name('index');
+        Route::post('update/{clientApp}', [ClientAppController::class, 'update'])->name('update');
     });
 
     // Translation

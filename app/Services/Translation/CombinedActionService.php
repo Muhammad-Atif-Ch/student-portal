@@ -4,6 +4,7 @@ namespace App\Services\Translation;
 
 use App\Helpers\ResponseCode;
 use App\Jobs\BulkTranslateAndSpeakQuestionsJob;
+use App\Models\Setting;
 use App\Responses\TranslationResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +15,7 @@ class CombinedActionService
 
     public function startAll(): TranslationResponse
     {
-        if (empty(config('services.azure_translator.key'))) {
+        if (empty(Setting::translationApiKey())) {
             $this->response->setResponse(ResponseCode::ERROR, 500, 'Azure Translator API key is not configured.');
             return $this->response;
         }

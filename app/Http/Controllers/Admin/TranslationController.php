@@ -6,6 +6,7 @@ use App\Helpers\ResponseCode;
 use App\Http\Controllers\Controller;
 use App\Models\Language;
 use App\Models\QuestionTranslation;
+use App\Models\Setting;
 use App\Services\AzureTranslation\AzureTranslatorService;
 use App\Services\Translation\CombinedActionService;
 use App\Services\Translation\TranslationActionService;
@@ -51,8 +52,8 @@ class TranslationController extends Controller
     {
         $request->validate(['field' => 'required|in:'.implode(',', self::FIELDS)]);
 
-        if (empty(config('services.azure_translator.key'))) {
-            return response()->json(['error' => 'Azure Translator API key is not configured. Set AZURE_TRANSLATOR_KEY in .env.'], 500);
+        if (empty(Setting::translationApiKey())) {
+            return response()->json(['error' => 'Azure Translator API key is not configured. Set it in Admin > App Settings > API Settings.'], 500);
         }
 
         $response = $this->actionService->retranslateField($translation, $request->input('field'), $translator);

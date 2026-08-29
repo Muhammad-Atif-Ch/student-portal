@@ -36,23 +36,29 @@
                     <li class="{{ Request::is('glossary*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.translations.glossary.index') }}">{{ __('Glossary') }}</a></li>
                 </ul>
             </li>
+            <li class="dropdown {{ Request::is('cpc*') ? 'active' : '' }}">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="briefcase"></i><span>{{ __('CPC') }}</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('cpc/type*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.cpc.type.index') }}">{{ __('CPC Type') }}</a></li>
+                    <li class="{{ Request::is('cpc/exam*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.cpc.exam.index') }}">{{ __('CPC Exam') }}</a></li>
+                    <li class="{{ Request::is('cpc/case-study*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.cpc.case-study.index') }}">{{ __('CPC Case Study') }}</a></li>
+                    <li class="{{ Request::is('cpc/question*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.cpc.question.index') }}">{{ __('CPC Question') }}</a></li>
+                    <li class="{{ Request::is('cpc/translation*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.cpc.translation.index') }}">{{ __('CPC Translation') }}</a></li>
+                </ul>
+            </li>
             <li class="dropdown {{ Request::is('users*') ? 'active' : '' }}">
                 <a href="{{ route('admin.users.index') }}" class="nav-link"><i data-feather="user"></i><span>{{ __('Users') }}</span></a>
             </li>
-            <li class="dropdown {{ Request::is('setting*') ? 'active' : '' }}">
-                <a href="{{ route('admin.setting.appImage') }}" class="nav-link"><i data-feather="image"></i><span>{{ __('App Image') }}</span></a>
+            <li class="dropdown {{ Request::is('technical-dictionary*') ? 'active' : '' }}">
+                <a href="{{ route('admin.technical-dictionary.index') }}" class="nav-link"><i data-feather="book-open"></i><span>{{ __('Technical Dictionary') }}</span></a>
             </li>
-
-            {{-- <li class="dropdown {{ Request::is('category*') || Request::is('question*') || Request::is('users*') ? 'active' : '' }}">
-                <a href="#" class="menu-toggle nav-link has-dropdown"><i
-                        data-feather="briefcase"></i><span>Main</span></a>
+            <li class="dropdown {{ Request::is('setting*') || Request::is('client-apps*') ? 'active' : '' }}">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="settings"></i><span>{{ __('App Settings') }}</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('category*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('category.index') }}">Category</a></li>
-                    <li class="{{ Request::is('question*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('question.index') }}">Question</a></li>
-                    <li class="{{ Request::is('users*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('users.index') }}">User</a></li>
+                    <li class="{{ Request::is('setting/api-settings*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.setting.apiSettings') }}">{{ __('API Settings') }}</a></li>
+                    <li class="{{ Request::is('client-apps*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.client-apps.index') }}">{{ __('Apps') }}</a></li>
                 </ul>
-            </li> --}}
-
+            </li>
         </ul>
     </aside>
 </div>

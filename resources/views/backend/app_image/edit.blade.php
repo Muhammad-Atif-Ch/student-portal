@@ -1,4 +1,4 @@
-@extends('backend.layouts.app')
+    @extends('backend.layouts.app')
 @section('title', __('App Image'))
 @section('content')
     <!-- Main Content -->

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\SampleCpcQuestionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CpcQuestion\CreateCpcQuestionRequest;
 use App\Http\Requests\CpcQuestion\UpdateCpcQuestionRequest;
+use App\Imports\CpcQuestionImport;
 use App\Models\CpcCaseStudy;
 use App\Models\CpcQuestion;
 use App\Services\CpcQuestion\CpcQuestionService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CpcQuestionController extends Controller
 {
@@ -76,5 +80,40 @@ class CpcQuestionController extends Controller
         $response = $this->service->destroy($question);
 
         return Response::sendResponse($response?->getResponeType(), $response?->code(), $response?->message(), redirect: 'admin.cpc.question.index');
+    }
+
+    /**
+     * Download the sample import template.
+     */
+    public function downloadSample()
+    {
+        return Excel::download(new SampleCpcQuestionExport, 'cpc_question_import_sample.xlsx');
+    }
+
+    /**
+     * Import CPC questions from an Excel/CSV file.
+     */
+    public function importQuestion(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:2048',
+        ]);
+
+        $import = new CpcQuestionImport;
+        Excel::import($import, $request->file('file'));
+
+        $failures = $import->failures();
+
+        if ($failures->isNotEmpty()) {
+            return back()
+                ->with('error', sprintf('%d row(s) failed validation.', $failures->count()))
+                ->with('import_failures', $failures->map(fn ($f) => [
+                    'row' => $f->row(),
+                    'attribute' => $f->attribute(),
+                    'errors' => $f->errors(),
+                ])->toArray());
+        }
+
+        return back()->with('success', 'CPC questions imported successfully!');
     }
 }

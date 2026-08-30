@@ -61,6 +61,8 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     // CPC Management
     Route::group(['prefix' => 'cpc', 'as' => 'cpc.'], function () {
         Route::resource('question', CpcQuestionController::class)->except('show');
+        Route::get('question-sample/download', [CpcQuestionController::class, 'downloadSample'])->name('question.sample.download');
+        Route::post('question/import/file', [CpcQuestionController::class, 'importQuestion'])->name('question.import.file');
         Route::resource('type', CpcTypeController::class)->except('show');
         Route::resource('exam', CpcExamController::class)->except('show');
 

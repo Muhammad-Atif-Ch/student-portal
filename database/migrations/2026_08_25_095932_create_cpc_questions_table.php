@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('cpc_questions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('cpc_case_study_id')->nullable()->constrained()->nullOnDelete();
             $table->text('question');
             $table->text('answer_explanation')->nullable();
-            $table->foreignId('cpc_case_study_id')->nullable()->after('id')->constrained()->nullOnDelete();
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });

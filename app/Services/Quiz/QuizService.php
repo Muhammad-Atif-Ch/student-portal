@@ -9,8 +9,8 @@ use Illuminate\Support\Collection;
 use App\Repositories\QuizRepository;
 use App\Core\Services\AbstractService;
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Requests\Test\CreateTestRequest;
-use App\Http\Requests\Test\UpdateTestRequest;
+use App\Http\Requests\Quiz\CreateQuizRequest;
+use App\Http\Requests\Quiz\UpdateQuizRequest;
 use App\Core\Contracts\Responses\AbstractResponseInterface;
 
 class QuizService extends AbstractService
@@ -22,7 +22,7 @@ class QuizService extends AbstractService
         $this->request = $request;
     }
 
-    public function createTest(CreateTestRequest $request): AbstractResponseInterface
+    public function createTest(CreateQuizRequest $request): AbstractResponseInterface
     {
         $test = $this->create($request->validated());
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getCreateResponseMessage());
@@ -39,7 +39,7 @@ class QuizService extends AbstractService
         return $this->getById($id);
     }
 
-    public function updateTest(UpdateTestRequest $request, $id): AbstractResponseInterface
+    public function updateTest(UpdateQuizRequest $request, $id): AbstractResponseInterface
     {
         $this->update($request->validated(), $id);
         $this->response->setResponse(ResponseCode::SUCCESS, ResponseCode::REGULAR, $this->response->getUpdateResponseMessage());

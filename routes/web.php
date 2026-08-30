@@ -48,7 +48,7 @@ Route::middleware(['auth', 'role:admin'])->as('admin.')->group(function () {
     });
 
     // Quiz and Question Management
-    Route::resource('quiz', QuizController::class)->except('create', 'store', 'show', 'destroy');
+    Route::resource('quiz', QuizController::class)->except('show');
     Route::group(['prefix' => 'quiz', 'as' => 'quiz.question.'], function () {
         Route::get('{quiz}/question/destroy', [QuestionController::class, 'destroyAll'])->name('destroy.all');
         Route::delete('question/{question}/remove-image', [QuestionController::class, 'removeImage'])->name('removeImage');

@@ -6,8 +6,8 @@ use App\Models\Quiz;
 use App\Services\Quiz\QuizService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
-use App\Http\Requests\Test\CreateTestRequest;
-use App\Http\Requests\Test\UpdateTestRequest;
+use App\Http\Requests\Quiz\CreateQuizRequest;
+use App\Http\Requests\Quiz\UpdateQuizRequest;
 
 class QuizController extends Controller
 {
@@ -36,7 +36,7 @@ class QuizController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateTestRequest $request)
+    public function store(CreateQuizRequest $request)
     {
         $response = $this->service->createTest($request);
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
@@ -62,7 +62,7 @@ class QuizController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTestRequest $request, string $id)
+    public function update(UpdateQuizRequest $request, string $id)
     {
         $response = $this->service->updateTest($request, $id);
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
@@ -71,9 +71,9 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Quiz $test)
+    public function destroy(Quiz $quiz)
     {
-        $response = $this->service->destroy($test);
+        $response = $this->service->destroy($quiz);
         return Response::sendResponse($response->getResponeType(), $response->code(), $response->message(), redirect: 'admin.quiz.index');
     }
 }

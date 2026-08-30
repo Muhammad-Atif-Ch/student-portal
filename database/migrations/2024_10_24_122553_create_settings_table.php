@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -23,6 +22,10 @@ return new class extends Migration
             $table->boolean('stiky_header')->default(true)->nullable();
             $table->text('image')->nullable();
             $table->boolean('translation_stopped')->default(false)->nullable();
+            $table->text('translation_api_key')->nullable();
+            $table->string('translation_api_region')->nullable();
+            $table->text('tts_api_key')->nullable();
+            $table->string('tts_api_region')->nullable();
             $table->timestamps();
         });
     }

@@ -24,6 +24,7 @@
                             </div>
                             <div class="card-body cs-preview">
                                 <h1>{{ $response->title }}</h1>
+                                <p class="text-muted">Type: {{ $response->type->title ?? '-' }}</p>
 
                                 @foreach ($response->blocks as $block)
                                     @if ($block->type === 'text')

@@ -24,6 +24,7 @@ class CreateCpcCaseStudyRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
+            'cpc_type_id' => ['required', 'exists:cpc_types,id'],
             'blocks' => ['required', 'array', 'min:1'],
             'blocks.*.type' => ['required', 'in:text,image,list'],
             'blocks.*.content' => ['nullable', 'string'],

@@ -5,29 +5,14 @@
 @endphp
 
 
-<div class="row">
-    <div class="col-12 col-md-6">
-        <div class="form-group">
-            <label>Type <small style="color: red">*</small></label>
-            <select name="cpc_type_id" class="form-control" required>
-                <option value="">Select Type</option>
-                @foreach ($cpcTypes as $cpcType)
-                    <option value="{{ $cpcType->id }}" {{ old('cpc_type_id', $response->cpc_type_id ?? '') == $cpcType->id ? 'selected' : '' }}>{{ $cpcType->title }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-    <div class="col-12 col-md-6">
-        <div class="form-group">
-            <label>Case Study</label>
-            <select name="cpc_case_study_id" class="form-control">
-                <option value="">None</option>
-                @foreach ($caseStudies as $caseStudy)
-                    <option value="{{ $caseStudy->id }}" {{ old('cpc_case_study_id', $response->cpc_case_study_id ?? '') == $caseStudy->id ? 'selected' : '' }}>{{ $caseStudy->title }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
+<div class="form-group">
+    <label>Case Study</label>
+    <select name="cpc_case_study_id" class="form-control">
+        <option value="">None</option>
+        @foreach ($caseStudies as $caseStudy)
+            <option value="{{ $caseStudy->id }}" {{ old('cpc_case_study_id', $response->cpc_case_study_id ?? '') == $caseStudy->id ? 'selected' : '' }}>{{ $caseStudy->title }}</option>
+        @endforeach
+    </select>
 </div>
 
 <div class="form-group">

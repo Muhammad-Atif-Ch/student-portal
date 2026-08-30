@@ -7,7 +7,6 @@ use App\Http\Requests\CpcQuestion\CreateCpcQuestionRequest;
 use App\Http\Requests\CpcQuestion\UpdateCpcQuestionRequest;
 use App\Models\CpcCaseStudy;
 use App\Models\CpcQuestion;
-use App\Models\CpcType;
 use App\Services\CpcQuestion\CpcQuestionService;
 use Illuminate\Support\Facades\Response;
 
@@ -33,10 +32,9 @@ class CpcQuestionController extends Controller
      */
     public function create()
     {
-        $cpcTypes = CpcType::orderBy('title')->get();
         $caseStudies = CpcCaseStudy::orderBy('title')->get();
 
-        return view('backend.cpc.question.create', compact('cpcTypes', 'caseStudies'));
+        return view('backend.cpc.question.create', compact('caseStudies'));
     }
 
     /**
@@ -55,10 +53,9 @@ class CpcQuestionController extends Controller
     public function edit(string $id)
     {
         $response = $this->service->showCpcQuestion($id);
-        $cpcTypes = CpcType::orderBy('title')->get();
         $caseStudies = CpcCaseStudy::orderBy('title')->get();
 
-        return view('backend.cpc.question.edit', compact('response', 'cpcTypes', 'caseStudies'));
+        return view('backend.cpc.question.edit', compact('response', 'caseStudies'));
     }
 
     /**

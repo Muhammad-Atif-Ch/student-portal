@@ -21,7 +21,6 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Question</th>
-                                                <th>Type</th>
                                                 <th>Case Study</th>
                                                 <th>Correct Option</th>
                                                 <th class="col-1">Action</th>
@@ -32,7 +31,6 @@
                                                 <tr>
                                                     <td>{{ $cpcQuestion->id }}</td>
                                                     <td>{{ Str::limit($cpcQuestion->question, 100) }}</td>
-                                                    <td>{{ $cpcQuestion->type->title ?? '-' }}</td>
                                                     <td>{{ $cpcQuestion->caseStudy->title ?? '-' }}</td>
                                                     <td>
                                                         @php $correct = $cpcQuestion->options->firstWhere('is_correct', true); @endphp

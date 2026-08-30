@@ -4,10 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['title'])]
+#[Fillable(['title', 'cpc_type_id'])]
 class CpcCaseStudy extends Model
 {
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(CpcType::class, 'cpc_type_id');
+    }
+
     public function blocks()
     {
         return $this->hasMany(CpcCaseStudyBlock::class)->orderBy('sort_order');

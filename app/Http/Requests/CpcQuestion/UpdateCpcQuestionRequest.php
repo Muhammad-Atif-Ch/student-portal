@@ -25,7 +25,6 @@ class UpdateCpcQuestionRequest extends FormRequest
         return [
             'question' => ['required', 'string', 'sometimes'],
             'answer_explanation' => ['nullable', 'string'],
-            'cpc_type_id' => ['required', 'exists:cpc_types,id'],
             'cpc_case_study_id' => ['nullable', 'exists:cpc_case_studies,id'],
             'correct_option' => ['required', 'in:a,b,c,d', 'sometimes'],
             'options' => ['required', 'array'],

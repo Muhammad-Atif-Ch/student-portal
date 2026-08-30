@@ -40,7 +40,6 @@ class CpcQuestionService extends AbstractService
                 $question = $this->create([
                     'question' => $data['question'],
                     'answer_explanation' => $data['answer_explanation'] ?? null,
-                    'cpc_type_id' => $data['cpc_type_id'],
                     'cpc_case_study_id' => $data['cpc_case_study_id'] ?? null,
                 ]);
 
@@ -59,7 +58,7 @@ class CpcQuestionService extends AbstractService
     {
         $this->setLimit(50);
 
-        return $this->repository->getList(['options', 'type', 'caseStudy']);
+        return $this->repository->getList(['options', 'caseStudy']);
     }
 
     public function showCpcQuestion($id): Model
@@ -78,7 +77,6 @@ class CpcQuestionService extends AbstractService
                 $this->update([
                     'question' => $data['question'],
                     'answer_explanation' => $data['answer_explanation'] ?? null,
-                    'cpc_type_id' => $data['cpc_type_id'],
                     'cpc_case_study_id' => $data['cpc_case_study_id'] ?? null,
                 ], $id);
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CpcCaseStudy\CreateCpcCaseStudyRequest;
 use App\Http\Requests\CpcCaseStudy\UpdateCpcCaseStudyRequest;
 use App\Models\CpcCaseStudy;
+use App\Models\CpcType;
 use App\Services\CpcCaseStudy\CpcCaseStudyService;
 use Illuminate\Support\Facades\Response;
 
@@ -31,7 +32,9 @@ class CpcCaseStudyController extends Controller
      */
     public function create()
     {
-        return view('backend.cpc.case-study.create');
+        $cpcTypes = CpcType::orderBy('title')->get();
+
+        return view('backend.cpc.case-study.create', compact('cpcTypes'));
     }
 
     /**
@@ -60,8 +63,9 @@ class CpcCaseStudyController extends Controller
     public function edit(string $id)
     {
         $response = $this->service->showCaseStudy($id);
+        $cpcTypes = CpcType::orderBy('title')->get();
 
-        return view('backend.cpc.case-study.edit', compact('response'));
+        return view('backend.cpc.case-study.edit', compact('response', 'cpcTypes'));
     }
 
     /**

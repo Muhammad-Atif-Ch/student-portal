@@ -10,8 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('cpc_questions', function (Blueprint $table) {
-            $table->foreignId('cpc_type_id')->nullable()->after('cpc_case_study_id')->constrained()->nullOnDelete();
+        Schema::create('cpc_case_studies', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->foreignId('cpc_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->timestamps();
         });
     }
 
@@ -20,8 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('cpc_questions', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('cpc_type_id');
-        });
+        Schema::dropIfExists('cpc_case_studies');
     }
 };

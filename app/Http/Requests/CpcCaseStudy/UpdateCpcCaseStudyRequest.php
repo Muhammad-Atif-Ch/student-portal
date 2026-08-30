@@ -24,6 +24,7 @@ class UpdateCpcCaseStudyRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
+            'cpc_type_id' => ['required', 'exists:cpc_types,id'],
             'blocks' => ['required', 'array', 'min:1'],
             'blocks.*.id' => ['nullable', 'integer', 'exists:cpc_case_study_blocks,id'],
             'blocks.*.type' => ['required', 'in:text,image,list'],

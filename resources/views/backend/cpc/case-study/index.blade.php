@@ -21,6 +21,7 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Title</th>
+                                                <th>Type</th>
                                                 <th>Blocks</th>
                                                 <th>Questions</th>
                                                 <th class="col-2">Action</th>
@@ -31,6 +32,7 @@
                                                 <tr>
                                                     <td>{{ $caseStudy->id }}</td>
                                                     <td>{{ $caseStudy->title }}</td>
+                                                    <td>{{ $caseStudy->type->title ?? '-' }}</td>
                                                     <td>{{ $caseStudy->blocks->count() }}</td>
                                                     <td>{{ $caseStudy->cpcQuestions->count() }}</td>
                                                     <td>
@@ -48,7 +50,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="5" class="text-center">No case studies found</td>
+                                                    <td colspan="6" class="text-center">No case studies found</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>

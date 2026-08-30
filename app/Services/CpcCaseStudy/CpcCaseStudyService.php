@@ -35,7 +35,7 @@ class CpcCaseStudyService extends AbstractService
 
         try {
             DB::transaction(function () use ($data, $request) {
-                $caseStudy = $this->create(['title' => $data['title']]);
+                $caseStudy = $this->create(['title' => $data['title'], 'cpc_type_id' => $data['cpc_type_id']]);
 
                 $this->storeBlocks($caseStudy, $request, $data['blocks']);
             });
@@ -52,7 +52,7 @@ class CpcCaseStudyService extends AbstractService
     {
         $this->setLimit(50);
 
-        return $this->repository->getList(['blocks', 'cpcQuestions']);
+        return $this->repository->getList(['type', 'blocks', 'cpcQuestions']);
     }
 
     public function listCaseStudiesForTranslation(): LengthAwarePaginator
@@ -64,7 +64,7 @@ class CpcCaseStudyService extends AbstractService
 
     public function showCaseStudy($id): Model
     {
-        return $this->getById($id, ['blocks.translations.language', 'translations.language', 'cpcQuestions.options']);
+        return $this->getById($id, ['type', 'blocks.translations.language', 'translations.language', 'cpcQuestions.options']);
     }
 
     public function updateCaseStudy(UpdateCpcCaseStudyRequest $request, $id): AbstractResponseInterface
@@ -75,7 +75,7 @@ class CpcCaseStudyService extends AbstractService
             DB::transaction(function () use ($data, $request, $id) {
                 $caseStudy = $this->repository->getById($id, ['blocks']);
 
-                $this->update(['title' => $data['title']], $id);
+                $this->update(['title' => $data['title'], 'cpc_type_id' => $data['cpc_type_id']], $id);
 
                 $keepIds = collect($data['blocks'])->pluck('id')->filter()->all();
                 $caseStudy->blocks->whereNotIn('id', $keepIds)->each->delete();

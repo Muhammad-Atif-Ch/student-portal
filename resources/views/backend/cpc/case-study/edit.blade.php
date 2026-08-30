@@ -21,7 +21,6 @@
                                     @include('backend.cpc.case-study._form')
                                 </div>
                                 <div class="card-footer text-right">
-                                    <a href="{{ route('admin.cpc.translation.index') }}" class="btn btn-outline-info mr-1">Manage Translations</a>
                                     <a href="{{ route('admin.cpc.case-study.show', $response->id) }}" class="btn btn-secondary mr-1" target="_blank">Preview</a>
                                     <button class="btn btn-primary mr-1" type="submit">Update</button>
                                 </div>

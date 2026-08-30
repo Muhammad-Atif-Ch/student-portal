@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('language_id')->constrained()->cascadeOnDelete();
             $table->text('question_translation')->nullable();
             $table->text('answer_explanation_translation')->nullable();
+            $table->string('answer_explanation_audio')->nullable();
             $table->string('question_audio')->nullable();
             $table->string('status')->default('pending'); // pending, partial, completed
             $table->timestamps();

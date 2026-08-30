@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->text('question');
             $table->text('answer_explanation')->nullable();
+            $table->foreignId('cpc_case_study_id')->nullable()->after('id')->constrained()->nullOnDelete();
+            $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });
     }

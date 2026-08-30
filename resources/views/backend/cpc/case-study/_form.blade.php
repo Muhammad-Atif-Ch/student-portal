@@ -23,6 +23,16 @@
     <input type="text" class="form-control" name="title" value="{{ old('title', $response->title ?? '') }}" placeholder="e.g. Scenario 1" required>
 </div>
 
+<div class="form-group">
+    <label>Type <small style="color: red">*</small></label>
+    <select class="form-control" name="cpc_type_id" required>
+        <option value="">Select Type</option>
+        @foreach ($cpcTypes as $cpcType)
+            <option value="{{ $cpcType->id }}" {{ old('cpc_type_id', $response->cpc_type_id ?? '') == $cpcType->id ? 'selected' : '' }}>{{ $cpcType->title }}</option>
+        @endforeach
+    </select>
+</div>
+
 <hr>
 
 <div class="d-flex justify-content-between align-items-center mb-2">

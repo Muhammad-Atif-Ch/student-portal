@@ -37,6 +37,7 @@
                                                 <th>#</th>
                                                 <th>Question</th>
                                                 <th>Case Study</th>
+                                                <th>Type</th>
                                                 <th>Correct Option</th>
                                                 <th class="col-1">Action</th>
                                             </tr>
@@ -47,6 +48,7 @@
                                                     <td>{{ $cpcQuestion->id }}</td>
                                                     <td>{{ Str::limit($cpcQuestion->question, 100) }}</td>
                                                     <td>{{ $cpcQuestion->caseStudy->title ?? '-' }}</td>
+                                                    <td><span class="badge badge-success">{{ ucfirst($cpcQuestion->caseStudy->type->title ?? '-') }}</span></td>
                                                     <td>
                                                         @php $correct = $cpcQuestion->options->firstWhere('is_correct', true); @endphp
                                                         @if ($correct)

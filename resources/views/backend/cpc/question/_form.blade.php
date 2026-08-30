@@ -10,7 +10,7 @@
     <select name="cpc_case_study_id" class="form-control">
         <option value="">None</option>
         @foreach ($caseStudies as $caseStudy)
-            <option value="{{ $caseStudy->id }}" {{ old('cpc_case_study_id', $response->cpc_case_study_id ?? '') == $caseStudy->id ? 'selected' : '' }}>{{ $caseStudy->title }}</option>
+            <option value="{{ $caseStudy->id }}" {{ old('cpc_case_study_id', $response->cpc_case_study_id ?? '') == $caseStudy->id ? 'selected' : '' }}>{{ $caseStudy->title }} - {{ ucfirst($caseStudy->type->title ?? '-') }}</option>
         @endforeach
     </select>
 </div>
